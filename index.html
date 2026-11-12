@@ -5,23 +5,46 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kumpulan Doa & Muqaddimah</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
-<meta name="theme-color" content="#050807">
-
-<!-- ====== TAUTAN PWA YANG BENAR ====== -->
+<meta name="theme-color" content="#050807" id="meta-theme">
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest.json">
 
 <style>
+  /* ==== VARIABEL TEMA (DARK / LIGHT) ==== */
+  :root {
+    --bg-main: #050807;
+    --text-main: #f8f1dc;
+    --text-muted: #cdbf8f;
+    --text-title: #f6e7a8;
+    --card-bg: rgba(255,255,255,0.02);
+    --card-border: rgba(212,175,55,0.2);
+    --gold: #d4af37;
+    --input-bg: rgba(255,255,255,0.05);
+    --font-scale: 1;
+  }
+  
+  body.light-mode {
+    --bg-main: #fdfaf6;
+    --text-main: #2c2a26;
+    --text-muted: #5c554a;
+    --text-title: #8b6508;
+    --card-bg: rgba(0,0,0,0.03);
+    --card-border: rgba(139,101,8,0.3);
+    --gold: #9b7605;
+    --input-bg: rgba(0,0,0,0.05);
+  }
+
   /* ==== RESET & DASAR ==== */
   *{box-sizing:border-box;-webkit-text-size-adjust:100%}
   html, body {
     margin: 0; padding: 0;
     height: 100%; width: 100%;
     overflow: hidden; 
-    background: #050807;
+    background: var(--bg-main);
     font-family: 'Cormorant Garamond', Georgia, serif;
-    color: #f8f1dc;
+    color: var(--text-main);
+    transition: background 0.3s, color 0.3s;
   }
   
   .app-container {
@@ -57,6 +80,16 @@
       radial-gradient(ellipse at 50% 40%, rgba(212,175,55,.06), transparent 60%),
       linear-gradient(160deg, #0a0f0d 0%, #050807 55%, #000 100%);
     background-size: 46px 46px, 62px 62px, 54px 54px, cover, cover;
+    transition: background 0.5s;
+  }
+
+  body.light-mode .cover {
+    background:
+      radial-gradient(circle at 20% 20%, rgba(139,101,8,.14) 0 1.5px, transparent 2.5px),
+      radial-gradient(circle at 80% 30%, rgba(139,101,8,.10) 0 1.5px, transparent 2.5px),
+      radial-gradient(circle at 30% 80%, rgba(139,101,8,.08) 0 1.5px, transparent 2.5px),
+      radial-gradient(ellipse at 50% 40%, rgba(139,101,8,.06), transparent 60%),
+      linear-gradient(160deg, #f5ebd6 0%, #fdfaf6 55%, #ffffff 100%);
   }
 
   .cover::before {
@@ -64,91 +97,127 @@
     border:1px solid rgba(212,175,55,.55); border-radius:6px;
     pointer-events:none; z-index:2; animation:framePulse 8s ease-in-out infinite;
   }
+  body.light-mode .cover::before { border-color: rgba(139,101,8,.55); }
+  
   @keyframes framePulse{0%,100%{box-shadow:inset 0 0 60px rgba(212,175,55,.05)}50%{box-shadow:inset 0 0 90px rgba(212,175,55,.14),0 0 30px rgba(212,175,55,.18)}}
 
   .stars, .particles { position:absolute; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
   .star { position:absolute; background:#ffe9a8; border-radius:50%; box-shadow:0 0 6px 1px rgba(232,199,102,.65); animation:twinkle var(--d,3s) ease-in-out infinite; animation-delay:var(--delay,0s); }
+  body.light-mode .star { background: #d4af37; box-shadow: 0 0 6px 1px rgba(139,101,8,.65); }
   @keyframes twinkle{0%,100%{opacity:.1;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+  
   .particle { position:absolute; bottom:-20px; border-radius:50%; background:radial-gradient(circle,#ffe9a8 0%,#d4af37 55%,transparent 100%); box-shadow:0 0 10px rgba(212,175,55,.7); opacity:0; animation:floatUp var(--dur,14s) linear infinite; animation-delay:var(--delay,0s); }
+  body.light-mode .particle { background: radial-gradient(circle,#d4af37 0%,#8b6508 55%,transparent 100%); box-shadow: 0 0 10px rgba(139,101,8,.7); }
   @keyframes floatUp{0%{transform:translate(0,0);opacity:0}10%{opacity:.85}90%{opacity:.4}100%{transform:translate(var(--dx,20px),-110vh);opacity:0}}
   
   .moon { position:absolute; top:40px; right:40px; width:1em; height:1em; font-size:60px; border-radius:50%; box-shadow:inset -.22em -.03em 0 0 #e8c766; animation:moonGlow 6s ease-in-out infinite; z-index:1; }
+  body.light-mode .moon { box-shadow: inset -.22em -.03em 0 0 #8b6508; }
   @keyframes moonGlow{0%,100%{filter:drop-shadow(0 0 10px rgba(212,175,55,.35))}50%{filter:drop-shadow(0 0 24px rgba(232,199,102,.8))}}
+
+  /* Tombol Tema (Matahari/Bulan) */
+  .btn-theme { position: absolute; top: 20px; left: 20px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--gold); font-size: 24px; padding: 8px; border-radius: 50%; cursor: pointer; z-index: 10; transition: all 0.3s; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; }
+  .btn-theme:hover { transform: scale(1.1); border-color: var(--gold); }
 
   .cover-content { position:relative; z-index:3; width:100%; display:flex; flex-direction:column; align-items:center; text-align:center; padding:20px; }
   
-  .bismillah { font-family:'Amiri',serif; font-size:clamp(22px, 5vw, 34px); color:#e8c766; line-height:1.8; margin:0 0 15px; animation:softGlow 5s ease-in-out infinite; direction: rtl; }
+  .bismillah { font-family:'Amiri',serif; font-size:clamp(22px, 5vw, 34px); color:var(--gold); line-height:1.8; margin:0 0 15px; animation:softGlow 5s ease-in-out infinite; direction: rtl; }
   @keyframes softGlow{0%,100%{text-shadow:0 0 14px rgba(212,175,55,.2)}50%{text-shadow:0 0 28px rgba(232,199,102,.65)}}
   
-  .kicker { font-family:Georgia,serif; font-size:clamp(10px, 1.5vw, 13px); letter-spacing:.4em; text-transform:uppercase; color:#d4af37; margin:0 0 15px; }
+  .kicker { font-family:Georgia,serif; font-size:clamp(10px, 1.5vw, 13px); letter-spacing:.4em; text-transform:uppercase; color:var(--gold); margin:0 0 15px; }
   
   h1.cover-title { margin:0; font-weight:700; font-size:clamp(38px, 8vw, 76px); line-height:1.04; background:linear-gradient(100deg,#f6e7a8 0%,#d4af37 22%,#fff6cf 42%,#b8860b 62%,#f6e7a8 82%,#d4af37 100%); background-size:220% 100%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; color:transparent; filter:drop-shadow(0 2px 10px rgba(0,0,0,.7)); animation:shimmer 7s linear infinite; }
+  body.light-mode h1.cover-title { background: linear-gradient(100deg, #8b6508 0%, #d4af37 22%, #5c4402 42%, #b8860b 62%, #8b6508 82%, #d4af37 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 2px 10px rgba(255,255,255,.7)); }
   @keyframes shimmer{0%{background-position:0% 50%}100%{background-position:-220% 50%}}
   
-  .divider { position:relative; width:clamp(80px, 30vw, 170px); height:1px; margin:20px auto; background:linear-gradient(90deg,transparent,#d4af37,transparent); }
-  .divider span { position:absolute; left:50%; top:50%; background:#070b09; padding:0 10px; color:#e8c766; font-size:16px; animation:spinSlow 14s linear infinite; }
+  .divider { position:relative; width:clamp(80px, 30vw, 170px); height:1px; margin:20px auto; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
+  .divider span { position:absolute; left:50%; top:50%; background:var(--bg-main); padding:0 10px; color:var(--gold); font-size:16px; animation:spinSlow 14s linear infinite; }
   @keyframes spinSlow{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
   
-  .desc { margin:0 auto 30px; max-width:30ch; font-style:italic; font-size:clamp(15px, 2.5vw, 20px); color:#cdbf8f; }
+  .desc { margin:0 auto 30px; max-width:30ch; font-style:italic; font-size:clamp(15px, 2.5vw, 20px); color:var(--text-muted); }
   
-  .btn-open { display:inline-block; padding:12px 30px; background:rgba(212,175,55,0.1); border:1px solid #d4af37; color:#d4af37; text-decoration:none; border-radius:30px; font-family:Georgia,serif; font-size:16px; letter-spacing:.1em; text-transform:uppercase; transition:all 0.3s ease; cursor:pointer; box-shadow:0 0 15px rgba(212,175,55,0.2); }
-  .btn-open:hover { background:#d4af37; color:#050807; box-shadow:0 0 25px rgba(212,175,55,0.6); }
+  .btn-open { display:inline-block; padding:12px 30px; background:var(--card-bg); border:1px solid var(--gold); color:var(--gold); text-decoration:none; border-radius:30px; font-family:Georgia,serif; font-size:16px; letter-spacing:.1em; text-transform:uppercase; transition:all 0.3s ease; cursor:pointer; box-shadow:0 0 15px rgba(212,175,55,0.2); }
+  .btn-open:hover { background:var(--gold); color:#050807; box-shadow:0 0 25px rgba(212,175,55,0.6); }
 
-  .cover-footer { position:absolute; bottom:30px; left:0; right:0; text-align:center; font-family:Georgia,serif; font-size:12px; letter-spacing:.2em; color:#b8a25e; z-index:3; }
+  .cover-footer { position:absolute; bottom:30px; left:0; right:0; text-align:center; font-family:Georgia,serif; font-size:12px; letter-spacing:.2em; color:var(--text-muted); z-index:3; }
 
   /* =========================================
      2. DESAIN DAFTAR ISI & PENCARIAN
      ========================================= */
   .toc-wrapper { width:100%; max-width:600px; margin:0 auto; padding:30px 20px 50px; position:relative; }
   .toc-header { text-align:center; margin-bottom:20px; }
-  .toc-header h2 { margin:0; font-size:clamp(28px, 5vw, 38px); font-weight:700; letter-spacing:.1em; background:linear-gradient(100deg, #f6e7a8 0%, #d4af37 50%, #fff6cf 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .toc-header h2 { margin:0; font-size:clamp(28px, 5vw, 38px); font-weight:700; letter-spacing:.1em; background:linear-gradient(100deg, var(--text-title) 0%, var(--gold) 50%, var(--text-title) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
   
   .search-container { margin-bottom: 25px; position: relative; }
-  .search-input { width: 100%; padding: 12px 20px 12px 45px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 25px; color: #f8f1dc; font-family: 'Cormorant Garamond', serif; font-size: 18px; outline: none; transition: all 0.3s; }
-  .search-input:focus { border-color: #d4af37; background: rgba(212,175,55,0.1); box-shadow: 0 0 15px rgba(212,175,55,0.2); }
-  .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #d4af37; font-size: 18px; }
+  .search-input { width: 100%; padding: 12px 20px 12px 45px; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 25px; color: var(--text-main); font-family: 'Cormorant Garamond', serif; font-size: 18px; outline: none; transition: all 0.3s; }
+  .search-input:focus { border-color: var(--gold); box-shadow: 0 0 15px rgba(212,175,55,0.2); }
+  .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--gold); font-size: 18px; }
 
-  .section-title { font-family: Georgia, serif; color: #d4af37; font-size: 14px; letter-spacing: .2em; text-transform: uppercase; margin: 25px 0 10px 5px; border-bottom: 1px dashed rgba(212,175,55,0.3); padding-bottom: 5px; display: none; }
+  .section-title { font-family: Georgia, serif; color: var(--gold); font-size: 14px; letter-spacing: .2em; text-transform: uppercase; margin: 25px 0 10px 5px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px; display: none; }
 
   .toc-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
   
-  .toc-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02); border: 1px solid rgba(212,175,55,.15); border-radius: 8px; transition: all 0.3s ease; padding-right: 15px; }
-  .toc-item:hover { background: rgba(212,175,55,0.08); border-color: #d4af37; transform: translateX(5px); }
+  .toc-item { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; transition: all 0.3s ease; padding-right: 15px; }
+  .toc-item:hover { border-color: var(--gold); transform: translateX(5px); }
   .toc-item a { display: flex; align-items: center; text-decoration: none; padding: 12px 15px; flex-grow: 1; cursor: pointer; }
   
-  .toc-number { font-family:Georgia, serif; font-size:16px; color:#d4af37; margin-right:12px; font-weight:bold; min-width:20px; }
-  .toc-title { font-size:18px; font-weight:600; color:#efe5c9; flex-grow:1; }
+  .toc-number { font-family:Georgia, serif; font-size:16px; color:var(--gold); margin-right:12px; font-weight:bold; min-width:20px; }
+  .toc-title { font-size:18px; font-weight:600; color:var(--text-main); flex-grow:1; }
   
   .btn-fav-toggle { background: none; border: none; font-size: 22px; cursor: pointer; padding: 0; color: #555; transition: transform 0.2s; line-height: 1; }
+  body.light-mode .btn-fav-toggle { color: #ccc; }
   .btn-fav-toggle:hover { transform: scale(1.2); }
   .btn-fav-toggle.active { color: #f6e7a8; text-shadow: 0 0 10px rgba(232,199,102,0.8); }
+  body.light-mode .btn-fav-toggle.active { color: #b8860b; text-shadow: none; }
 
   /* =========================================
      3. DESAIN ISI DOA (HALAMAN BACAAN)
      ========================================= */
   .doa-container { width:100%; max-width:700px; margin:0 auto; padding:30px 20px 60px; }
   
-  .doa-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom:1px solid rgba(212,175,55,0.3); padding-bottom:15px; }
-  .btn-back { display:inline-flex; align-items:center; gap:8px; color:#d4af37; text-decoration:none; font-size:16px; cursor:pointer; transition:color 0.3s; background:rgba(212,175,55,0.1); padding:6px 12px; border-radius:20px; border:1px solid rgba(212,175,55,0.3); }
-  .btn-back:hover { color:#050807; background:#d4af37; }
+  .doa-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom:1px solid var(--card-border); padding-bottom:15px; }
+  .btn-back { display:inline-flex; align-items:center; gap:8px; color:var(--gold); text-decoration:none; font-size:16px; cursor:pointer; transition:color 0.3s; background:var(--card-bg); padding:6px 12px; border-radius:20px; border:1px solid var(--card-border); }
+  .btn-back:hover { color:var(--bg-main); background:var(--gold); }
   
   .btn-fav-page { background: none; border: none; font-size: 28px; cursor: pointer; color: #555; transition: transform 0.2s, color 0.2s; line-height: 1; }
+  body.light-mode .btn-fav-page { color: #ccc; }
   .btn-fav-page:hover { transform: scale(1.2); }
   .btn-fav-page.active { color: #f6e7a8; text-shadow: 0 0 15px rgba(232,199,102,0.8); }
+  body.light-mode .btn-fav-page.active { color: #b8860b; text-shadow: none; }
 
-  .doa-title { font-size:clamp(24px, 5vw, 32px); color:#f6e7a8; margin:0 0 20px; }
+  /* FITUR BARU: TOOLBAR (UKURAN & SALIN) */
+  .doa-tools { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tool-btn { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--gold); padding: 8px 16px; border-radius: 20px; font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 5px; }
+  .tool-btn:hover { background: var(--gold); color: var(--bg-main); }
+
+  .doa-title { font-size:clamp(24px, 5vw, 32px); color:var(--text-title); margin:0 0 20px; text-align: center; }
   
-  .doa-card { background:rgba(255,255,255,0.02); border:1px solid rgba(212,175,55,0.2); border-radius:12px; padding:25px; margin-bottom:25px; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
+  .doa-card { background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:25px; margin-bottom:25px; box-shadow:0 10px 30px rgba(0,0,0,0.1); }
   
-  .arabic-text { font-family: 'Amiri', 'Traditional Arabic', serif; font-size: clamp(26px, 6vw, 34px); color: #e8c766; direction: rtl; text-align: right; line-height: 2.5; margin-bottom: 20px; text-shadow: 0 0 15px rgba(212,175,55,0.2); white-space: pre-wrap; word-spacing: 3px; }
-  .latin-text { font-style:italic; color:#cdbf8f; font-size:16px; line-height:1.6; margin-bottom:20px; border-left:2px solid #d4af37; padding-left:15px; white-space: pre-wrap; display: none; }
-  .translation-text { color:#f8f1dc; font-size:18px; line-height:1.6; white-space: pre-wrap; display: none; }
+  /* ==== TEKS ARAB & CAMPURAN (FONT SCALE) ==== */
+  .arabic-text { 
+    font-family: 'Amiri', 'Traditional Arabic', serif; 
+    /* Font scale multiplier */
+    font-size: clamp(calc(26px * var(--font-scale)), calc(6vw * var(--font-scale)), calc(34px * var(--font-scale))); 
+    color: var(--gold); 
+    direction: rtl; 
+    text-align: right; 
+    line-height: 2.5; 
+    margin-bottom: 20px; 
+    text-shadow: 0 0 15px rgba(212,175,55,0.1); 
+    white-space: pre-wrap; 
+    word-spacing: 3px; 
+  }
+  
+  .latin-text { font-style:italic; color:var(--text-muted); font-size:calc(16px * var(--font-scale)); line-height:1.6; margin-bottom:20px; border-left:2px solid var(--gold); padding-left:15px; white-space: pre-wrap; display: none; }
+  .translation-text { color:var(--text-main); font-size:calc(18px * var(--font-scale)); line-height:1.6; white-space: pre-wrap; display: none; }
 </style>
 </head>
 <body>
 
 <div class="app-container" id="app-scroll">
+  <!-- HALAMAN 1: COVER -->
   <div id="page-cover" class="page active cover">
+    <button class="btn-theme" id="theme-btn" onclick="toggleTheme()">🌙</button>
     <div class="stars" aria-hidden="true"></div>
     <div class="particles" aria-hidden="true"></div>
     <div class="moon" aria-hidden="true"></div>
@@ -163,11 +232,12 @@
     <div class="cover-footer">Edisi Digital • 2026</div>
   </div>
 
+  <!-- HALAMAN 2: DAFTAR ISI -->
   <div id="page-toc" class="page">
     <div class="toc-wrapper">
       <div class="toc-header">
         <h2>Daftar Isi</h2>
-        <span style="color:#d4af37; font-size:14px; letter-spacing:5px;">✦ ✦ ✦</span>
+        <span style="color:var(--gold); font-size:14px; letter-spacing:5px;">✦ ✦ ✦</span>
       </div>
       <div class="search-container">
         <span class="search-icon">🔍</span>
@@ -180,12 +250,22 @@
     </div>
   </div>
 
+  <!-- HALAMAN 3: ISI DOA -->
   <div id="page-doa" class="page">
     <div class="doa-container">
       <div class="doa-header">
         <a class="btn-back" onclick="showPage('page-toc')">❮ Kembali</a>
         <button id="fav-btn-page" class="btn-fav-page" onclick="toggleCurrentFavorite()">☆</button>
       </div>
+      
+      <!-- FITUR BARU: TOOLBAR -->
+      <div class="doa-tools">
+        <button class="tool-btn" onclick="adjustFont(-0.1)">A-</button>
+        <button class="tool-btn" onclick="adjustFont(0.1)">A+</button>
+        <button class="tool-btn" onclick="copyDoa()">📋 Salin</button>
+        <button class="tool-btn" onclick="shareDoa()">🔗 Bagikan</button>
+      </div>
+
       <h2 id="doa-title" class="doa-title">Judul Doa</h2>
       <div class="doa-card">
         <div id="doa-arabic" class="arabic-text">Teks Arab...</div>
@@ -198,7 +278,7 @@
 
 <script>
   // ====================================================
-  // DATA DOA (Tetap sama, tidak ada perubahan)
+  // DATA DOA 
   // ====================================================
   const dataDoa = {
     1: { title: "Doa Setelah Sholat Tahajud", arabic: `اللَّهُمَّ لَكَ الْحَمْدُ أَنْتَ قَيِّمُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ، وَلَكَ الْحَمْدُ لَكَ مُلْكُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ، وَلَكَ الْحَمْدُ نُورُ السَّمَوَاتِ وَالْأَرْضِ، وَلَكَ الْحَمْدُ أَنْتَ الْحَقُّ وَوَعْدُكَ الْحَقُّ وَلِقَاءُكَ حَقٌّ وَقَوْلُكَ حَقٌّ وَالْجَنَّةُ حَقٌّ وَالنَّارُ حَقٌّ، وَالنَّبِيُّونَ حَقٌّ، وَمُحَمَّدٌ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ حَقٌّ، وَالسَّاعَةُ حَقٌّ. اللَّهُمَّ لَكَ أَسْلَمْتُ، وَبِكَ آمَنْتُ، وَعَلَيْكَ تَوَكَّلْتُ وَإِلَيْكَ أَنَبْتُ وَبِكَ خَاصَمْتُ، وَإِلَيْكَ حَاكَمْتُ، فَاغْفِرْلِي مَا قَدَّمْتُ، وَمَا أَخَّرْتُ وَمَا أَسْرَرْتُ وَمَا أَعْلَنْتُ، أَنْتَ الْمُقَدِّمُ وَأَنْتَ الْمُؤَخِّرُ، لَا إِلَهَ إِلَّا أَنْتَ أَوْ لَا إِلَهَ غَيْرُكَ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ.`, latin: "", translation: "" },
@@ -217,6 +297,8 @@
   // ====================================================
   // FUNGSI INTERAKTIF
   // ====================================================
+
+  // 1. FITUR SUARA
   function playSound() {
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -229,6 +311,78 @@
     } catch(e) { }
   }
 
+  // 2. FITUR TEMA (LIGHT/DARK)
+  function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    const isLight = document.body.classList.contains('light-mode');
+    localStorage.setItem('doa_theme', isLight ? 'light' : 'dark');
+    
+    document.getElementById('theme-btn').innerText = isLight ? '☀️' : '🌙';
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', isLight ? '#fdfaf6' : '#050807');
+    playSound();
+  }
+
+  // Load Tema saat dibuka
+  if (localStorage.getItem('doa_theme') === 'light') {
+    document.body.classList.add('light-mode');
+    document.getElementById('theme-btn').innerText = '☀️';
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fdfaf6');
+  }
+
+  // 3. FITUR UKURAN TEKS (A- / A+)
+  function adjustFont(step) {
+    let scale = parseFloat(localStorage.getItem('doa_font_scale')) || 1;
+    scale += step;
+    // Batasi ukuran minimal 0.8 (kecil) dan maksimal 1.5 (besar)
+    scale = Math.max(0.8, Math.min(1.5, scale));
+    
+    localStorage.setItem('doa_font_scale', scale);
+    document.documentElement.style.setProperty('--font-scale', scale);
+    playSound();
+  }
+  
+  // Load ukuran teks saat dibuka
+  const savedScale = parseFloat(localStorage.getItem('doa_font_scale')) || 1;
+  document.documentElement.style.setProperty('--font-scale', savedScale);
+
+  // 4. FITUR SALIN (COPY)
+  function copyDoa() {
+    const title = document.getElementById('doa-title').innerText;
+    const arabic = document.getElementById('doa-arabic').innerText;
+    const latin = document.getElementById('doa-latin').innerText;
+    const trans = document.getElementById('doa-translation').innerText;
+
+    let textToCopy = `${title}\n\n${arabic}`;
+    if (latin.trim() !== "") textToCopy += `\n\n${latin}`;
+    if (trans.trim() !== "") textToCopy += `\n\nArtinya:\n${trans}`;
+    textToCopy += `\n\n(Dikutip dari Aplikasi Kumpulan Doa & Muqaddimah)`;
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('Teks doa berhasil disalin ke clipboard!');
+    }).catch(err => {
+      alert('Gagal menyalin teks.');
+    });
+    playSound();
+  }
+
+  // 5. FITUR BAGIKAN (SHARE)
+  function shareDoa() {
+    const title = document.getElementById('doa-title').innerText;
+    if (navigator.share) {
+      navigator.share({
+        title: title,
+        text: `Baca ${title} di Aplikasi Buku Doa Digital.`,
+        url: window.location.href
+      }).catch(console.error);
+    } else {
+      // Fallback jika browser tidak mendukung Web Share API
+      navigator.clipboard.writeText(window.location.href);
+      alert('Link aplikasi berhasil disalin! Bagikan ke teman Anda.');
+    }
+    playSound();
+  }
+
+  // ==== LOGIKA FAVORIT ====
   let favorites = [];
   try { const savedFav = localStorage.getItem('doa_favorites'); if (savedFav) { const parsed = JSON.parse(savedFav); if (Array.isArray(parsed)) favorites = parsed; } } catch (e) { }
   let currentDoaId = null;
@@ -247,6 +401,7 @@
     if (currentDoaId && favorites.includes(String(currentDoaId))) { btn.innerHTML = '⭐'; btn.classList.add('active'); } else { btn.innerHTML = '☆'; btn.classList.remove('active'); }
   }
 
+  // ==== RENDER & PENCARIAN ====
   function renderTOC() {
     try {
       const favList = document.getElementById('fav-list'); const allList = document.getElementById('all-list'); const favTitle = document.getElementById('fav-section-title');
@@ -286,6 +441,7 @@
     if (allTitle) allTitle.style.display = (allVisibleCount > 0) ? 'block' : 'none';
   }
 
+  // ==== NAVIGASI ====
   function showPage(pageId) {
     playSound(); document.querySelectorAll('.page').forEach(page => { page.classList.remove('active'); });
     const target = document.getElementById(pageId); if (target) target.classList.add('active');
@@ -304,7 +460,7 @@
     }
   }
 
-  // Efek Bintang
+  // ==== EFEK BINTANG & PARTIKEL ====
   (function(){
     var s=document.querySelector('.stars'), p=document.querySelector('.particles'); if(!s||!p) return;
     var small=innerWidth<600, red=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -321,7 +477,7 @@
     }
   })();
 
-  // ====== SERVICE WORKER REGISTRATION ======
+  // ==== SERVICE WORKER ====
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(err => console.log('SW gagal:', err));
   }
