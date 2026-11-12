@@ -92,30 +92,50 @@
   .cover-footer { position:absolute; bottom:30px; left:0; right:0; text-align:center; font-family:Georgia,serif; font-size:12px; letter-spacing:.2em; color:#b8a25e; z-index:3; }
 
   /* =========================================
-     2. DESAIN DAFTAR ISI
+     2. DESAIN DAFTAR ISI & PENCARIAN
      ========================================= */
   .toc-wrapper { width:100%; max-width:600px; margin:0 auto; padding:30px 20px 50px; position:relative; }
-  .toc-header { text-align:center; margin-bottom:30px; }
+  .toc-header { text-align:center; margin-bottom:20px; }
   .toc-header h2 { margin:0; font-size:clamp(28px, 5vw, 38px); font-weight:700; letter-spacing:.1em; background:linear-gradient(100deg, #f6e7a8 0%, #d4af37 50%, #fff6cf 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
   
-  .toc-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px; }
+  /* Search Bar */
+  .search-container { margin-bottom: 25px; position: relative; }
+  .search-input { width: 100%; padding: 12px 20px 12px 45px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 25px; color: #f8f1dc; font-family: 'Cormorant Garamond', serif; font-size: 18px; outline: none; transition: all 0.3s; }
+  .search-input:focus { border-color: #d4af37; background: rgba(212,175,55,0.1); box-shadow: 0 0 15px rgba(212,175,55,0.2); }
+  .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #d4af37; font-size: 18px; }
+
+  /* Kategori Judul */
+  .section-title { font-family: Georgia, serif; color: #d4af37; font-size: 14px; letter-spacing: .2em; text-transform: uppercase; margin: 25px 0 10px 5px; border-bottom: 1px dashed rgba(212,175,55,0.3); padding-bottom: 5px; display: none; }
+
+  .toc-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
   
-  .toc-item a { display:flex; align-items:center; text-decoration:none; padding:15px 20px; background:rgba(255,255,255,0.02); border:1px solid rgba(212,175,55,.2); border-radius:8px; transition:all 0.3s ease; cursor:pointer; }
-  .toc-item a:hover { background:rgba(212,175,55,0.08); border-color:#d4af37; transform:translateX(8px); }
+  /* Desain Item Daftar Isi & Tombol Favorit */
+  .toc-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02); border: 1px solid rgba(212,175,55,.15); border-radius: 8px; transition: all 0.3s ease; padding-right: 15px; }
+  .toc-item:hover { background: rgba(212,175,55,0.08); border-color: #d4af37; transform: translateX(5px); }
+  .toc-item a { display: flex; align-items: center; text-decoration: none; padding: 12px 15px; flex-grow: 1; cursor: pointer; }
   
-  .toc-number { font-family:Georgia, serif; font-size:20px; color:#d4af37; margin-right:15px; font-weight:bold; min-width:30px; }
-  .toc-title { font-size:20px; font-weight:600; color:#efe5c9; flex-grow:1; }
-  .toc-arrow { color:#d4af37; font-size:18px; }
+  .toc-number { font-family:Georgia, serif; font-size:16px; color:#d4af37; margin-right:12px; font-weight:bold; min-width:20px; }
+  .toc-title { font-size:18px; font-weight:600; color:#efe5c9; flex-grow:1; }
+  
+  /* Ikon Favorit di Daftar Isi */
+  .btn-fav-toggle { background: none; border: none; font-size: 22px; cursor: pointer; padding: 0; color: #555; transition: transform 0.2s; line-height: 1; }
+  .btn-fav-toggle:hover { transform: scale(1.2); }
+  .btn-fav-toggle.active { color: #f6e7a8; text-shadow: 0 0 10px rgba(232,199,102,0.8); }
 
   /* =========================================
      3. DESAIN ISI DOA (HALAMAN BACAAN)
      ========================================= */
   .doa-container { width:100%; max-width:700px; margin:0 auto; padding:30px 20px 60px; }
   
-  .btn-back { display:inline-flex; align-items:center; gap:8px; color:#d4af37; text-decoration:none; font-size:16px; margin-bottom:20px; cursor:pointer; transition:color 0.3s; background:rgba(212,175,55,0.1); padding:8px 15px; border-radius:20px; border:1px solid rgba(212,175,55,0.3); }
+  .doa-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom:1px solid rgba(212,175,55,0.3); padding-bottom:15px; }
+  .btn-back { display:inline-flex; align-items:center; gap:8px; color:#d4af37; text-decoration:none; font-size:16px; cursor:pointer; transition:color 0.3s; background:rgba(212,175,55,0.1); padding:6px 12px; border-radius:20px; border:1px solid rgba(212,175,55,0.3); }
   .btn-back:hover { color:#050807; background:#d4af37; }
   
-  .doa-title { font-size:clamp(26px, 5vw, 36px); color:#f6e7a8; margin:0 0 20px; border-bottom:1px solid rgba(212,175,55,0.3); padding-bottom:15px; }
+  .btn-fav-page { background: none; border: none; font-size: 28px; cursor: pointer; color: #555; transition: transform 0.2s, color 0.2s; line-height: 1; }
+  .btn-fav-page:hover { transform: scale(1.2); }
+  .btn-fav-page.active { color: #f6e7a8; text-shadow: 0 0 15px rgba(232,199,102,0.8); }
+
+  .doa-title { font-size:clamp(24px, 5vw, 32px); color:#f6e7a8; margin:0 0 20px; }
   
   .doa-card { background:rgba(255,255,255,0.02); border:1px solid rgba(212,175,55,0.2); border-radius:12px; padding:25px; margin-bottom:25px; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
   
@@ -163,26 +183,28 @@
         <h2>Daftar Isi</h2>
         <span style="color:#d4af37; font-size:14px; letter-spacing:5px;">✦ ✦ ✦</span>
       </div>
-      <div class="toc-list">
-        <div class="toc-item"><a onclick="openDoa(1)"><span class="toc-number">01</span><span class="toc-title">Doa Setelah Sholat Tahajud</span><span class="toc-arrow">❯</span></a></div>
-        <div class="toc-item"><a onclick="openDoa(2)"><span class="toc-number">02</span><span class="toc-title">Doa Setelah Sholat Dhuha</span><span class="toc-arrow">❯</span></a></div>
-        <div class="toc-item"><a onclick="openDoa(3)"><span class="toc-number">03</span><span class="toc-title">Doa Setelah Sholat Witir</span><span class="toc-arrow">❯</span></a></div>
-        <div class="toc-item"><a onclick="openDoa(4)"><span class="toc-number">04</span><span class="toc-title">Doa Pengusir Jin Ifrit</span><span class="toc-arrow">❯</span></a></div>
-        <div class="toc-item"><a onclick="openDoa(5)"><span class="toc-number">05</span><span class="toc-title">Doa Mencukur Rambut Bayi</span><span class="toc-arrow">❯</span></a></div>
-        <div class="toc-item"><a onclick="openDoa(6)"><span class="toc-number">06</span><span class="toc-title">Doa Khatam Quran</span><span class="toc-arrow">❯</span></a></div>
-        <div class="toc-item"><a onclick="openDoa(7)"><span class="toc-number">07</span><span class="toc-title">Doa Talqin Mayit</span><span class="toc-arrow">❯</span></a></div>
-        <div class="toc-item"><a onclick="openDoa(8)"><span class="toc-number">08</span><span class="toc-title">Doa Menghindari Fitnah Dajjal</span><span class="toc-arrow">❯</span></a></div>
-        <div class="toc-item"><a onclick="openDoa(9)"><span class="toc-number">09</span><span class="toc-title">Doa Setelah Sholat Fardu</span><span class="toc-arrow">❯</span></a></div>
-        <div class="toc-item"><a onclick="openDoa(10)"><span class="toc-number">10</span><span class="toc-title">Contoh Muqoddimah Tahlil</span><span class="toc-arrow">❯</span></a></div>
-        <div class="toc-item"><a onclick="openDoa(11)"><span class="toc-number">11</span><span class="toc-title">Contoh Muqoddimah Aqiqah</span><span class="toc-arrow">❯</span></a></div>
+
+      <!-- Fitur Pencarian -->
+      <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" class="search-input" placeholder="Cari doa atau muqaddimah..." onkeyup="filterTOC()">
       </div>
+
+      <div id="fav-section-title" class="section-title">⭐ Doa Favorit</div>
+      <div id="fav-list" class="toc-list" style="margin-bottom: 20px;"></div>
+
+      <div id="all-section-title" class="section-title" style="display: block;">Semua Doa</div>
+      <div id="all-list" class="toc-list"></div>
     </div>
   </div>
 
   <!-- HALAMAN 3: ISI DOA -->
   <div id="page-doa" class="page">
     <div class="doa-container">
-      <a class="btn-back" onclick="showPage('page-toc')">❮ Kembali ke Daftar Isi</a>
+      <div class="doa-header">
+        <a class="btn-back" onclick="showPage('page-toc')">❮ Kembali</a>
+        <button id="fav-btn-page" class="btn-fav-page" onclick="toggleCurrentFavorite()">☆</button>
+      </div>
       <h2 id="doa-title" class="doa-title">Judul Doa</h2>
       <div class="doa-card">
         <div id="doa-arabic" class="arabic-text">Teks Arab...</div>
@@ -204,30 +226,210 @@
     4: { title: "Doa Pengusir Jin Ifrit", arabic: `أَعُوذُ بِوَجْهِ اللهِ الْكَرِيمِ وَبِكَلِمَاتِ اللهِ التَّآمَّاتِ اللَّاتِيْ لَا يُجَاوِزُهُنَّ بَرٌّ وَلَا فَاجِرٌ مِنْ شَرِّ مَا يَنْزِلُ مِنَ السَّمَآءِ وَشَرِّ مَا يَخْرُجُ فِيهَا وَشَرِّ مَا ذَرَأَ فِي الْأَرْضِ وَشَرِّ مَا يَخْرُجُ مِنْهَا وَمِنْ فِتَنِ اللَّيْلِ وَالنَّهَارِ وَمِنْ طَوَارِقِ اللَّيْلِ وَالنَّهَارِ إِلَّا طَارِقًا يَطْرُقُ بِخَيْرٍ يَا رَحْمَنُ`, latin: "", translation: "" },
     5: { title: "Doa Mencukur Rambut Bayi", arabic: `اَللّٰهُمَّ نُوْرُ السَّمٰوَاتِ وَ نُوْرُ الشَّمْسِ وَالْقَمَرِ اَللّٰهُمَّ سَرُّاللّٰهِ نُوْرُ النُّبُوَّةِ رَسُوْلِ اللّٰهِﷺ`, latin: "", translation: "" },
     6: { title: "Doa Khatam Quran", arabic: `اللَّهُمَّ ارْحَمْنِي بِالْقُرْآنِ وَاجْعَلْهُ لِيْ إِمَامًا وَنُوْرًا وَهُدًى وَرَحْمَةً . اللَّهُمَّ ذَكِّرْنِي مِنْهُ مَا نَسِيْتُ وَعَلِّمْنِي مِنْهُ مَا جَهِلْتُ وَارْزُقْنِي تِلَاوَتَهُ آنَاءَ اللَّيْلِ وَأَطْرَافَ النَّهَارِ وَاجْعَلْهُ لِي حُجَّةً يَا رَبَّ الْعَالَمِينَ`, latin: "", translation: "" },
-    7: { title: "Doa Talqin Mayit", arabic: `لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيْكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ يُحْيِى وَيُمِيْتُ، وَهُوَ حَيٌّ دَائِمٌ لَا يَمُوْتُ، بِيَدِهِ الخَيْرُ يَفْعَلُ مَا يَشَاءُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيْرٌ، كُلُّ نَفْسٍ ذَائِقَةُ المَوْتِ وَإِنَّمَا تُوَفَّوْنَ أُجُوْرَكُمْ يَوْمَ القِيَامَةِ، فَمَنْ زُحْزِحَ عَنِ النَّارِ وَأُدْخِلَ الجَنَّةَ فَقَدْ فَازَ، وَمَا الحَيَاةُ الدُّنْيَا إِلَّا مَتَاعُ الغُرُوْرِ يَا عَبْدَ اللهِ، ابْنَ عَبْدَيِ اللهِ (يَا أَمَةَ اللهِ، بِنْتَ عَبْدَيِ اللهِ) يَا عَبْدَ اللهِ، ابْنَ حَوَاء (يَا أَمَةَ اللهِ، بِنْتَ حَوَاء) اذْكُرِ (اذْكُرِي) العَهْدَ الَّذِيْ خَرَجْتَ (خَرَجْتِ) عَلَيْهِ مِنْ دَارِ الدُّنْيَا، وَهُوَ شَهَادَةُ أَنْ لَّا إِلَهَ إِلَّا اللهُ وَأَنَّ مُحَمَّدًا رَّسُوْلُ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، وَأَنَّ المَوْتَ حَقٌّ، وَأَنَّ القَبْرَ حَقٌّ، وَأَنَّ نَعِيْمَهُ حَقٌّ، وَأَنَّ عَذَابَهُ حَقٌّ، وَأَنَّ سُؤَالَ مُنْكَرٍ وَنَكِيْرٍ فِيْهِ حَقٌّ، وَأَنَّ البَعْثَ حَقٌّ، وَأَنَّ الحِسَابَ حَقٌّ، وَأَنَّ المِيْزَانَ حَقٌّ، وَأَنَّ الصِّرَاطَ حَقٌّ، وَأَنَّ شَفَاعَةَ سَيِّدِنَا مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ حَقٌّ، وَأَنَّ الجَنَّةَ حَقٌّ، وَأَنَّ النَّارَ حَقٌّ، وَأَنَّ لِقَاءَ اللهِ تَعَالَى لِأَهْلِ الحَقِّ حَقٌّ، وَأَنَّ السَّاعَةَ آتِيَةٌ لَا رَيْبَ فِيْهَا، وَأَنَّ اللهَ يَبْعَثُ مَنْ فِي القُبُوْرِ، . الآنَ قَدْ صِرْتَ (صِرْتِ) فِي أَطْبَاقِ الثَّرَى وَبَيْنَ عَسَاكِرِ المَوْتَى، فَإِذَا جَاءَكَ (جَاءَكِ) المَلَكَانِ المُوَكَّلَانِ بِكَ (بِكِ)، وَهُمَا مُنْكَرٌ وَنَكِيْرٌ فَلَا يُفْزِعَاكَ (يُفْزِعَاكِ) وَلَا يُرْهِبَاكَ (يُرْهِبَاكِ)، فَإِنَّهُمَا خَلْقٌ مِنْ خَلْقِ اللهِ تَعَالَى عَزَّ وَجَلَّ، وَإِذَا سَأَلَاكَ (سَأَلَاكِ) "مَنْ رَبُّكَ (رَبُّكِ) ومَنْ نَبِيُّكَ (نَبِيُّكِ) وَمَا دِيْنُكَ (دِيْنُكِ) وَمَا قِبْلَتُكَ (قِبْلَتُكِ) وَمَا إِمَامُكَ (إِمَامُكِ) وَمَنْ إِخْوَانُكَ (إِخْوَانُكِ)" فَقُلْ (فَقُوْلِيْ) لَهُمَا بِلِسَانٍ فَصِيْحٍ وَاعْتِقَادٍ صَحِيْحٍ "اللهُ رَبِّي ومُحَمَّدٌ نَبِيِّى وَالإِسْلَامُ دِيْنِي وَالكَعْبَةُ قِبْلَتِي وَالقُرْآنُ إِمَامِي وَالمُسْلِمُوْنَ وَالمُؤْمِنُوْنَ إِخْوَانِي،" وَقُلْ (وَقُوْلِيْ) "رَضِيْتُ بِاللهِ رَبًّا وَبِالإِسْلَامِ دِيْنًا وَبِمُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا وَرَسُوْلًا" عَلَى ذَلِكَ حُيِّيْتَ (حُيِّيْتِ) وَعَلَى ذَلِكَ مِتَّ (مِتِّ) وَبِذَلِكَ تُبْعَثُ (تُبْعَثِيْنَ) إِنْ شَاءَ اللهُ تَعَالَى مِنَ الآمِنِيْنَ ثَبَّتَكِ اللهُ بِالقَوْلِ الثَّابِتِ ٣ ثَبَّتَكَ اللهُ بِالقَوْلِ الثَّابِتِ ٣ يُثَبِّتُ اللهُ الَّذِيْنَ آمَنُوْا بِالقَوْلِ الثَّابِتِ فِي الحَيَاةِ الدُّنْيَا وَفِي الآخِرَةِ، يَا أَيَّتُهَا النَّفْسُ المُطْمَئِنَّةُ، ارْجِعِي إِلَى رَبِّكِ رَاضِيَةً مَرْضِيَّةً، فَادْخُلِى فِي عِبَادِي وَادْخُلِي جَنَّتِي Tawasul ka kanjeng Nabi اِلَى حَضْرَةِ النَّبِيِّ صَلَّى اللهُ عَلَيهِ وَسَلَّمَ وَاَلِهِ وصَحْبِهِ شَيْءٌ لِلهِ لَهُمُ الْفَاتِحَةُ Tahlil Lanjutan ayat qursi لِلَّهِ مَا فِى السَّمَوَاتِ وَمَا فِى الْاَرْضِ. وَاِنْ تُبْدُوْا مَا فِى اَنْفُسِكُمْ اَوْ تَخْفُوْهُ يُحَاسِبْكُمْ بِهِ اللهُ. فَيَغْفِرُ لَمِنْ يَّشَاءُ وَيُعَذِّبُ مَنْ يَّشَاءُ. وَاللهُ عَلَى كُلِّ شَىْءٍ قَدِيْرٌ. اَمَنَ الرَّسُوْلُ بِمَا اُنْزِلَ اِلَيْهِ مِنْ رَّبِّهِ وَالْمُؤْمِنُوْنَ. كُلٌّ اَمَنَ بِاللهِ وَمَلَائِكَتِهِ وَكُتُبِهِ وَرُسُلِهِ. لَانًفَرِّقُ بَيْنَ اَحَدٍ مِّنْ رُّسُلِهِ. وَقَالُوْا سَمِعْنَا وَاَطَعْنَا غُفْرَانَكَ رَبَّنَا وَاِلَيْكَ الْمَصِيْرُ. لَا يُكَلِّفُ اللهُ نَفْسًا اِلَّا وُسْعَهَا. لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا اكَتْسَبَتْ. رَبَّنَا لَا تُؤَاخِذْنَا اِنْ نَسِيْنَا اَوْ اَخْطَاْنَا. رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَا اِصْرًا كَمَا حَمَلْتَهُ عَلَى الَّذِيْنَ مِنْ قَبْلِنَا. رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِ. وَاعْفُ عَنَّا وَاغْفِرْ لَنَا وَارْحَمْنَا اَنْتَ مَوْلَانَا فَانْصُرْنَا عَلَى الْقَوْمِ الْكَافِرِيْنَ Setelah beres ayat kursiy baca: ارْحَمْنَا، يَا اَرْحَمَ الرَّاحِمِيْنَ *3 رَحْمَتُ اللهِ وَبَرَكَاتُهُ عَلَيْكُمْ اَهْلَ الْبَيْتِ اِنَّهُ حَمِيْدٌ مَّجِيْدٌ اِنَّمَا يُرِدُ اللهُ لِيُذْهِبَ عَنْكُمُ الرِّجْسَ اَهْلَ الْبَيْتِ وَيُطَهِّرَكُمْ تَطْهِيْرًا . اِنَّ اللهَ وَمَلاَئِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ، يَا أَيُّهَا الَّذِيْنَ آمَنُوْا صَلُّوْا عَلَيْهِ وَسَلِّمُوا تَسْلِيْمًا . اَلَّلهُمَّ صَلِّ عَلَى سَيِّدِنَا ومَوْلَانَا مُحَمَّدٍ وَعَلَى اَلِ سَيِّدِنَا مُحَمَّدٍ، عَدَدَ مَعْلُوْمَاتِكَ وَمِدَادَ كَلِمَاتِكَ كُلَّمَا ذَكَرَكَ الذَّاكِرُوْنَ وَغَفَلَ عَنْ ذِكْرِكَ الْغَافِلُوْنَ .وَسَلِّمْ وَرَضِيَ اللهُ تَبَارَكَ وَتَعَالَى عَنْ سَادَاتِنَا اَصْحَابِ سَيِّدِنَا رَسُوْلِ اللهِ اَجْمَعِيْنَ . حَسْبُنَا اللهُ وَنِعْمَ الْوَكِيْلُ. نِعْمَ الْمَوْلَى وَنِعْمَ النَّصِيْرُ اَسْتَغْفِرُاللهَ الْعَظِيْمَ *3 الَّذِيْ لَا اِلَهَ اِلَّا هُوَ الحَيُّ القَيُّوْمُ وَأَتُوْبُ إِلَيْهِ اَفْضَلُ الذِّكْرِ فَاعْلَمْ اَنَّهُ لَااِلَهَ اِلَّا اللهُ لَااِلَهَ اِلَّا اللهُ ١٠٠ لَا اِلَهَ اِلَّا اللهُ مُحَمَّدٌ رَّسُوْلُ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ اَللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ، اَللَّهُمَّ صَلِّ عَلَيْهِ وَسَلِّمْ *3 سُبْحَانَ اللهِ وَبِحَمْدِهِ .*33 سُبْحَانَ اللهِ الْعَظِيْمِ اللَّهُمَّ صَلِّ عَلَى حَبِيْبِكَ سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ وَسَلِّمْ *3 كَلِمَةُ حَقٍّ عَلَيْهَا نَحْيَا وَعَلَيْهَا نَمُوْتُ وَبِهَا نُبْعَثُ إِنْ شَاءَ اللهُ تَعَالَى مِنَ الآمِنِيْنَ بِرَحْمَةِ اللهِ وَكَرَمِهِ، اِنَّ اللهَ وَمَلاَئِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ، يَا أَيُّهَا الَّذِيْنَ آمَنُوْا صَلُّوْا عَلَيْهِ وَسَلِّمُوا تَسْلِيْمًا. اَلْفَاتِحَةْ Do’a الْحَمْدُ لِلهِ رَبِّ الْعَالَمِيْنَ حَمْدَ الشَّاكِرِيْنَ حَمْدَ النَّاعِمِيْنَ حَمْدًا يُّوَافِى نِعَمَهُ وَيُكَافِىءُ مَزِيْدَهُ، يَا رَبَّنَا لَكَ الْحَمْدُ كَمَا يَنْبَغِيْ لِجَلَالِ وَجْهِكَ وَعَظِيْمِ سُلْطَانِكَ. سُبْحَانَكَ لَا نُحْصِى ثَنَاءً عَلَيْكَ أَنْتَ كَمَا أَثْنَيْتَ عَلَى نَفْسِكَ، فَلَكَ الحَمْدُ قَبْلَ الرِّضَى وَلَكَ الحَمْدُ بَعْدَ الرِّضَى وَلَكَ الحَمْدُ إِذَا رَضِيْتَ عَنَّا دَائِمًا أَبَدًا اللَّهُمَّ صَلِّ علَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى اَلِ سَيِّدِنَا مُحَمَّدٍ اللَّهُمَّ كَمَا خَصَّصْتَنَا بِكِتَابِكَ الكَرِيْمِ وَهَدَيْتَنَا إِلَى صِرَاتِكَ المُسْتَقِيْمِ، أَصْلِحْ بِهِ مِنَّا جَمِيْعَ مَا فَسَدَ وَطَهِّرْ بِهِ مِنَّا مَا ظَهَرَ وَمَا بَطَنَ اللَّهُمَّ اشْرَحْ بِالقُرْآنِ صُدُوْرَنَا وَيَسِّرْ بِهِ أُمُوْرَنَا وَعَظِّمْ بِهِ أُجُوْرَنَا وَحَسِّنْ بِهِ أَخْلَاقَنَا وَوَسِّعْ بِهِ أَرْزَاقَنَا وَنَوِّرْ بِهِ قُبُوْرَنَا اللَّهُمَّ تَقَبَّلْ وَاَوْصِلْ ثَوَاَبَ مَا قَرَأْنَاهُ مِنْ الْقُرْاَنِ الْعَظِيْمِ وَمَا هَلَلْنَا وَمَا سَبَّحْنَا وَمَا اسْتَغْفَرْنَا وَمَا صَلَّيْنَا عَلَى سَيِّدِنَا مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ هَدِيَّةً مِنَّا وَاصِلَةً وَرَحْمَةً نَازِلَةً وَبَرَكَةً شَامِلَةً اِلَى حَضَرَاتِ حَبِيْبِنَا وَشَفِيْعِنَا وَقُرَّةِ اَعْيُنِنَا سَيِّدِنَا وَمَوْلَانَا مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، وَاِلَى جَمِيْعِ إِخْوَانِهِ مِنَ الْأَنْبِيَاءِ وَالْمُرْسَلِيْنَ وَالْأَوْلِيَاءِ وَالشُّهَدَاءِ وَالصَّالِحِيْنَ وَالصَّحَابَةِ وَالتَّابِعِيْنَ وَالْعُلَمَاءِ الْعَامِلِيْنَ وَالْمُصَنِّفِيْنَ الْمُخْلِصِيْنَ وَجَمِيْعِ الْمُجَاهِدِيْنَ فِي سَبِيْلِ اللهِ رَبِّ الْعَالَمِيْنَ وَالْمَلَائِكَةِ الْمُقَرَّبِيْنَ خُصُوْصًا إِلَى أَرْوَاحِ جَمِيْعِ أَهْلِ الْقُبُوْرِ مِنَ الْمُسْلِمِيْنَ وَالْمُسْلِمَاتِ وَالْمُؤْمِنِيْنَ وَالْمُؤْمِنَاتِ مِنْ مَشَارِقِ الْاَرْضِ إِلَى مَغَارِبِهَا بَرِّهَا وَبَحْرِهَا، خُصُوْصًا إِلَى آبَاءِنَا وَاُمَّهَاتِنَا وَأَجْدَادِنَا وَجَدَّاتِنَا وَنَخَصُّ خَصُوْصًا إِلَى مَنِ اجْتَمَعْنَا هَهُنَا بِسَبَبِهِ وَلِاَجْلِهِ وَنَخَصُّ خَصُوْصًا إِلَى...(فلان/فلانة، وأهل هذا البيت، وأقرباؤهم اللَّهُمَّ أَنْزِلْ فِيْ قَبْرِهِ الرَّحْمَةَ وَالضِّيَاءَ وَالنُّوْرَ، وَالبَهْجَةَ وَالرَوْحَ وَالرَّيْحَانَ وَالسُّرُوْرَ، مِنْ يَوْمِنَا هَذَا إِلَى يَوْمِ البَعْثِ وَالنُّشُوْرِ، إِنَّكَ مَلِكٌ رَبٌّ غَفُوْرٌ. اللَّهُمَّ اجْعَلِ القُرْآنَ العَظِيْمَ فِي قَبْرِهِ مُؤْنِسًا، وَفِي القِيَامَةِ شَافِعًا، وَفِي الحَشْرِ ضِيَاءً وَظِلًّا وَدَلِيْلًا، وَفِي المِيْزَانِ رَاجِحًا، وَعَلَى الصِّرَاطِ نُوْرًا وَقَائِدًا، وَعَنِ النَّارِ سِتْرًا وَحِجَابًا، وَفِي الجَنَّةِ رَفِيْقًا. اَللَّهُمَّ اغْفِرْ لَهُمْ وَارْحَمْهُمْ وَعَافِهِمْ وَاعْفُ عَنْهُمْ. اللَّهُمَّ اَنْزِلِ الرَّحْمَةَ وَالْمَغْفِرَةَ عَلَى أَهْلِ الْقُبُوْرِ مِنْ أَهْلِ لَاالَهَ اِلَّا اللهُ مُحَمَّدٌ رَّسُوْلُ اللهِ رَبَّنَا أَرِنَا الْحَقَّ حَقًّا وَارْزُقْنَا اتِّبَاعَهُ، وَأَرِنَا الْبَاطِلَ بَاطِلًا وَارْزُقْنَا اجْتِنَابَهُ. رَبَّنَا آتِنَا فِى الدُّنْيَا حَسَنَةً، وَفِى الْآخِرَةِ حَسَنَةً، وَقِنَا عَذَابَ النَّارِ، سًبْحَانَ رَبَّكَ رَبِّ الْعِزَّةِ عَمَّا يَصِفُوْنَ، وَسَلَامٌ عَلَى الْمُرْسَلِيْنَ، وَالْحَمْدُ لِلهِ رَبِّ الْعَلَمِيْنَ. اَلْفَاتِحَةْ … وَاعْفُ عَنَّا يَا كَرِيْمُ *2 بِرَحْمَتِكَ يَا أَرْحَمَ الرَّاحِمِيْنَ ارْحَمْنَا. اَللَّهُمَّ بِحَقِّ الفَاتِحَةِ وَبِسِرِّ الفَاتِحَةِ وَبِكَرَامَةِ الفَاتِحَةِ، يَا فَارِجَ الهَمِّ يَا كَاشِفَ الغَمِّ يَا مَنْ لِعَبْدِهِ يَغْفِرُ وَيَرْحَمُ، اَللَّهُمَّ اغْفِرْ ذُنُوْبَنَا وَاسْتُرْ عُيُوْبَنَا وَفَرِّجْ هُمُوْمَنَا وَاكْشِفْ غُمُوْمَنَا وَأَصْلِحْ ذَاتَ بَيْنِنَا، دَعْوَاهُمْ فِيْهَا سُبْحَانَكَ اَللَّهُمَّ وَتَحِيَّتُهُمْ فِيْهَا سَلَامٌ، وَآخِرُ دَعْوَاهُمْ أَنِ الْحَمْدُ لِلهِ رَبِّ الْعَلَمِيْنَ`, latin: "", translation: "" },
+    7: { title: "Doa Talqin Mayit", arabic: `لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيْكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ يُحْيِى وَيُمِيْتُ، وَهُوَ حَيٌّ دَائِمٌ لَا يَمُوْتُ، بِيَدِهِ الخَيْرُ يَفْعَلُ مَا يَشَاءُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيْرٌ، كُلُّ نَفْسٍ ذَائِقَةُ المَوْتِ وَإِنَّمَا تُوَفَّوْنَ أُجُوْرَكُمْ يَوْمَ القِيَامَةِ، فَمَنْ زُحْزِحَ عَنِ النَّارِ وَأُدْخِلَ الجَنَّةَ فَقَدْ فَازَ، وَمَا الحَيَاةُ الدُّنْيَا إِلَّا مَتَاعُ الغُرُوْرِ يَا عَبْدَ اللهِ، ابْنَ عَبْدَيِ اللهِ (يَا أَمَةَ اللهِ، بِنْتَ عَبْدَيِ اللهِ) يَا عَبْدَ اللهِ، ابْنَ حَوَاء (يَا أَمَةَ اللهِ، بِنْتَ حَوَاء) اذْكُرِ (اذْكُرِي) العَهْدَ الَّذِيْ خَرَجْتَ (خَرَجْتِ) عَلَيْهِ مِنْ دَارِ الدُّنْيَا، وَهُوَ شَهَادَةُ أَنْ لَّا إِلَهَ إِلَّا اللهُ وَأَنَّ مُحَمَّدًا رَّسُوْلُ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، وَأَنَّ المَوْتَ حَقٌّ، وَأَنَّ القَبْرَ حَقٌّ، وَأَنَّ نَعِيْمَهُ حَقٌّ، وَأَنَّ عَذَابَهُ حَقٌّ، وَأَنَّ سُؤَالَ مُنْكَرٍ وَنَكِيْرٍ فِيْهِ حَقٌّ، وَأَنَّ البَعْثَ حَقٌّ، وَأَنَّ الحِسَابَ حَقٌّ، وَأَنَّ المِيْزَانَ حَقٌّ، وَأَنَّ الصِّرَاطَ حَقٌّ، وَأَنَّ شَفَاعَةَ سَيِّدِنَا مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ حَقٌّ، وَأَنَّ الجَنَّةَ حَقٌّ، وَأَنَّ النَّارَ حَقٌّ، وَأَنَّ لِقَاءَ اللهِ تَعَالَى لِأَهْلِ الحَقِّ حَقٌّ، وَأَنَّ السَّاعَةَ آتِيَةٌ لَا رَيْبَ فِيْهَا، وَأَنَّ اللهَ يَبْعَثُ مَنْ فِي القُبُوْرِ، . الآنَ قَدْ صِرْتَ (صِرْتِ) فِي أَطْبَاقِ الثَّرَى وَبَيْنَ عَسَاكِرِ المَوْتَى، فَإِذَا جَاءَكَ (جَاءَكِ) المَلَكَانِ المُوَكَّلَانِ بِكَ (بِكِ)، وَهُمَا مُنْكَرٌ وَنَكِيْرٌ فَلَا يُفْزِعَاكَ (يُفْزِعَاكِ) وَلَا يُرْهِبَاكَ (يُرْهِبَاكِ)، فَإِنَّهُمَا خَلْقٌ مِنْ خَلْقِ اللهِ تَعَالَى عَزَّ وَجَلَّ، وَإِذَا سَأَلَاكَ (سَأَلَاكِ) "مَنْ رَبُّكَ (رَبُّكِ) ومَنْ نَبِيُّكَ (نَبِيُّكِ) وَمَا دِيْنُكَ (دِيْنُكِ) وَمَا قِبْلَتُكَ (قِبْلَتُكِ) وَمَا إِمَامُكَ (إِمَامُكِ) وَمَنْ إِخْوَانُكَ (إِخْوَانُكِ)" فَقُلْ (فَقُوْلِيْ) لَهُمَا بِلِسَانٍ فَصِيْحٍ وَاعْتِقَادٍ صَحِيْحٍ "اللهُ رَبِّي ومُحَمَّدٌ نَبِيِّى وَالإِسْلَامُ دِيْنِي وَالكَعْبَةُ قِبْلَتِي وَالقُرْآنُ إِمَامِي وَالمُسْلِمُوْنَ وَالمُؤْمِنُوْنَ إِخْوَانِي،" وَقُلْ (وَقُوْلِيْ) "رَضِيْتُ بِاللهِ رَبًّا وَبِالإِسْلَامِ دِيْنًا وَبِمُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا وَرَسُوْلًا" عَلَى ذَلِكَ حُيِّيْتَ (حُيِّيْتِ) وَعَلَى ذَلِكَ مِتَّ (مِتِّ) وَبِذَلِكَ تُبْعَثُ (تُبْعَثِيْنَ) إِنْ شَاءَ اللهُ تَعَالَى مِنَ الآمِنِيْنَ ثَبَّتَكِ اللهُ بِالقَوْلِ الثَّابِتِ ٣ ثَبَّتَكَ اللهُ بِالقَوْلِ الثَّابِتِ ٣ يُثَبِّتُ اللهُ الَّذِيْنَ آمَنُوْا بِالقَوْلِ الثَّابِتِ فِي الحَيَاةِ الدُّنْيَا وَفِي الآخِرَةِ، يَا أَيَّتُهَا النَّفْسُ المُطْمَئِنَّةُ، ارْجِعِي إِلَى رَبِّكِ رَاضِيَةً مَرْضِيَّةً، فَادْخُلِى فِي عِبَادِي وَادْخُلِي جَنَّتِي Tawasul ka kanjeng Nabi اِلَى حَضْرَةِ النَّبِيِّ صَلَّى اللهُ عَلَيهِ وَسَلَّمَ وَاَلِهِ وصَحْبِهِ شَيْءٌ لِلهِ لَهُمُ الْفَاتِحَةُ Tahlil Lanjutan ayat qursi لِلَّهِ مَا فِى السَّمَوَاتِ وَمَا فِى الْاَرْضِ. وَاِنْ تُبْدُوْا مَا فِى اَنْفُسِكُمْ اَوْ تَخْفُوْهُ يُحَاسِبْكُمْ بِهِ اللهُ. فَيَغْفِرُ لَمِنْ يَّشَاءُ وَيُعَذِّبُ مَنْ يَّشَاءُ. وَاللهُ عَلَى كُلِّ شَىْءٍ قَدِيْرٌ. اَمَنَ الرَّسُوْلُ بِمَا اُنْزِلَ اِلَيْهِ مِنْ رَّبِّهِ وَالْمُؤْمِنُوْنَ. كُلٌّ اَمَنَ بِاللهِ وَمَلَائِكَتِهِ وَكُتُبِهِ وَرُسُلِهِ. لَانًفَرِّقُ بَيْنَ اَحَدٍ مِّنْ رُّسُلِهِ. وَقَالُوْا سَمِعْنَا وَاَطَعْنَا غُفْرَانَكَ رَبَّنَا وَاِلَيْكَ الْمَصِيْرُ. لَا يُكَلِّفُ اللهُ نَفْسًا اِلَّا وُسْعَهَا. لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا اكَتْسَبَتْ. رَبَّنَا لَا تُؤَاخِذْنَا اِنْ نَسِيْنَا اَوْ اَخْطَاْنَا. رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَا اِصْرًا كَمَا حَمَلْتَهُ عَلَى الَّذِيْنَ مِنْ قَبْلِنَا. رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِ. وَاعْفُ عَنَّا وَاغْفِرْ لَنَا وَارْحَمْنَا اَنْتَ مَوْلَانَا فَانْصُرْنَا عَلَى الْقَوْمِ الْكَافِرِيْنَ Setelah beres ayat kursiy baca: ارْحَمْنَا، يَا اَرْحَمَ الرَّاحِمِيْنَ *3 رَحْمَتُ اللهِ وَبَرَكَاتُهُ عَلَيْكُمْ اَهْلَ الْبَيْتِ اِنَّهُ حَمِيْدٌ مَّجِيْدٌ اِنَّمَا يُرِدُ اللهُ لِيُذْهِبَ عَنْكُمُ الرِّجْسَ اَهْلَ الْبَيْتِ وَيُطَهِّرَكُمْ تَطْهِيْرًا . اِنَّ اللهَ وَمَلاَئِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ، يَا أَيُّهَا الَّذِيْنَ آمَنُوْا صَلُّوْا عَلَيْهِ وَسَلِّمُوا تَسْلِيْمًا . اَلَّلهُمَّ صَلِّ عَلَى سَيِّدِنَا ومَوْلَانَا مُحَمَّدٍ وَعَلَى اَلِ سَيِّدِنَا مُحَمَّدٍ، عَدَدَ مَعْلُوْمَاتِكَ وَمِدَادَ كَلِمَاتِكَ كُلَّمَا ذَكَرَكَ الذَّاكِرُوْنَ وَغَفَلَ عَنْ ذِكْرِكَ الْغَافِلُوْنَ .وَسَلِّمْ وَرَضِيَ اللهُ تَبَارَكَ وَتَعَالَى عَنْ سَادَاتِنَا اَصْحَابِ سَيِّدِنَا رَسُوْلِ اللهِ اَجْمَعِيْنَ . حَسْبُنَا اللهُ وَنِعْمَ الْوَكِيْلُ. نِعْمَ الْمَوْلَى وَنِعْمَ النَّصِيْرُ اَسْتَغْفِرُاللهَ الْعَظِيْمَ *3 الَّذِيْ لَا اِلَهَ اِلَّا هُوَ الحَيُّ القَيُّوْمُ وَأَتُوْبُ إِلَيْهِ اَفْضَلُ الذِّكْرِ فَاعْلَمْ اَنَّهُ لَااِلَهَ اِلَّا اللهُ لَااِلَهَ اِلَّا اللهُ ١٠٠ لَا اِلَهَ اِلَّا اللهُ مُحَمَّدٌ رَّسُوْلُ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ اَللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ، اَللَّهُمَّ صَلِّ عَلَيْهِ وَسَلِّمْ *3 سُبْحَانَ اللهِ وَبِحَمْدِهِ .*33 سُبْحَانَ اللهِ الْعَظِيْمِ اللَّهُمَّ صَلِّ عَلَى حَبِيْبِكَ سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ وَسَلِّمْ *3 كَلِمَةُ حَقٍّ عَلَيْهَا نَحْيَا وَعَلَيْهَا نَمُوْتُ وَبِهَا نُبْعَثُ إِنْ شَاءَ اللهُ تَعَالَى مِنَ الآمِنِيْنَ بِرَحْمَةِ اللهِ وَكَرَمِهِ، اِنَّ اللهَ وَمَلاَئِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ، يَا أَيُّهَا الَّذِيْنَ آمَنُوْا صَلُّوْا عَلَيْهِ وَسَلِّمُوا تَسْلِيْمًا. اَلْفَاتِحَةْ Do’a الْحَمْدُ لِلهِ رَبِّ الْعَالَمِيْنَ حَمْدَ الشَّاكِرِيْنَ حَمْدَ النَّاعِمِيْنَ حَمْدًا يُّوَافِى نِعَمَهُ وَيُكَافِىءُ مَزِيْدَهُ، يَا رَبَّنَا لَكَ الْحَمْدُ كَمَا يَنْبَغِيْ لِجَلَالِ وَجْهِكَ وَعَظِيْمِ سُلْطَانِكَ. سُبْحَانَكَ لَا نُحْصِى ثَنَاءً عَلَيْكَ أَنْتَ كَمَا أَثْنَيْتَ عَلَى نَفْسِكَ، فَلَكَ الحَمْدُ قَبْلَ الرِّضَى وَلَكَ الحَمْدُ بَعْدَ الرِّضَى وَلَكَ الحَمْدُ إِذَا رَضِيْتَ عَنَّا دَائِمًا أَبَدًا اللَّهُمَّ صَلِّ علَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى اَلِ سَيِّدِنَا مُحَمَّدٍ اللَّهُمَّ كَمَا خَصَّصْتَنَا بِكِتَابِكَ الكَرِيْمِ وَهَدَيْتَنَا إِلَى صِرَاتِكَ المُسْتَقِيْمِ، أَصْلِحْ بِهِ مِنَّا جَمِيْعَ مَا فَسَدَ وَطَهِّرْ بِهِ مِنَّا مَا ظَهَرَ وَمَا بَطَنَ اللَّهُمَّ اشْرَحْ بِالقُرْآنِ صُدُوْرَنَا وَيَسِّرْ بِهِ أُمُوْرَنَا وَعَظِّمْ بِهِ أُجُوْرَنَا وَحَسِّنْ بِهِ أَخْلَاقَنَا وَوَسِّعْ بِهِ أَرْزَاقَنَا وَنَوِّرْ بِهِ قُبُوْرَنَا اللَّهُمَّ تَقَبَّلْ وَاَوْصِلْ ثَوَاَبَ مَا قَرَأْنَاهُ مِنْ الْقُرْاَنِ الْعَظِيْمِ وَمَا هَلَلْنَا وَمَا سَبَّحْنَا وَمَا اسْتَغْفَرْنَا وَمَا صَلَّيْنَا عَلَى سَيِّدِنَا مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ هَدِيَّةً مِنَّا وَاصِلَةً وَرَحْمَةً نَازِلَةً وَبَرَكَةً شَامِلَةً اِلَى حَضَرَاتِ حَبِيْبِنَا وَشَفِيْعِنَا وَقُرَّةِ اَعْيُنِنَا سَيِّدِنَا وَمَوْلَانَا مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، وَاِلَى جَمِيْعِ إِخْوَانِهِ مِنَ الْأَنْبِيَاءِ وَالْمُرْسَلِيْنَ وَالْأَوْلِيَاءِ وَالشُّهَدَاءِ وَالصَّالِحِيْنَ وَالصَّحَابَةِ وَالتَّابِعِيْنَ وَالْعُلَمَاءِ الْعَامِلِيْنَ وَالْمُصَنِّفِيْنَ الْمُخْلِصِيْنَ وَجَمِيْعِ الْمُجَاهِدِيْنَ فِي سَبِيْلِ اللهِ رَبِّ الْعَالَمِيْنَ وَالْمَلَائِكَةِ الْمُقَرَّبِيْنَ خُصُوْصًا إِلَى أَرْوَاحِ جَمِيْعِ أَهْلِ الْقُبُوْرِ مِنَ الْمُسْلِمِيْنَ وَالْمُسْلِمَاتِ وَالْمُؤْمِنِيْنَ وَالْمُؤْمِنَاتِ مِنْ مَشَارِقِ الْاَرْضِ إِلَى مَغَارِبِهَا بَرِّهَا وَبَحْرِهَا، خُصُوْصًا إِلَى آبَاءِنَا وَاُمَّهَاتِنَا وَأَجْدَادِنَا وَجَدَّاتِنَا وَنَخَصُّ خَصُوْصًا إِلَى مَنِ اجْتَمَعْنَا هَهُنَا بِسَبَبِهِ وَلِاَجْلِهِ وَنَخَصُّ خَصُوْصًا إِلَى...(فلان/فلانة، وأهل هذا البيت، وأقرباؤهم اللَّهُمَّ أَنْزِلْ فِيْ قَبْرِهِ الرَّحْمَةَ وَالضِّيَاءَ وَالنُّوْرَ، وَالبَهْجَةَ وَالرَّوْحَ وَالرَّيْحَانَ وَالسُّرُوْرَ، مِنْ يَوْمِنَا هَذَا إِلَى يَوْمِ البَعْثِ وَالنُّشُوْرِ، إِنَّكَ مَلِكٌ رَبٌّ غَفُوْرٌ. اللَّهُمَّ اجْعَلِ القُرْآنَ العَظِيْمَ فِي قَبْرِهِ مُؤْنِسًا، وَفِي القِيَامَةِ شَافِعًا، وَفِي الحَشْرِ ضِيَاءً وَظِلًّا وَدَلِيْلًا، وَفِي المِيْزَانِ رَاجِحًا، وَعَلَى الصِّرَاطِ نُوْرًا وَقَائِدًا، وَعَنِ النَّارِ سِتْرًا وَحِجَابًا، وَفِي الجَنَّةِ رَفِيْقًا. اَللَّهُمَّ اغْفِرْ لَهُمْ وَارْحَمْهُمْ وَعَافِهِمْ وَاعْفُ عَنْهُمْ. اللَّهُمَّ اَنْزِلِ الرَّحْمَةَ وَالْمَغْفِرَةَ عَلَى أَهْلِ الْقُبُوْرِ مِنْ أَهْلِ لَاالَهَ اِلَّا اللهُ مُحَمَّدٌ رَّسُوْلُ اللهِ رَبَّنَا أَرِنَا الْحَقَّ حَقًّا وَارْزُقْنَا اتِّبَاعَهُ، وَأَرِنَا الْبَاطِلَ بَاطِلًا وَارْزُقْنَا اجْتِنَابَهُ. رَبَّنَا آتِنَا فِى الدُّنْيَا حَسَنَةً، وَفِى الْآخِرَةِ حَسَنَةً، وَقِنَا عَذَابَ النَّارِ، سًبْحَانَ رَبَّكَ رَبِّ الْعِزَّةِ عَمَّا يَصِفُوْنَ، وَسَلَامٌ عَلَى الْمُرْسَلِيْنَ، وَالْحَمْدُ لِلهِ رَبِّ الْعَلَمِيْنَ. اَلْفَاتِحَةْ … وَاعْفُ عَنَّا يَا كَرِيْمُ *2 بِرَحْمَتِكَ يَا أَرْحَمَ الرَّاحِمِيْنَ ارْحَمْنَا. اَللَّهُمَّ بِحَقِّ الفَاتِحَةِ وَبِسِرِّ الفَاتِحَةِ وَبِكَرَامَةِ الفَاتِحَةِ، يَا فَارِجَ الهَمِّ يَا كَاشِفَ الغَمِّ يَا مَنْ لِعَبْدِهِ يَغْفِرُ وَيَرْحَمُ، اَللَّهُمَّ اغْفِرْ ذُنُوْبَنَا وَاسْتُرْ عُيُوْبَنَا وَفَرِّجْ هُمُوْمَنَا وَاكْشِفْ غُمُوْمَنَا وَأَصْلِحْ ذَاتَ بَيْنِنَا، دَعْوَاهُمْ فِيْهَا سُبْحَانَكَ اَللَّهُمَّ وَتَحِيَّتُهُمْ فِيْهَا سَلَامٌ، وَآخِرُ دَعْوَاهُمْ أَنِ الْحَمْدُ لِلهِ رَبِّ الْعَلَمِيْنَ`, latin: "", translation: "" },
     8: { title: "Doa Menghindari Fitnah Dajjal", arabic: `اللّٰهُمَّ اِنِّى اَعُوْذُ بِكَ مِنْ عَذَابِ جَهَنَّمَ، وَمِنْ عَذَابِ الْقَبْرِ وَمِنْ فِتْنَةِ الْمَحْيَا وَالْمَمَاتِ وَمِنْ شَرِّ فِتْنَةِ الْمَسِيْحِ الدَّجَّالِ`, latin: "", translation: "" },
     9: { title: "Doa Setelah Sholat Fardu", arabic: `اَلْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِيْنَ. حَمْدًا يُوَافِيْ نِعَمَهُ وَيُكَافِئُ مَزِيْدَهُ. يَا رَبَّنَا لَكَ الْحَمْدُ كَمَا يَنْبَغِيْ لِجَلاَلِ وَجْهِكَ الْكَرِيْمِ وَعَظِيْمِ سُلْطَانِكَ اَللَّهُمَّ صَلِّ عَلىَ سَيِّدِنَا مُحَمَّدٍ وَعَلىَ آلِ سَيِّدِنَا مُحَمَّدٍ اَللَّهُمَّ رَبَّنَا تَـقَـبَّلْ مِنَّا صَلاَتَنَا وَصِيَا مَنَا وَرُكُوْ عَنَا وَسُجُوْدَنَا وَقُعُوْدَنَا وَتَضَرُّ عَنَا وَتَخَشُّوْعَنَا وَتَعَبُّدَنَا وَتَمِّمْ تَقْصِيْرَنَا يَا اَلله يَا رَبَّ الْعَالَمِيْنَ رَبَّنَا ضَلَمْنَا أَنْفُسَنَا وَإِنْ لَمْ تَغْفِرْلَنَا وَتَرْحَمْنَا لَنَكُوْنَنَّ مِنَ الْخَاسِرِيْنَ رَبَّنَا وَلاَ تَحْمِلْ عَلَيْنَا إِصْرًا كَمَا حَمَلْتَهُ عَلَى الَّذِ يْنَ مِنْ قَبْلِنَا رَبَّنَا وَلاَ تُحَمِّلْنَا مَا لاَ طَا قَتَا لَنَا بِهِ, وَاعْفُ عَنَّا وَاغْفِرْلَنَا وَارْحَمْنَا أَنْتَ مَوْلاَنَا فَانْصُرْنَا عَلَى الْقَوْمِ الْكَافِرِيْنَ رَبَّنَا لاَ تُزِغْ قُلُوْبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِنْ لَّدُنْكَ رَحْمَةً إِنَّكَ أَنْتَ الْوَهَّابُ رَبَّنَا غْفِرْلَنَا وَلِوَالِدِيْنَ وَلِجَمِيْعِ الْمُسْلِمِيْنَ وَالْمُسْلِمَاتِ وَالْمُؤْمِنِيْنَ وَالْمُؤْمِنَاتِ أَلْأَحْيَآءِ مِنْهُمْ وَاْلأَمْوَاتِ, اِنَّكَ عَلَى قُلِّ ثَيْءٍ قَدِيْرِ رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي اْلآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ اللّٰهُمَّ اغْفِرْلَنَا ذُنُوْبَنَا وَكَفِّرْعَنَّا سَيِّئَاتِنَا وَتَوَفَّنَا مَعَ الْأَ بْرَارِ سُبْحَانَ رَبِّكِ رَبِّ الْعِزَةِ عَمَّا يَصِفُوْنَ، وَسَلاَمٌ عَلَى الْمُرْ سَلِيْنَ، وَالْحَمْدُ لِلهِ رَبِّ الْعَالَمِيْنَ`, latin: "", translation: "" },
     10: { title: "Contoh Muqoddimah Tahlil", arabic: `<div style="direction: ltr; text-align: left; font-family: 'Cormorant Garamond', Georgia, serif; white-space: normal; line-height: 1.6; color: #f8f1dc;"><h3 style="color: #d4af37; font-size: 20px; margin-bottom: 15px; border-bottom: 1px dashed rgba(212,175,55,0.4); padding-bottom: 5px;">• Versi Indonesia</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin rahimakumullah.</p><p style="margin-bottom: 15px;">Marilah kita panjatkan puji dan syukur ke hadirat Allah SWT, yang telah memberikan nikmat iman, Islam, kesehatan, serta kesempatan kepada kita untuk berkumpul di tempat ini.</p><p style="margin-bottom: 15px;">Hadirin yang dimuliakan Allah.</p><p style="margin-bottom: 15px;">Kita semua menyadari bahwa kehidupan di dunia ini hanyalah sementara. Sebagaimana firman Allah SWT dalam Surah Al-Ankabut ayat 57:</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">كُلُّ نَفْسٍ ذَائِقَةُ الْمَوْتِ ۖ ثُمَّ إِلَيْنَا تُرْجَعُونَ</div><p style="margin-bottom: 15px; font-style: italic; color: #cdbf8f;">"Setiap yang bernyawa akan merasakan mati. Kemudian hanya kepada Kamilah kamu dikembalikan."</p><p style="margin-bottom: 15px;">Dan ketika kita menghadapi musibah, Allah mengajarkan kita untuk senantiasa bersabar, sebagaimana firman-Nya dalam Surah Al-Baqarah ayat 156:</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ</div><p style="margin-bottom: 15px; font-style: italic; color: #cdbf8f;">"Sesungguhnya kami milik Allah dan kepada-Nyalah kami kembali."</p><p style="margin-bottom: 15px;">Hadirin sekalian.</p><p style="margin-bottom: 15px;">Maka pada kesempatan ini, marilah kita bersama-sama mendoakan almarhum/almarhumah. Semoga Allah SWT mengampuni segala dosa-dosanya, menerima amal ibadahnya, melapangkan alam kuburnya, serta menempatkannya di tempat terbaik di sisi-Nya.</p><p style="margin-bottom: 15px;">Atas nama keluarga, kami mengucapkan terima kasih atas kehadiran Bapak, Ibu, dan seluruh hadirin. Kami juga memohon maaf apabila semasa hidup almarhum/almarhumah terdapat kesalahan dan kekhilafan, baik disengaja maupun tidak disengaja.</p><p style="margin-bottom: 15px;">Akhir kata, marilah kita ikuti pembacaan tahlil dan doa ini dengan penuh kekhusyukan. Semoga Allah SWT mengabulkan doa-doa kita.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 25px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p><h3 style="color: #d4af37; font-size: 20px; margin-top: 30px; margin-bottom: 15px; border-bottom: 1px dashed rgba(212,175,55,0.4); padding-bottom: 5px;">• Versi Sunda</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin anu ku simkuring dipihormat, para sesepuh, alim ulama, Bapa-bapa, Ibu-ibu, sareng sadaya jamaah anu dirahmati ku Allah SWT.</p><p style="margin-bottom: 15px;">Mimiti, hayu urang sami-sami muji sareng ngucapkeun sukur ka Allah SWT, anu parantos maparin rahmat, nikmat, sareng karunia-Na, dugi ka dina wengi ieu urang sadaya tiasa kempel ngariung dina kaayaan séhat wal'afiat.</p><p style="margin-bottom: 15px;">Hadirin rahimakumullah.</p><p style="margin-bottom: 15px;">Urang sadaya tangtos parantos uninga, yén kahirupan di dunya ieu mung sakedap sareng sadaya mahluk anu hirup pasti bakal ngaraoskeun maot. Sakumaha dawuhan Allah SWT dina Al-Qur'an Surah Al-Ankabut ayat 57:</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">كُلُّ نَفْسٍ ذَائِقَةُ الْمَوْتِ ۖ ثُمَّ إِلَيْنَا تُرْجَعُونَ</div><p style="margin-bottom: 15px; font-style: italic; color: #cdbf8f;">Anu hartosna: "Satiap anu gaduh nyawa pasti bakal ngaraoskeun maot, teras ka Kami aranjeun sadayana bakal dipulangkeun."</p><p style="margin-bottom: 15px;">Sareng dina waktos urang ditimpa musibah, Allah SWT ngajarkeun urang sangkan tetep sabar sareng ikhlas, sakumaha dina Surah Al-Baqarah ayat 156:</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ</div><p style="margin-bottom: 15px; font-style: italic; color: #cdbf8f;">Anu hartosna: "Saéstuna urang sadaya kagungan Allah, sareng ka Mantenna urang sadaya bakal mulang."</p><p style="margin-bottom: 15px;">Ku kituna, dina ieu kasempetan, hayu urang sami-sami ngado'akeun almarhum/almarhumah, mugia Allah SWT ngahampura sagala kalepatanana, nampi amal ibadahna, ngalapangan alam kuburna, sareng maparin tempat anu mulya di sisi-Na.</p><p style="margin-bottom: 15px;">Salajengna, simkuring salaku wawakil ti pihak kulawarga ngahaturkeun nuhun anu teu kaétang kana kasumpingan Bapa, Ibu, sareng sadaya jamaah. Simkuring ogé nyuhunkeun dihapunten bilih salami almarhum/almarhumah hirup aya kalepatan, boh dina ucap boh dina lampah, dihaja atanapi teu dihaja.</p><p style="margin-bottom: 15px;">Pamungkas, hayu urang sami-sami ngalaksanakeun tahlil sareng ngadu'a kalayan khusyuk. Mugia sadaya amal sareng do'a urang ditampi ku Allah SWT.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 15px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p></div>`, latin: "", translation: "" },
     11: { title: "Contoh Muqoddimah Aqiqah", arabic: `<div style="direction: ltr; text-align: left; font-family: 'Cormorant Garamond', Georgia, serif; white-space: normal; line-height: 1.6; color: #f8f1dc;"><h3 style="color: #d4af37; font-size: 20px; margin-bottom: 15px; border-bottom: 1px dashed rgba(212,175,55,0.4); padding-bottom: 5px;">• Versi Bahasa Sunda</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin rahimakumullah.</p><p style="margin-bottom: 15px;">Mimiti, hayu urang sami-sami muji sareng ngucapkeun sukur ka Allah SWT, anu parantos maparin rahmat, nikmat, sareng karunia-Na, dugi ka dina ieu kasempetan urang tiasa kempel ngariung dina kaayaan séhat wal'afiat.</p><p style="margin-bottom: 15px;">Dina ieu kasempetan, urang sadaya ngariung dina raraga ngalaksanakeun syukuran aqiqah, minangka wujud rasa syukur kulawarga ka Allah SWT, anu parantos maparin amanah sareng karunia berupa lahirna putra/putri.</p><p style="margin-bottom: 15px;">Mugia ku dilaksanakeunana ieu aqiqah, janten jalan kahadéan, sareng mugia murangkalihna janten anak anu soleh/solehah, séhat, panjang yuswa, barokah umurna, taat ka Allah SWT, sareng janten kabagjaan kanggo sepuhna.</p><p style="margin-bottom: 15px;">Teu hilap, simkuring salaku wawakil kulawarga ngahaturkeun nuhun kana kasumpingan Bapa, Ibu, sareng sadaya tamu uleman. Hapunten bilih aya kakirangan dina panyambutan atanapi dina sagala rupi hidangan.</p><p style="margin-bottom: 15px;">Pamungkas, hayu urang sami-sami ngiringan ieu acara kalayan pinuh ku rasa syukur sareng ngadu'a, mugia sadayana dipaparin kalancaran sareng kaberkahan ku Allah SWT.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 25px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p><h3 style="color: #d4af37; font-size: 20px; margin-top: 30px; margin-bottom: 15px; border-bottom: 1px dashed rgba(212,175,55,0.4); padding-bottom: 5px;">• Versi Bahasa Indonesia</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin yang dirahmati Allah SWT.</p><p style="margin-bottom: 15px;">Pertama-tama, marilah kita panjatkan puji dan syukur ke hadirat Allah SWT, karena atas segala rahmat dan karunia-Nya, kita dapat berkumpul di tempat ini dalam keadaan sehat walafiat.</p><p style="margin-bottom: 15px;">Pada kesempatan yang penuh kebahagiaan ini, kita berkumpul dalam rangka melaksanakan syukuran aqiqah sebagai bentuk rasa syukur keluarga kepada Allah SWT atas anugerah dan amanah berupa kelahiran seorang putra/putri.</p><p style="margin-bottom: 15px;">Semoga melalui acara aqiqah ini, anak yang telah dianugerahkan menjadi anak yang saleh/salehah, berbakti kepada kedua orang tua, sehat, panjang umur, penuh keberkahan, serta kelak menjadi kebanggaan keluarga dan bermanfaat bagi agama, bangsa, dan sesama.</p><p style="margin-bottom: 15px;">Selanjutnya, kami mewakili keluarga mengucapkan terima kasih atas kehadiran Bapak, Ibu, serta seluruh tamu undangan. Kami juga memohon maaf apabila terdapat kekurangan dalam penyambutan maupun hidangan yang kami sajikan.</p><p style="margin-bottom: 15px;">Akhir kata, marilah kita ikuti rangkaian acara ini dengan penuh rasa syukur dan doa. Semoga Allah SWT senantiasa melimpahkan keberkahan kepada kita semua.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 15px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p></div>`, latin: "", translation: "" }
   };
 
-  // ==== FUNGSI BERPINDAH HALAMAN ====
-  function showPage(pageId) {
-    document.querySelectorAll('.page').forEach(page => { page.classList.remove('active'); });
-    document.getElementById(pageId).classList.add('active');
-    document.getElementById('app-scroll').scrollTop = 0; 
+  // ====================================================
+  // LOGIKA FITUR (PENCARIAN, FAVORIT, AUDIO)
+  // ====================================================
+
+  // 1. EFEK SUARA (Web Audio API)
+  function playSound() {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      
+      osc.type = 'sine'; 
+      osc.frequency.setValueAtTime(800, ctx.currentTime); 
+      osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.15); 
+      
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      osc.start();
+      osc.stop(ctx.currentTime + 0.2);
+    } catch(e) { }
   }
 
-  // ==== FUNGSI SAAT DAFTAR ISI DIKLIK ====
+  // 2. LOGIKA FAVORIT
+  let favorites = [];
+  try {
+    const savedFav = localStorage.getItem('doa_favorites');
+    if (savedFav) {
+      const parsed = JSON.parse(savedFav);
+      if (Array.isArray(parsed)) favorites = parsed;
+    }
+  } catch (e) { }
+  
+  let currentDoaId = null;
+
+  function toggleFav(id, event) {
+    if (event) event.stopPropagation(); 
+    const idStr = String(id);
+    
+    if (favorites.includes(idStr)) {
+      favorites = favorites.filter(favId => favId !== idStr);
+    } else {
+      favorites.push(idStr);
+    }
+    
+    try { localStorage.setItem('doa_favorites', JSON.stringify(favorites)); } catch(e) {}
+    
+    renderTOC(); 
+    updateStarIcon(); 
+    playSound();
+  }
+
+  function toggleCurrentFavorite() {
+    if (currentDoaId) toggleFav(currentDoaId);
+  }
+
+  function updateStarIcon() {
+    const btn = document.getElementById('fav-btn-page');
+    if (!btn) return;
+    if (currentDoaId && favorites.includes(String(currentDoaId))) {
+      btn.innerHTML = '⭐'; btn.classList.add('active');
+    } else {
+      btn.innerHTML = '☆'; btn.classList.remove('active');
+    }
+  }
+
+  // 3. RENDER DAFTAR ISI & PENCARIAN (Dibuat lebih aman)
+  function renderTOC() {
+    try {
+      const favList = document.getElementById('fav-list');
+      const allList = document.getElementById('all-list');
+      const favTitle = document.getElementById('fav-section-title');
+      
+      if (!favList || !allList) return;
+
+      // Kosongkan list terlebih dahulu
+      favList.innerHTML = '';
+      allList.innerHTML = '';
+      
+      let hasFav = false;
+
+      // Looping data dengan aman menggunakan Object.keys
+      Object.keys(dataDoa).forEach(id => {
+        const doa = dataDoa[id];
+        const isFav = favorites.includes(String(id));
+        
+        // Membuat elemen menggunakan DOM API (Jauh lebih stabil daripada innerHTML)
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'toc-item';
+        
+        const a = document.createElement('a');
+        a.setAttribute('onclick', `openDoa('${id}')`);
+        
+        const numSpan = document.createElement('span');
+        numSpan.className = 'toc-number';
+        numSpan.innerText = String(id).padStart(2, '0');
+        
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'toc-title';
+        titleSpan.innerText = doa.title;
+        
+        a.appendChild(numSpan);
+        a.appendChild(titleSpan);
+        
+        const favBtn = document.createElement('button');
+        favBtn.className = `btn-fav-toggle ${isFav ? 'active' : ''}`;
+        favBtn.setAttribute('onclick', `toggleFav('${id}', event)`);
+        favBtn.innerHTML = isFav ? '⭐' : '☆';
+        
+        itemDiv.appendChild(a);
+        itemDiv.appendChild(favBtn);
+        
+        if (isFav) {
+          favList.appendChild(itemDiv);
+          hasFav = true;
+        } else {
+          allList.appendChild(itemDiv);
+        }
+      });
+
+      if (favTitle) {
+        favTitle.style.display = hasFav ? 'block' : 'none';
+      }
+      
+      filterTOC(); // Panggil filter setelah render
+    } catch (error) {
+      console.error("Gagal merender daftar isi:", error);
+    }
+  }
+
+  function filterTOC() {
+    const searchInput = document.getElementById('search-input');
+    if (!searchInput) return;
+    
+    const query = searchInput.value.toLowerCase();
+    const allItems = document.querySelectorAll('.toc-item');
+    
+    let favVisibleCount = 0;
+    let allVisibleCount = 0;
+    
+    allItems.forEach(item => {
+      const titleEl = item.querySelector('.toc-title');
+      if (!titleEl) return;
+      
+      const title = titleEl.innerText.toLowerCase();
+      const isMatch = title.includes(query);
+      
+      if (isMatch) {
+        item.style.display = 'flex';
+        // Hitung jumlah yang terlihat untuk nampilin judul section
+        if (item.parentElement.id === 'fav-list') favVisibleCount++;
+        if (item.parentElement.id === 'all-list') allVisibleCount++;
+      } else {
+        item.style.display = 'none';
+      }
+    });
+
+    // Tampilkan/Sembunyikan Judul Kategori berdasarkan hasil filter
+    const favTitle = document.getElementById('fav-section-title');
+    const allTitle = document.getElementById('all-section-title');
+    if (favTitle) favTitle.style.display = (favVisibleCount > 0) ? 'block' : 'none';
+    if (allTitle) allTitle.style.display = (allVisibleCount > 0) ? 'block' : 'none';
+  }
+
+  // ==== NAVIGASI HALAMAN ====
+  function showPage(pageId) {
+    playSound(); 
+    document.querySelectorAll('.page').forEach(page => { page.classList.remove('active'); });
+    const target = document.getElementById(pageId);
+    if (target) target.classList.add('active');
+    const scroller = document.getElementById('app-scroll');
+    if (scroller) scroller.scrollTop = 0; 
+  }
+
   function openDoa(id) {
     const doa = dataDoa[id];
     if (doa) {
+      currentDoaId = id;
       document.getElementById('doa-title').innerText = doa.title;
       document.getElementById('doa-arabic').innerHTML = doa.arabic;
+      
       const latinEl = document.getElementById('doa-latin');
-      if (doa.latin.trim() !== "") { latinEl.innerText = doa.latin; latinEl.style.display = "block"; } else { latinEl.style.display = "none"; }
+      if (latinEl) {
+        if (doa.latin && doa.latin.trim() !== "") { latinEl.innerText = doa.latin; latinEl.style.display = "block"; } else { latinEl.style.display = "none"; }
+      }
+      
       const transEl = document.getElementById('doa-translation');
-      if (doa.translation.trim() !== "") { transEl.innerText = doa.translation; transEl.style.display = "block"; } else { transEl.style.display = "none"; }
+      if (transEl) {
+        if (doa.translation && doa.translation.trim() !== "") { transEl.innerText = doa.translation; transEl.style.display = "block"; } else { transEl.style.display = "none"; }
+      }
+      
+      updateStarIcon();
       showPage('page-doa');
     }
   }
@@ -256,43 +458,24 @@
   })();
 
   // ====================================================
-  // LOGIKA PWA (MANIFEST & SERVICE WORKER INLINE)
+  // PWA LOGIKA (Dibungkus try-catch agar tidak error di beberapa browser)
   // ====================================================
-  // 1. Membuat Manifest secara virtual
-  const manifestData = {
-    name: "Kumpulan Doa & Muqaddimah",
-    short_name: "Buku Doa",
-    start_url: ".",
-    display: "standalone",
-    background_color: "#050807",
-    theme_color: "#050807",
-    icons: [
-      {
-        src: "https://cdn-icons-png.flaticon.com/512/3274/3274140.png",
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "any maskable"
-      }
-    ]
-  };
-  const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
-  const manifestURL = URL.createObjectURL(manifestBlob);
-  document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
+  try {
+    const manifestData = { name: "Kumpulan Doa & Muqaddimah", short_name: "Buku Doa", start_url: ".", display: "standalone", background_color: "#050807", theme_color: "#050807", icons: [{ src: "https://cdn-icons-png.flaticon.com/512/3274/3274140.png", sizes: "512x512", type: "image/png" }] };
+    const manifestEl = document.getElementById('manifest-placeholder');
+    if (manifestEl) {
+      manifestEl.setAttribute('href', URL.createObjectURL(new Blob([JSON.stringify(manifestData)], {type: 'application/json'})));
+    }
+    
+    if ('serviceWorker' in navigator) {
+      const swCode = `const CACHE_NAME = 'buku-doa-v5'; self.addEventListener('install', (e) => { self.skipWaiting(); }); self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); }); self.addEventListener('fetch', (e) => { e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))); });`;
+      navigator.serviceWorker.register(URL.createObjectURL(new Blob([swCode], {type: 'application/javascript'}))).catch(err => console.log('SW gagal:', err));
+    }
+  } catch(e) { console.log("PWA Setup Error:", e); }
 
-  // 2. Mendaftarkan Service Worker (agar bisa diinstal/offline)
-  const swCode = `
-    const CACHE_NAME = 'buku-doa-v1';
-    self.addEventListener('install', (e) => { self.skipWaiting(); });
-    self.addEventListener('fetch', (e) => {
-      e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
-    });
-  `;
-  const swBlob = new Blob([swCode], {type: 'application/javascript'});
-  const swURL = URL.createObjectURL(swBlob);
-  
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register(swURL).catch(err => console.log('SW gagal:', err));
-  }
+  // ==== PANGGIL FUNGSI RENDER SAAT HALAMAN DIMUAT ====
+  // Karena script ini ada di paling bawah (sebelum tag </body>), elemen HTML sudah siap.
+  renderTOC();
 </script>
 </body>
 </html>
