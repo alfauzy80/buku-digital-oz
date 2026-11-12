@@ -6,7 +6,12 @@
 <title>Kumpulan Doa & Muqaddimah</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#050807">
+
+<!-- ====== PENGATURAN IKON APLIKASI (LINK ABSOLUT) ====== -->
+<link rel="icon" type="image/png" href="https://buku-digital-oz.vercel.app/icon.png">
+<link rel="apple-touch-icon" href="https://buku-digital-oz.vercel.app/icon.png">
 <link id="manifest-placeholder" rel="manifest">
+
 <style>
   /* ==== RESET & DASAR ==== */
   *{box-sizing:border-box;-webkit-text-size-adjust:100%}
@@ -98,18 +103,15 @@
   .toc-header { text-align:center; margin-bottom:20px; }
   .toc-header h2 { margin:0; font-size:clamp(28px, 5vw, 38px); font-weight:700; letter-spacing:.1em; background:linear-gradient(100deg, #f6e7a8 0%, #d4af37 50%, #fff6cf 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
   
-  /* Search Bar */
   .search-container { margin-bottom: 25px; position: relative; }
   .search-input { width: 100%; padding: 12px 20px 12px 45px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 25px; color: #f8f1dc; font-family: 'Cormorant Garamond', serif; font-size: 18px; outline: none; transition: all 0.3s; }
   .search-input:focus { border-color: #d4af37; background: rgba(212,175,55,0.1); box-shadow: 0 0 15px rgba(212,175,55,0.2); }
   .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #d4af37; font-size: 18px; }
 
-  /* Kategori Judul */
   .section-title { font-family: Georgia, serif; color: #d4af37; font-size: 14px; letter-spacing: .2em; text-transform: uppercase; margin: 25px 0 10px 5px; border-bottom: 1px dashed rgba(212,175,55,0.3); padding-bottom: 5px; display: none; }
 
   .toc-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
   
-  /* Desain Item Daftar Isi & Tombol Favorit */
   .toc-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02); border: 1px solid rgba(212,175,55,.15); border-radius: 8px; transition: all 0.3s ease; padding-right: 15px; }
   .toc-item:hover { background: rgba(212,175,55,0.08); border-color: #d4af37; transform: translateX(5px); }
   .toc-item a { display: flex; align-items: center; text-decoration: none; padding: 12px 15px; flex-grow: 1; cursor: pointer; }
@@ -117,7 +119,6 @@
   .toc-number { font-family:Georgia, serif; font-size:16px; color:#d4af37; margin-right:12px; font-weight:bold; min-width:20px; }
   .toc-title { font-size:18px; font-weight:600; color:#efe5c9; flex-grow:1; }
   
-  /* Ikon Favorit di Daftar Isi */
   .btn-fav-toggle { background: none; border: none; font-size: 22px; cursor: pointer; padding: 0; color: #555; transition: transform 0.2s; line-height: 1; }
   .btn-fav-toggle:hover { transform: scale(1.2); }
   .btn-fav-toggle.active { color: #f6e7a8; text-shadow: 0 0 10px rgba(232,199,102,0.8); }
@@ -139,20 +140,7 @@
   
   .doa-card { background:rgba(255,255,255,0.02); border:1px solid rgba(212,175,55,0.2); border-radius:12px; padding:25px; margin-bottom:25px; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
   
-  /* ==== TEKS ARAB & CAMPURAN ==== */
-  .arabic-text { 
-    font-family: 'Amiri', 'Traditional Arabic', serif; 
-    font-size: clamp(26px, 6vw, 34px); 
-    color: #e8c766; 
-    direction: rtl; 
-    text-align: right; 
-    line-height: 2.5; 
-    margin-bottom: 20px; 
-    text-shadow: 0 0 15px rgba(212,175,55,0.2); 
-    white-space: pre-wrap; 
-    word-spacing: 3px; 
-  }
-  
+  .arabic-text { font-family: 'Amiri', 'Traditional Arabic', serif; font-size: clamp(26px, 6vw, 34px); color: #e8c766; direction: rtl; text-align: right; line-height: 2.5; margin-bottom: 20px; text-shadow: 0 0 15px rgba(212,175,55,0.2); white-space: pre-wrap; word-spacing: 3px; }
   .latin-text { font-style:italic; color:#cdbf8f; font-size:16px; line-height:1.6; margin-bottom:20px; border-left:2px solid #d4af37; padding-left:15px; white-space: pre-wrap; display: none; }
   .translation-text { color:#f8f1dc; font-size:18px; line-height:1.6; white-space: pre-wrap; display: none; }
 </style>
@@ -184,7 +172,6 @@
         <span style="color:#d4af37; font-size:14px; letter-spacing:5px;">✦ ✦ ✦</span>
       </div>
 
-      <!-- Fitur Pencarian -->
       <div class="search-container">
         <span class="search-icon">🔍</span>
         <input type="text" id="search-input" class="search-input" placeholder="Cari doa atau muqaddimah..." onkeyup="filterTOC()">
@@ -216,9 +203,7 @@
 </div>
 
 <script>
-  // ====================================================
-  // DATA DOA 
-  // ====================================================
+  // (Data Doa tetap sama seperti sebelumnya, disingkat agar tidak kepanjangan)
   const dataDoa = {
     1: { title: "Doa Setelah Sholat Tahajud", arabic: `اللَّهُمَّ لَكَ الْحَمْدُ أَنْتَ قَيِّمُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ، وَلَكَ الْحَمْدُ لَكَ مُلْكُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ، وَلَكَ الْحَمْدُ نُورُ السَّمَوَاتِ وَالْأَرْضِ، وَلَكَ الْحَمْدُ أَنْتَ الْحَقُّ وَوَعْدُكَ الْحَقُّ وَلِقَاءُكَ حَقٌّ وَقَوْلُكَ حَقٌّ وَالْجَنَّةُ حَقٌّ وَالنَّارُ حَقٌّ، وَالنَّبِيُّونَ حَقٌّ، وَمُحَمَّدٌ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ حَقٌّ، وَالسَّاعَةُ حَقٌّ. اللَّهُمَّ لَكَ أَسْلَمْتُ، وَبِكَ آمَنْتُ، وَعَلَيْكَ تَوَكَّلْتُ وَإِلَيْكَ أَنَبْتُ وَبِكَ خَاصَمْتُ، وَإِلَيْكَ حَاكَمْتُ، فَاغْفِرْلِي مَا قَدَّمْتُ، وَمَا أَخَّرْتُ وَمَا أَسْرَرْتُ وَمَا أَعْلَنْتُ، أَنْتَ الْمُقَدِّمُ وَأَنْتَ الْمُؤَخِّرُ، لَا إِلَهَ إِلَّا أَنْتَ أَوْ لَا إِلَهَ غَيْرُكَ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ.`, latin: "", translation: "" },
     2: { title: "Doa Setelah Sholat Dhuha", arabic: `اَللَّهُمَّ إِنَّ الضُّحَاءَ ضُحَاؤُكَ وَالْبَهَاءَ بَهَاؤُكَ وَالْجَمَالَ جَمَالُكَ وَالْقُوَّةَ قُوَّتُكَ وَالْقُدْرَةَ قُدْرَتُكَ وَالْعِصْمَةَ عِصْمَتُكَ. اَللَّهُمَّ إِنْ كَانَ رِزْقِي فِي السَّمَاءِ فَأَنْزِلْهُ وَإِنْ كَانَ فِي الْأَرْضِ فَأَخْرِجْهُ وَإِنْ كَانَ مُعَسَّرًا فَيَسِّرْهُ وَإِنْ كَانَ حَرَامًا فَطَهِّرْهُ وَإِنْ كَانَ بَعِيدًا فَقَرِّبْهُ بِحَقِّ ضُحَائِكَ وَبَهَائِكَ وَجَمَالِكَ وَقُوَّتِكَ وَقُدْرَتِكَ آتِنِي مَا آتَيْتَ عِبَادَكَ الصَّالِحِينَ.`, latin: "", translation: "" },
@@ -233,248 +218,133 @@
     11: { title: "Contoh Muqoddimah Aqiqah", arabic: `<div style="direction: ltr; text-align: left; font-family: 'Cormorant Garamond', Georgia, serif; white-space: normal; line-height: 1.6; color: #f8f1dc;"><h3 style="color: #d4af37; font-size: 20px; margin-bottom: 15px; border-bottom: 1px dashed rgba(212,175,55,0.4); padding-bottom: 5px;">• Versi Bahasa Sunda</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin rahimakumullah.</p><p style="margin-bottom: 15px;">Mimiti, hayu urang sami-sami muji sareng ngucapkeun sukur ka Allah SWT, anu parantos maparin rahmat, nikmat, sareng karunia-Na, dugi ka dina ieu kasempetan urang tiasa kempel ngariung dina kaayaan séhat wal'afiat.</p><p style="margin-bottom: 15px;">Dina ieu kasempetan, urang sadaya ngariung dina raraga ngalaksanakeun syukuran aqiqah, minangka wujud rasa syukur kulawarga ka Allah SWT, anu parantos maparin amanah sareng karunia berupa lahirna putra/putri.</p><p style="margin-bottom: 15px;">Mugia ku dilaksanakeunana ieu aqiqah, janten jalan kahadéan, sareng mugia murangkalihna janten anak anu soleh/solehah, séhat, panjang yuswa, barokah umurna, taat ka Allah SWT, sareng janten kabagjaan kanggo sepuhna.</p><p style="margin-bottom: 15px;">Teu hilap, simkuring salaku wawakil kulawarga ngahaturkeun nuhun kana kasumpingan Bapa, Ibu, sareng sadaya tamu uleman. Hapunten bilih aya kakirangan dina panyambutan atanapi dina sagala rupi hidangan.</p><p style="margin-bottom: 15px;">Pamungkas, hayu urang sami-sami ngiringan ieu acara kalayan pinuh ku rasa syukur sareng ngadu'a, mugia sadayana dipaparin kalancaran sareng kaberkahan ku Allah SWT.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 25px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p><h3 style="color: #d4af37; font-size: 20px; margin-top: 30px; margin-bottom: 15px; border-bottom: 1px dashed rgba(212,175,55,0.4); padding-bottom: 5px;">• Versi Bahasa Indonesia</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin yang dirahmati Allah SWT.</p><p style="margin-bottom: 15px;">Pertama-tama, marilah kita panjatkan puji dan syukur ke hadirat Allah SWT, karena atas segala rahmat dan karunia-Nya, kita dapat berkumpul di tempat ini dalam keadaan sehat walafiat.</p><p style="margin-bottom: 15px;">Pada kesempatan yang penuh kebahagiaan ini, kita berkumpul dalam rangka melaksanakan syukuran aqiqah sebagai bentuk rasa syukur keluarga kepada Allah SWT atas anugerah dan amanah berupa kelahiran seorang putra/putri.</p><p style="margin-bottom: 15px;">Semoga melalui acara aqiqah ini, anak yang telah dianugerahkan menjadi anak yang saleh/salehah, berbakti kepada kedua orang tua, sehat, panjang umur, penuh keberkahan, serta kelak menjadi kebanggaan keluarga dan bermanfaat bagi agama, bangsa, dan sesama.</p><p style="margin-bottom: 15px;">Selanjutnya, kami mewakili keluarga mengucapkan terima kasih atas kehadiran Bapak, Ibu, serta seluruh tamu undangan. Kami juga memohon maaf apabila terdapat kekurangan dalam penyambutan maupun hidangan yang kami sajikan.</p><p style="margin-bottom: 15px;">Akhir kata, marilah kita ikuti rangkaian acara ini dengan penuh rasa syukur dan doa. Semoga Allah SWT senantiasa melimpahkan keberkahan kepada kita semua.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 15px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p></div>`, latin: "", translation: "" }
   };
 
-  // ====================================================
-  // LOGIKA FITUR (PENCARIAN, FAVORIT, AUDIO)
-  // ====================================================
-
-  // 1. EFEK SUARA (Web Audio API)
   function playSound() {
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       if (!AudioContext) return;
       const ctx = new AudioContext();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      
-      osc.type = 'sine'; 
-      osc.frequency.setValueAtTime(800, ctx.currentTime); 
-      osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.15); 
-      
-      gain.gain.setValueAtTime(0.1, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
-      
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      
-      osc.start();
-      osc.stop(ctx.currentTime + 0.2);
+      const osc = ctx.createOscillator(); const gain = ctx.createGain();
+      osc.type = 'sine'; osc.frequency.setValueAtTime(800, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.15); 
+      gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+      osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.2);
     } catch(e) { }
   }
 
-  // 2. LOGIKA FAVORIT
   let favorites = [];
-  try {
-    const savedFav = localStorage.getItem('doa_favorites');
-    if (savedFav) {
-      const parsed = JSON.parse(savedFav);
-      if (Array.isArray(parsed)) favorites = parsed;
-    }
-  } catch (e) { }
-  
+  try { const savedFav = localStorage.getItem('doa_favorites'); if (savedFav) { const parsed = JSON.parse(savedFav); if (Array.isArray(parsed)) favorites = parsed; } } catch (e) { }
   let currentDoaId = null;
 
   function toggleFav(id, event) {
-    if (event) event.stopPropagation(); 
-    const idStr = String(id);
-    
-    if (favorites.includes(idStr)) {
-      favorites = favorites.filter(favId => favId !== idStr);
-    } else {
-      favorites.push(idStr);
-    }
-    
+    if (event) event.stopPropagation(); const idStr = String(id);
+    if (favorites.includes(idStr)) { favorites = favorites.filter(favId => favId !== idStr); } else { favorites.push(idStr); }
     try { localStorage.setItem('doa_favorites', JSON.stringify(favorites)); } catch(e) {}
-    
-    renderTOC(); 
-    updateStarIcon(); 
-    playSound();
+    renderTOC(); updateStarIcon(); playSound();
   }
 
-  function toggleCurrentFavorite() {
-    if (currentDoaId) toggleFav(currentDoaId);
-  }
+  function toggleCurrentFavorite() { if (currentDoaId) toggleFav(currentDoaId); }
 
   function updateStarIcon() {
-    const btn = document.getElementById('fav-btn-page');
-    if (!btn) return;
-    if (currentDoaId && favorites.includes(String(currentDoaId))) {
-      btn.innerHTML = '⭐'; btn.classList.add('active');
-    } else {
-      btn.innerHTML = '☆'; btn.classList.remove('active');
-    }
+    const btn = document.getElementById('fav-btn-page'); if (!btn) return;
+    if (currentDoaId && favorites.includes(String(currentDoaId))) { btn.innerHTML = '⭐'; btn.classList.add('active'); } else { btn.innerHTML = '☆'; btn.classList.remove('active'); }
   }
 
-  // 3. RENDER DAFTAR ISI & PENCARIAN (Dibuat lebih aman)
   function renderTOC() {
     try {
-      const favList = document.getElementById('fav-list');
-      const allList = document.getElementById('all-list');
-      const favTitle = document.getElementById('fav-section-title');
-      
+      const favList = document.getElementById('fav-list'); const allList = document.getElementById('all-list'); const favTitle = document.getElementById('fav-section-title');
       if (!favList || !allList) return;
-
-      // Kosongkan list terlebih dahulu
-      favList.innerHTML = '';
-      allList.innerHTML = '';
-      
-      let hasFav = false;
-
-      // Looping data dengan aman menggunakan Object.keys
+      favList.innerHTML = ''; allList.innerHTML = ''; let hasFav = false;
       Object.keys(dataDoa).forEach(id => {
-        const doa = dataDoa[id];
-        const isFav = favorites.includes(String(id));
-        
-        // Membuat elemen menggunakan DOM API (Jauh lebih stabil daripada innerHTML)
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'toc-item';
-        
-        const a = document.createElement('a');
-        a.setAttribute('onclick', `openDoa('${id}')`);
-        
-        const numSpan = document.createElement('span');
-        numSpan.className = 'toc-number';
-        numSpan.innerText = String(id).padStart(2, '0');
-        
-        const titleSpan = document.createElement('span');
-        titleSpan.className = 'toc-title';
-        titleSpan.innerText = doa.title;
-        
-        a.appendChild(numSpan);
-        a.appendChild(titleSpan);
-        
-        const favBtn = document.createElement('button');
-        favBtn.className = `btn-fav-toggle ${isFav ? 'active' : ''}`;
-        favBtn.setAttribute('onclick', `toggleFav('${id}', event)`);
-        favBtn.innerHTML = isFav ? '⭐' : '☆';
-        
-        itemDiv.appendChild(a);
-        itemDiv.appendChild(favBtn);
-        
-        if (isFav) {
-          favList.appendChild(itemDiv);
-          hasFav = true;
-        } else {
-          allList.appendChild(itemDiv);
-        }
+        const doa = dataDoa[id]; const isFav = favorites.includes(String(id));
+        const itemDiv = document.createElement('div'); itemDiv.className = 'toc-item';
+        const a = document.createElement('a'); a.setAttribute('onclick', `openDoa('${id}')`);
+        const numSpan = document.createElement('span'); numSpan.className = 'toc-number'; numSpan.innerText = String(id).padStart(2, '0');
+        const titleSpan = document.createElement('span'); titleSpan.className = 'toc-title'; titleSpan.innerText = doa.title;
+        a.appendChild(numSpan); a.appendChild(titleSpan);
+        const favBtn = document.createElement('button'); favBtn.className = `btn-fav-toggle ${isFav ? 'active' : ''}`; favBtn.setAttribute('onclick', `toggleFav('${id}', event)`); favBtn.innerHTML = isFav ? '⭐' : '☆';
+        itemDiv.appendChild(a); itemDiv.appendChild(favBtn);
+        if (isFav) { favList.appendChild(itemDiv); hasFav = true; } else { allList.appendChild(itemDiv); }
       });
-
-      if (favTitle) {
-        favTitle.style.display = hasFav ? 'block' : 'none';
-      }
-      
-      filterTOC(); // Panggil filter setelah render
-    } catch (error) {
-      console.error("Gagal merender daftar isi:", error);
-    }
+      if (favTitle) { favTitle.style.display = hasFav ? 'block' : 'none'; }
+      filterTOC();
+    } catch (error) { console.error("Gagal merender daftar isi:", error); }
   }
 
   function filterTOC() {
-    const searchInput = document.getElementById('search-input');
-    if (!searchInput) return;
-    
-    const query = searchInput.value.toLowerCase();
-    const allItems = document.querySelectorAll('.toc-item');
-    
-    let favVisibleCount = 0;
-    let allVisibleCount = 0;
-    
+    const searchInput = document.getElementById('search-input'); if (!searchInput) return;
+    const query = searchInput.value.toLowerCase(); const allItems = document.querySelectorAll('.toc-item');
+    let favVisibleCount = 0; let allVisibleCount = 0;
     allItems.forEach(item => {
-      const titleEl = item.querySelector('.toc-title');
-      if (!titleEl) return;
-      
-      const title = titleEl.innerText.toLowerCase();
-      const isMatch = title.includes(query);
-      
+      const titleEl = item.querySelector('.toc-title'); if (!titleEl) return;
+      const title = titleEl.innerText.toLowerCase(); const isMatch = title.includes(query);
       if (isMatch) {
         item.style.display = 'flex';
-        // Hitung jumlah yang terlihat untuk nampilin judul section
         if (item.parentElement.id === 'fav-list') favVisibleCount++;
         if (item.parentElement.id === 'all-list') allVisibleCount++;
-      } else {
-        item.style.display = 'none';
-      }
+      } else { item.style.display = 'none'; }
     });
-
-    // Tampilkan/Sembunyikan Judul Kategori berdasarkan hasil filter
-    const favTitle = document.getElementById('fav-section-title');
-    const allTitle = document.getElementById('all-section-title');
+    const favTitle = document.getElementById('fav-section-title'); const allTitle = document.getElementById('all-section-title');
     if (favTitle) favTitle.style.display = (favVisibleCount > 0) ? 'block' : 'none';
     if (allTitle) allTitle.style.display = (allVisibleCount > 0) ? 'block' : 'none';
   }
 
-  // ==== NAVIGASI HALAMAN ====
   function showPage(pageId) {
-    playSound(); 
-    document.querySelectorAll('.page').forEach(page => { page.classList.remove('active'); });
-    const target = document.getElementById(pageId);
-    if (target) target.classList.add('active');
-    const scroller = document.getElementById('app-scroll');
-    if (scroller) scroller.scrollTop = 0; 
+    playSound(); document.querySelectorAll('.page').forEach(page => { page.classList.remove('active'); });
+    const target = document.getElementById(pageId); if (target) target.classList.add('active');
+    const scroller = document.getElementById('app-scroll'); if (scroller) scroller.scrollTop = 0; 
   }
 
   function openDoa(id) {
     const doa = dataDoa[id];
     if (doa) {
-      currentDoaId = id;
-      document.getElementById('doa-title').innerText = doa.title;
-      document.getElementById('doa-arabic').innerHTML = doa.arabic;
-      
+      currentDoaId = id; document.getElementById('doa-title').innerText = doa.title; document.getElementById('doa-arabic').innerHTML = doa.arabic;
       const latinEl = document.getElementById('doa-latin');
-      if (latinEl) {
-        if (doa.latin && doa.latin.trim() !== "") { latinEl.innerText = doa.latin; latinEl.style.display = "block"; } else { latinEl.style.display = "none"; }
-      }
-      
+      if (latinEl) { if (doa.latin && doa.latin.trim() !== "") { latinEl.innerText = doa.latin; latinEl.style.display = "block"; } else { latinEl.style.display = "none"; } }
       const transEl = document.getElementById('doa-translation');
-      if (transEl) {
-        if (doa.translation && doa.translation.trim() !== "") { transEl.innerText = doa.translation; transEl.style.display = "block"; } else { transEl.style.display = "none"; }
-      }
-      
-      updateStarIcon();
-      showPage('page-doa');
+      if (transEl) { if (doa.translation && doa.translation.trim() !== "") { transEl.innerText = doa.translation; transEl.style.display = "block"; } else { transEl.style.display = "none"; } }
+      updateStarIcon(); showPage('page-doa');
     }
   }
 
-  // ==== EFEK BINTANG & PARTIKEL ====
   (function(){
-    var s=document.querySelector('.stars'), p=document.querySelector('.particles');
-    if(!s||!p) return;
+    var s=document.querySelector('.stars'), p=document.querySelector('.particles'); if(!s||!p) return;
     var small=innerWidth<600, red=matchMedia('(prefers-reduced-motion: reduce)').matches;
     for(var i=0;i<(small?28:55);i++){
-      var e=document.createElement('span'); e.className='star';
-      e.style.left=(Math.random()*100).toFixed(2)+'%'; e.style.top=(Math.random()*100).toFixed(2)+'%';
+      var e=document.createElement('span'); e.className='star'; e.style.left=(Math.random()*100).toFixed(2)+'%'; e.style.top=(Math.random()*100).toFixed(2)+'%';
       var z=1+Math.random()*2; e.style.width=z+'px'; e.style.height=z+'px';
-      e.style.setProperty('--d',(2.5+Math.random()*4).toFixed(2)+'s');
-      e.style.setProperty('--delay',(Math.random()*6).toFixed(2)+'s'); s.appendChild(e);
+      e.style.setProperty('--d',(2.5+Math.random()*4).toFixed(2)+'s'); e.style.setProperty('--delay',(Math.random()*6).toFixed(2)+'s'); s.appendChild(e);
     }
     if(!red){
       for(var j=0;j<(small?8:16);j++){
-        var q=document.createElement('span'); q.className='particle';
-        q.style.left=(Math.random()*100).toFixed(2)+'%'; var w=2+Math.random()*3; q.style.width=w+'px'; q.style.height=w+'px';
-        q.style.setProperty('--dur',(12+Math.random()*10).toFixed(2)+'s');
-        q.style.setProperty('--delay',(Math.random()*16).toFixed(2)+'s');
-        q.style.setProperty('--dx',((Math.random()-0.5)*120).toFixed(1)+'px'); p.appendChild(q);
+        var q=document.createElement('span'); q.className='particle'; q.style.left=(Math.random()*100).toFixed(2)+'%'; var w=2+Math.random()*3; q.style.width=w+'px'; q.style.height=w+'px';
+        q.style.setProperty('--dur',(12+Math.random()*10).toFixed(2)+'s'); q.style.setProperty('--delay',(Math.random()*16).toFixed(2)+'s'); q.style.setProperty('--dx',((Math.random()-0.5)*120).toFixed(1)+'px'); p.appendChild(q);
       }
     }
   })();
 
-  // ====================================================
-  // PWA LOGIKA (Dibungkus try-catch agar tidak error di beberapa browser)
-  // ====================================================
   try {
-    const manifestData = { name: "Kumpulan Doa & Muqaddimah", short_name: "Buku Doa", start_url: ".", display: "standalone", background_color: "#050807", theme_color: "#050807", icons: [{ src: "https://cdn-icons-png.flaticon.com/512/3274/3274140.png", sizes: "512x512", type: "image/png" }] };
+    const manifestData = { 
+      name: "Kumpulan Doa & Muqaddimah", 
+      short_name: "Buku Doa", 
+      start_url: ".", 
+      display: "standalone", 
+      background_color: "#050807", 
+      theme_color: "#050807", 
+      icons: [{ 
+        src: "https://buku-digital-oz.vercel.app/icon.png", /* <--- LINK ABSOLUT */
+        sizes: "512x512", 
+        type: "image/png",
+        purpose: "any maskable"
+      }] 
+    };
     const manifestEl = document.getElementById('manifest-placeholder');
-    if (manifestEl) {
-      manifestEl.setAttribute('href', URL.createObjectURL(new Blob([JSON.stringify(manifestData)], {type: 'application/json'})));
-    }
+    if (manifestEl) { manifestEl.setAttribute('href', URL.createObjectURL(new Blob([JSON.stringify(manifestData)], {type: 'application/json'}))); }
     
     if ('serviceWorker' in navigator) {
-      const swCode = `const CACHE_NAME = 'buku-doa-v5'; self.addEventListener('install', (e) => { self.skipWaiting(); }); self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); }); self.addEventListener('fetch', (e) => { e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))); });`;
+      const swCode = `const CACHE_NAME = 'buku-doa-v7'; self.addEventListener('install', (e) => { self.skipWaiting(); }); self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); }); self.addEventListener('fetch', (e) => { e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))); });`;
       navigator.serviceWorker.register(URL.createObjectURL(new Blob([swCode], {type: 'application/javascript'}))).catch(err => console.log('SW gagal:', err));
     }
   } catch(e) { console.log("PWA Setup Error:", e); }
 
-  // ==== PANGGIL FUNGSI RENDER SAAT HALAMAN DIMUAT ====
-  // Karena script ini ada di paling bawah (sebelum tag </body>), elemen HTML sudah siap.
   renderTOC();
 </script>
 </body>
