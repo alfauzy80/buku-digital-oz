@@ -1,4 +1,4 @@
-const CACHE_NAME = 'buku-doa-v1';
+const CACHE_NAME = 'buku-doa-v9';
 const urlsToCache = [
   '/',
   '/index.html',
