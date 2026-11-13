@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.json">
 
 <style>
-  /* ==== VARIABEL TEMA (DARK / LIGHT) ==== */
+  /* ==== VARIABEL TEMA ==== */
   :root {
     --bg-main: #050807;
     --text-main: #f8f1dc;
@@ -23,7 +23,6 @@
     --input-bg: rgba(255,255,255,0.05);
     --font-scale: 1;
   }
-  
   body.light-mode {
     --bg-main: #fdfaf6;
     --text-main: #2c2a26;
@@ -38,249 +37,158 @@
   /* ==== RESET & DASAR ==== */
   *{box-sizing:border-box;-webkit-text-size-adjust:100%}
   html, body {
-    margin: 0; padding: 0;
-    height: 100%; width: 100%;
-    overflow: hidden; 
-    background: var(--bg-main);
+    margin: 0; padding: 0; height: 100%; width: 100%;
+    overflow: hidden; background: var(--bg-main);
     font-family: 'Cormorant Garamond', Georgia, serif;
-    color: var(--text-main);
-    transition: background 0.3s, color 0.3s;
+    color: var(--text-main); transition: background 0.3s, color 0.3s;
   }
   
   .app-container {
-    position: relative;
-    width: 100%;
-    height: 100dvh; 
-    overflow-y: auto;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
+    position: relative; width: 100%; height: 100dvh; 
+    overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
   }
 
-  .page {
-    display: none;
-    min-height: 100%;
-    width: 100%;
-  }
-  .page.active {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+  .page { display: none; min-height: 100%; width: 100%; }
+  .page.active { display: flex; flex-direction: column; align-items: center; }
 
   /* =========================================
-     FITUR BARU: PWA INSTALL BANNER
+     PWA INSTALL BANNER
      ========================================= */
   #pwa-install-banner {
-    position: fixed;
-    top: 0; left: 0; right: 0;
+    position: fixed; top: 0; left: 0; right: 0;
     background: linear-gradient(180deg, #14543d 0%, #0f3d2e 100%);
-    color: #f8f1dc;
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    z-index: 9999;
-    transform: translateY(-100%);
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    font-family: 'Cormorant Garamond', serif;
+    color: #f8f1dc; padding: 15px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 9999;
+    transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border-bottom: 1px solid var(--gold);
   }
-  #pwa-install-banner.show {
-    transform: translateY(0);
-  }
-  .banner-text {
-    flex-grow: 1;
-    margin-right: 15px;
-  }
-  .banner-text h4 {
-    margin: 0 0 4px 0;
-    color: var(--gold);
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-  }
-  .banner-text p {
-    margin: 0;
-    font-size: 12px;
-    color: #cdbf8f;
-    font-family: 'Cormorant Garamond', Georgia, serif;
-  }
-  .banner-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .btn-install {
-    background: var(--gold);
-    color: #050807;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-install:hover { transform: scale(1.05); box-shadow: 0 0 10px rgba(212,175,55,0.5); }
-  .btn-close-banner {
-    background: none;
-    border: none;
-    color: #cdbf8f;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 0 5px;
-  }
-  .btn-close-banner:hover { color: #fff; }
+  #pwa-install-banner.show { transform: translateY(0); }
+  .banner-text { flex-grow: 1; margin-right: 15px; }
+  .banner-text h4 { margin: 0 0 4px 0; color: var(--gold); font-size: 16px; font-weight: 700; }
+  .banner-text p { margin: 0; font-size: 12px; color: #cdbf8f; }
+  .banner-actions { display: flex; align-items: center; gap: 10px; }
+  .btn-install { background: var(--gold); color: #050807; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; cursor: pointer; }
+  .btn-close-banner { background: none; border: none; color: #cdbf8f; font-size: 20px; cursor: pointer; padding: 0 5px; }
 
   /* =========================================
-     1. DESAIN COVER (HALAMAN DEPAN)
+     1. COVER
      ========================================= */
   .cover {
-    justify-content: center;
-    position: relative;
-    background:
-      radial-gradient(circle at 20% 20%, rgba(212,175,55,.14) 0 1.5px, transparent 2.5px),
-      radial-gradient(circle at 80% 30%, rgba(212,175,55,.10) 0 1.5px, transparent 2.5px),
-      radial-gradient(circle at 30% 80%, rgba(212,175,55,.08) 0 1.5px, transparent 2.5px),
-      radial-gradient(ellipse at 50% 40%, rgba(212,175,55,.06), transparent 60%),
-      linear-gradient(160deg, #0a0f0d 0%, #050807 55%, #000 100%);
-    background-size: 46px 46px, 62px 62px, 54px 54px, cover, cover;
-    transition: background 0.5s;
+    justify-content: center; position: relative;
+    background: radial-gradient(circle at 20% 20%, rgba(212,175,55,.14) 0 1.5px, transparent 2.5px), radial-gradient(circle at 80% 30%, rgba(212,175,55,.10) 0 1.5px, transparent 2.5px), radial-gradient(circle at 30% 80%, rgba(212,175,55,.08) 0 1.5px, transparent 2.5px), radial-gradient(ellipse at 50% 40%, rgba(212,175,55,.06), transparent 60%), linear-gradient(160deg, #0a0f0d 0%, #050807 55%, #000 100%);
+    background-size: 46px 46px, 62px 62px, 54px 54px, cover, cover; transition: background 0.5s;
   }
-
   body.light-mode .cover {
-    background:
-      radial-gradient(circle at 20% 20%, rgba(139,101,8,.14) 0 1.5px, transparent 2.5px),
-      radial-gradient(circle at 80% 30%, rgba(139,101,8,.10) 0 1.5px, transparent 2.5px),
-      radial-gradient(circle at 30% 80%, rgba(139,101,8,.08) 0 1.5px, transparent 2.5px),
-      radial-gradient(ellipse at 50% 40%, rgba(139,101,8,.06), transparent 60%),
-      linear-gradient(160deg, #f5ebd6 0%, #fdfaf6 55%, #ffffff 100%);
+    background: radial-gradient(circle at 20% 20%, rgba(139,101,8,.14) 0 1.5px, transparent 2.5px), radial-gradient(circle at 80% 30%, rgba(139,101,8,.10) 0 1.5px, transparent 2.5px), radial-gradient(circle at 30% 80%, rgba(139,101,8,.08) 0 1.5px, transparent 2.5px), radial-gradient(ellipse at 50% 40%, rgba(139,101,8,.06), transparent 60%), linear-gradient(160deg, #f5ebd6 0%, #fdfaf6 55%, #ffffff 100%);
   }
-
-  .cover::before {
-    content:""; position:absolute; inset:15px;
-    border:1px solid rgba(212,175,55,.55); border-radius:6px;
-    pointer-events:none; z-index:2; animation:framePulse 8s ease-in-out infinite;
-  }
+  .cover::before { content:""; position:absolute; inset:15px; border:1px solid rgba(212,175,55,.55); border-radius:6px; pointer-events:none; z-index:2; animation:framePulse 8s infinite; }
   body.light-mode .cover::before { border-color: rgba(139,101,8,.55); }
-  
   @keyframes framePulse{0%,100%{box-shadow:inset 0 0 60px rgba(212,175,55,.05)}50%{box-shadow:inset 0 0 90px rgba(212,175,55,.14),0 0 30px rgba(212,175,55,.18)}}
 
   .stars, .particles { position:absolute; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
-  .star { position:absolute; background:#ffe9a8; border-radius:50%; box-shadow:0 0 6px 1px rgba(232,199,102,.65); animation:twinkle var(--d,3s) ease-in-out infinite; animation-delay:var(--delay,0s); }
+  .star { position:absolute; background:#ffe9a8; border-radius:50%; box-shadow:0 0 6px 1px rgba(232,199,102,.65); animation:twinkle var(--d,3s) infinite; animation-delay:var(--delay,0s); }
   body.light-mode .star { background: #d4af37; box-shadow: 0 0 6px 1px rgba(139,101,8,.65); }
   @keyframes twinkle{0%,100%{opacity:.1;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
-  
   .particle { position:absolute; bottom:-20px; border-radius:50%; background:radial-gradient(circle,#ffe9a8 0%,#d4af37 55%,transparent 100%); box-shadow:0 0 10px rgba(212,175,55,.7); opacity:0; animation:floatUp var(--dur,14s) linear infinite; animation-delay:var(--delay,0s); }
-  body.light-mode .particle { background: radial-gradient(circle,#d4af37 0%,#8b6508 55%,transparent 100%); box-shadow: 0 0 10px rgba(139,101,8,.7); }
+  body.light-mode .particle { background: radial-gradient(circle,#d4af37 0%,#8b6508 55%,transparent 100%); }
   @keyframes floatUp{0%{transform:translate(0,0);opacity:0}10%{opacity:.85}90%{opacity:.4}100%{transform:translate(var(--dx,20px),-110vh);opacity:0}}
   
-  .moon { position:absolute; top:40px; right:40px; width:1em; height:1em; font-size:60px; border-radius:50%; box-shadow:inset -.22em -.03em 0 0 #e8c766; animation:moonGlow 6s ease-in-out infinite; z-index:1; }
+  .moon { position:absolute; top:40px; right:40px; width:1em; height:1em; font-size:60px; border-radius:50%; box-shadow:inset -.22em -.03em 0 0 #e8c766; animation:moonGlow 6s infinite; z-index:1; }
   body.light-mode .moon { box-shadow: inset -.22em -.03em 0 0 #8b6508; }
   @keyframes moonGlow{0%,100%{filter:drop-shadow(0 0 10px rgba(212,175,55,.35))}50%{filter:drop-shadow(0 0 24px rgba(232,199,102,.8))}}
 
-  /* Tombol Tema (Matahari/Bulan) */
-  .btn-theme { position: absolute; top: 20px; left: 20px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--gold); font-size: 24px; padding: 8px; border-radius: 50%; cursor: pointer; z-index: 10; transition: all 0.3s; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; }
-  .btn-theme:hover { transform: scale(1.1); border-color: var(--gold); }
-
+  .btn-theme { position: absolute; top: 20px; left: 20px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--gold); font-size: 24px; padding: 8px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; }
   .cover-content { position:relative; z-index:3; width:100%; display:flex; flex-direction:column; align-items:center; text-align:center; padding:20px; }
-  
-  .bismillah { font-family:'Amiri',serif; font-size:clamp(22px, 5vw, 34px); color:var(--gold); line-height:1.8; margin:0 0 15px; animation:softGlow 5s ease-in-out infinite; direction: rtl; }
+  .bismillah { font-family:'Amiri',serif; font-size:clamp(22px, 5vw, 34px); color:var(--gold); line-height:1.8; margin:0 0 15px; animation:softGlow 5s infinite; direction: rtl; }
   @keyframes softGlow{0%,100%{text-shadow:0 0 14px rgba(212,175,55,.2)}50%{text-shadow:0 0 28px rgba(232,199,102,.65)}}
-  
   .kicker { font-family:Georgia,serif; font-size:clamp(10px, 1.5vw, 13px); letter-spacing:.4em; text-transform:uppercase; color:var(--gold); margin:0 0 15px; }
-  
-  h1.cover-title { margin:0; font-weight:700; font-size:clamp(38px, 8vw, 76px); line-height:1.04; background:linear-gradient(100deg,#f6e7a8 0%,#d4af37 22%,#fff6cf 42%,#b8860b 62%,#f6e7a8 82%,#d4af37 100%); background-size:220% 100%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; color:transparent; filter:drop-shadow(0 2px 10px rgba(0,0,0,.7)); animation:shimmer 7s linear infinite; }
-  body.light-mode h1.cover-title { background: linear-gradient(100deg, #8b6508 0%, #d4af37 22%, #5c4402 42%, #b8860b 62%, #8b6508 82%, #d4af37 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 2px 10px rgba(255,255,255,.7)); }
+  h1.cover-title { margin:0; font-weight:700; font-size:clamp(38px, 8vw, 76px); line-height:1.04; background:linear-gradient(100deg,#f6e7a8 0%,#d4af37 22%,#fff6cf 42%,#b8860b 62%,#f6e7a8 82%,#d4af37 100%); background-size:220% 100%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 2px 10px rgba(0,0,0,.7)); animation:shimmer 7s linear infinite; }
+  body.light-mode h1.cover-title { background: linear-gradient(100deg, #8b6508 0%, #d4af37 22%, #5c4402 42%, #b8860b 62%, #8b6508 82%, #d4af37 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
   @keyframes shimmer{0%{background-position:0% 50%}100%{background-position:-220% 50%}}
-  
   .divider { position:relative; width:clamp(80px, 30vw, 170px); height:1px; margin:20px auto; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
   .divider span { position:absolute; left:50%; top:50%; background:var(--bg-main); padding:0 10px; color:var(--gold); font-size:16px; animation:spinSlow 14s linear infinite; }
   @keyframes spinSlow{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
-  
   .desc { margin:0 auto 30px; max-width:30ch; font-style:italic; font-size:clamp(15px, 2.5vw, 20px); color:var(--text-muted); }
-  
-  .btn-open { display:inline-block; padding:12px 30px; background:var(--card-bg); border:1px solid var(--gold); color:var(--gold); text-decoration:none; border-radius:30px; font-family:Georgia,serif; font-size:16px; letter-spacing:.1em; text-transform:uppercase; transition:all 0.3s ease; cursor:pointer; box-shadow:0 0 15px rgba(212,175,55,0.2); }
-  .btn-open:hover { background:var(--gold); color:#050807; box-shadow:0 0 25px rgba(212,175,55,0.6); }
-
-  .cover-footer { position:absolute; bottom:30px; left:0; right:0; text-align:center; font-family:Georgia,serif; font-size:12px; letter-spacing:.2em; color:var(--text-muted); z-index:3; }
+  .btn-open { padding:12px 30px; background:var(--card-bg); border:1px solid var(--gold); color:var(--gold); border-radius:30px; font-family:Georgia,serif; font-size:16px; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; box-shadow:0 0 15px rgba(212,175,55,0.2); }
+  .cover-footer { position:absolute; bottom:30px; left:0; right:0; text-align:center; font-size:12px; letter-spacing:.2em; color:var(--text-muted); z-index:3; }
 
   /* =========================================
-     2. DESAIN DAFTAR ISI & PENCARIAN
+     2. DAFTAR ISI
      ========================================= */
   .toc-wrapper { width:100%; max-width:600px; margin:0 auto; padding:30px 20px 50px; position:relative; }
   .toc-header { text-align:center; margin-bottom:20px; }
   .toc-header h2 { margin:0; font-size:clamp(28px, 5vw, 38px); font-weight:700; letter-spacing:.1em; background:linear-gradient(100deg, var(--text-title) 0%, var(--gold) 50%, var(--text-title) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
   
-  .search-container { margin-bottom: 25px; position: relative; }
-  .search-input { width: 100%; padding: 12px 20px 12px 45px; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 25px; color: var(--text-main); font-family: 'Cormorant Garamond', serif; font-size: 18px; outline: none; transition: all 0.3s; }
-  .search-input:focus { border-color: var(--gold); box-shadow: 0 0 15px rgba(212,175,55,0.2); }
+  .search-container { margin-bottom: 20px; position: relative; }
+  .search-input { width: 100%; padding: 12px 20px 12px 45px; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 25px; color: var(--text-main); font-family: 'Cormorant Garamond', serif; font-size: 18px; outline: none; }
   .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--gold); font-size: 18px; }
 
-  .section-title { font-family: Georgia, serif; color: var(--gold); font-size: 14px; letter-spacing: .2em; text-transform: uppercase; margin: 25px 0 10px 5px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px; display: none; }
+  /* Tombol Tasbih di Daftar Isi */
+  .btn-tasbih { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(212,175,55,0.1); border: 1px solid var(--gold); color: var(--gold); border-radius: 12px; font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+  .btn-tasbih:hover { background: var(--gold); color: var(--bg-main); }
 
+  .section-title { font-family: Georgia, serif; color: var(--gold); font-size: 14px; letter-spacing: .2em; text-transform: uppercase; margin: 25px 0 10px 5px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px; display: none; }
   .toc-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
-  
-  .toc-item { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; transition: all 0.3s ease; padding-right: 15px; }
-  .toc-item:hover { border-color: var(--gold); transform: translateX(5px); }
+  .toc-item { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding-right: 15px; }
   .toc-item a { display: flex; align-items: center; text-decoration: none; padding: 12px 15px; flex-grow: 1; cursor: pointer; }
-  
-  .toc-number { font-family:Georgia, serif; font-size:16px; color:var(--gold); margin-right:12px; font-weight:bold; min-width:20px; }
+  .toc-number { font-size:16px; color:var(--gold); margin-right:12px; font-weight:bold; min-width:20px; }
   .toc-title { font-size:18px; font-weight:600; color:var(--text-main); flex-grow:1; }
-  
-  .btn-fav-toggle { background: none; border: none; font-size: 22px; cursor: pointer; padding: 0; color: #555; transition: transform 0.2s; line-height: 1; }
-  body.light-mode .btn-fav-toggle { color: #ccc; }
-  .btn-fav-toggle:hover { transform: scale(1.2); }
+  .btn-fav-toggle { background: none; border: none; font-size: 22px; cursor: pointer; color: #555; }
   .btn-fav-toggle.active { color: #f6e7a8; text-shadow: 0 0 10px rgba(232,199,102,0.8); }
   body.light-mode .btn-fav-toggle.active { color: #b8860b; text-shadow: none; }
 
   /* =========================================
-     3. DESAIN ISI DOA (HALAMAN BACAAN)
+     3. ISI DOA
      ========================================= */
   .doa-container { width:100%; max-width:700px; margin:0 auto; padding:30px 20px 60px; }
-  
   .doa-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom:1px solid var(--card-border); padding-bottom:15px; }
-  .btn-back { display:inline-flex; align-items:center; gap:8px; color:var(--gold); text-decoration:none; font-size:16px; cursor:pointer; transition:color 0.3s; background:var(--card-bg); padding:6px 12px; border-radius:20px; border:1px solid var(--card-border); }
-  .btn-back:hover { color:var(--bg-main); background:var(--gold); }
-  
-  .btn-fav-page { background: none; border: none; font-size: 28px; cursor: pointer; color: #555; transition: transform 0.2s, color 0.2s; line-height: 1; }
-  body.light-mode .btn-fav-page { color: #ccc; }
-  .btn-fav-page:hover { transform: scale(1.2); }
+  .btn-back { display:inline-flex; align-items:center; gap:8px; color:var(--gold); font-size:16px; cursor:pointer; background:var(--card-bg); padding:6px 12px; border-radius:20px; border:1px solid var(--card-border); }
+  .btn-fav-page { background: none; border: none; font-size: 28px; cursor: pointer; color: #555; }
   .btn-fav-page.active { color: #f6e7a8; text-shadow: 0 0 15px rgba(232,199,102,0.8); }
   body.light-mode .btn-fav-page.active { color: #b8860b; text-shadow: none; }
 
-  /* FITUR BARU: TOOLBAR (UKURAN & SALIN) */
-  .doa-tools { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-  .tool-btn { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--gold); padding: 8px 16px; border-radius: 20px; font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 5px; }
-  .tool-btn:hover { background: var(--gold); color: var(--bg-main); }
+  .doa-tools { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tool-btn { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--gold); padding: 8px 12px; border-radius: 20px; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 5px; }
+  .tool-btn:hover, .tool-btn.active { background: var(--gold); color: var(--bg-main); }
 
   .doa-title { font-size:clamp(24px, 5vw, 32px); color:var(--text-title); margin:0 0 20px; text-align: center; }
+  .doa-card { background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:25px; margin-bottom:25px; }
   
-  .doa-card { background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:25px; margin-bottom:25px; box-shadow:0 10px 30px rgba(0,0,0,0.1); }
-  
-  /* ==== TEKS ARAB & CAMPURAN (FONT SCALE) ==== */
   .arabic-text { 
     font-family: 'Amiri', 'Traditional Arabic', serif; 
     font-size: clamp(calc(26px * var(--font-scale)), calc(6vw * var(--font-scale)), calc(34px * var(--font-scale))); 
-    color: var(--gold); 
-    direction: rtl; 
-    text-align: right; 
-    line-height: 2.5; 
-    margin-bottom: 20px; 
-    text-shadow: 0 0 15px rgba(212,175,55,0.1); 
-    white-space: pre-wrap; 
-    word-spacing: 3px; 
+    color: var(--gold); direction: rtl; text-align: right; line-height: 2.5; margin-bottom: 20px; white-space: pre-wrap; 
   }
-  
   .latin-text { font-style:italic; color:var(--text-muted); font-size:calc(16px * var(--font-scale)); line-height:1.6; margin-bottom:20px; border-left:2px solid var(--gold); padding-left:15px; white-space: pre-wrap; display: none; }
   .translation-text { color:var(--text-main); font-size:calc(18px * var(--font-scale)); line-height:1.6; white-space: pre-wrap; display: none; }
+
+  /* =========================================
+     4. TASBIH DIGITAL
+     ========================================= */
+  .tasbih-container { width: 100%; max-width: 400px; margin: 0 auto; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100%; }
+  .tasbih-target { display: flex; gap: 10px; margin-bottom: 30px; }
+  .btn-target { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--gold); background: var(--card-bg); color: var(--gold); font-size: 16px; font-weight: bold; cursor: pointer; }
+  .btn-target.active { background: var(--gold); color: var(--bg-main); }
+  
+  .tasbih-circle { 
+    width: 250px; height: 250px; border-radius: 50%; 
+    background: radial-gradient(circle, var(--bg-main) 30%, rgba(212,175,55,0.2) 100%);
+    border: 3px solid var(--gold); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 0 30px rgba(212,175,55,0.3); transition: transform 0.1s;
+    user-select: none; margin-bottom: 30px;
+  }
+  .tasbih-circle:active { transform: scale(0.95); }
+  .tasbih-count { font-size: 80px; font-weight: bold; color: var(--gold); line-height: 1; }
+  .tasbih-text { font-size: 20px; color: var(--text-muted); margin-top: 10px; }
+  
+  .btn-reset-tasbih { background: none; border: 1px solid #ff4444; color: #ff4444; padding: 10px 20px; border-radius: 20px; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
 </style>
 </head>
 <body>
 
-<!-- ====== PWA INSTALL BANNER ====== -->
+<!-- PWA BANNER -->
 <div id="pwa-install-banner">
   <div class="banner-text">
     <h4>Instal Aplikasi Buku Doa</h4>
@@ -293,7 +201,7 @@
 </div>
 
 <div class="app-container" id="app-scroll">
-  <!-- HALAMAN 1: COVER -->
+  <!-- COVER -->
   <div id="page-cover" class="page active cover">
     <button class="btn-theme" id="theme-btn" onclick="toggleTheme()">🌙</button>
     <div class="stars" aria-hidden="true"></div>
@@ -310,13 +218,17 @@
     <div class="cover-footer">Edisi Digital • 2026</div>
   </div>
 
-  <!-- HALAMAN 2: DAFTAR ISI -->
+  <!-- DAFTAR ISI -->
   <div id="page-toc" class="page">
     <div class="toc-wrapper">
       <div class="toc-header">
         <h2>Daftar Isi</h2>
         <span style="color:var(--gold); font-size:14px; letter-spacing:5px;">✦ ✦ ✦</span>
       </div>
+      
+      <!-- TOMBOL TASBIH -->
+      <button class="btn-tasbih" onclick="showPage('page-tasbih')">📿 Buka Tasbih Digital</button>
+
       <div class="search-container">
         <span class="search-icon">🔍</span>
         <input type="text" id="search-input" class="search-input" placeholder="Cari doa atau muqaddimah..." onkeyup="filterTOC()">
@@ -328,7 +240,7 @@
     </div>
   </div>
 
-  <!-- HALAMAN 3: ISI DOA -->
+  <!-- ISI DOA -->
   <div id="page-doa" class="page">
     <div class="doa-container">
       <div class="doa-header">
@@ -336,11 +248,14 @@
         <button id="fav-btn-page" class="btn-fav-page" onclick="toggleCurrentFavorite()">☆</button>
       </div>
       
+      <!-- FITUR BARU DI TOOLBAR -->
       <div class="doa-tools">
         <button class="tool-btn" onclick="adjustFont(-0.1)">A-</button>
         <button class="tool-btn" onclick="adjustFont(0.1)">A+</button>
+        <button class="tool-btn" id="btn-scroll" onclick="toggleAutoScroll()">⏯️ Auto</button>
+        <button class="tool-btn" id="btn-tts" onclick="toggleTTS()">🔊 Baca</button>
+        <button class="tool-btn" id="btn-wake" onclick="toggleWakeLock()">💡 Layar</button>
         <button class="tool-btn" onclick="copyDoa()">📋 Salin</button>
-        <button class="tool-btn" onclick="shareDoa()">🔗 Bagikan</button>
       </div>
 
       <h2 id="doa-title" class="doa-title">Judul Doa</h2>
@@ -349,6 +264,26 @@
         <div id="doa-latin" class="latin-text"></div>
         <div id="doa-translation" class="translation-text"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- TASBIH DIGITAL -->
+  <div id="page-tasbih" class="page">
+    <div class="tasbih-container">
+      <a class="btn-back" style="align-self: flex-start; margin-bottom: 20px;" onclick="goBack()">❮ Kembali</a>
+      
+      <div class="tasbih-target">
+        <button class="btn-target" onclick="setTarget(33)">33x</button>
+        <button class="btn-target" onclick="setTarget(99)">99x</button>
+        <button class="btn-target active" onclick="setTarget(100)">100x</button>
+      </div>
+
+      <div class="tasbih-circle" onclick="countTasbih()">
+        <div class="tasbih-count" id="tasbih-count">0</div>
+        <div class="tasbih-text" id="tasbih-target-text">dari 100</div>
+      </div>
+
+      <button class="btn-reset-tasbih" onclick="resetTasbih()">🔄 Reset</button>
     </div>
   </div>
 </div>
@@ -377,42 +312,129 @@
   const closeBtn = document.getElementById('pwa-close-btn');
 
   window.addEventListener('beforeinstallprompt', (e) => {
-    // Mencegah mini-infobar bawaan browser muncul
     e.preventDefault();
-    // Simpan event agar bisa dipicu nanti
     deferredPrompt = e;
-    
-    // Tampilkan banner kustom kita
     installBanner.classList.add('show');
   });
 
   installBtn.addEventListener('click', async () => {
     if (deferredPrompt) {
-      // Tampilkan prompt instalasi asli
       deferredPrompt.prompt();
-      // Tunggu pilihan pengguna
       const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        console.log('Pengguna menerima instalasi');
-      } else {
-        console.log('Pengguna menolak instalasi');
-      }
-      // Sembunyikan banner dan reset prompt
       installBanner.classList.remove('show');
       deferredPrompt = null;
     }
   });
+  closeBtn.addEventListener('click', () => installBanner.classList.remove('show'));
+  window.addEventListener('appinstalled', () => installBanner.classList.remove('show'));
 
-  closeBtn.addEventListener('click', () => {
-    installBanner.classList.remove('show');
-  });
+  // ====================================================
+  // LOGIKA FITUR BARU (AUTO SCROLL, TTS, WAKE LOCK, TASBIH)
+  // ====================================================
+  
+  let scrollInterval;
+  let isScrolling = false;
+  
+  function toggleAutoScroll() {
+    const btn = document.getElementById('btn-scroll');
+    if (isScrolling) {
+      clearInterval(scrollInterval);
+      btn.classList.remove('active');
+      isScrolling = false;
+    } else {
+      isScrolling = true;
+      btn.classList.add('active');
+      scrollInterval = setInterval(() => {
+        document.getElementById('app-scroll').scrollBy(0, 2); // Kecepatan gulir
+      }, 50);
+    }
+  }
 
-  window.addEventListener('appinstalled', () => {
-    // Sembunyikan banner jika aplikasi berhasil diinstal
-    installBanner.classList.remove('show');
-    console.log('Aplikasi berhasil diinstal');
-  });
+  let isSpeaking = false;
 
+  function toggleTTS() {
+    const btn = document.getElementById('btn-tts');
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      isSpeaking = false;
+      btn.classList.remove('active');
+    } else {
+      isSpeaking = true;
+      btn.classList.add('active');
+      
+      const arabicText = document.getElementById('doa-arabic').innerText;
+      const latinText = document.getElementById('doa-latin').innerText;
+      
+      const textToRead = arabicText + ". " + (latinText ? latinText : "");
+      
+      const utterance = new SpeechSynthesisUtterance(textToRead);
+      utterance.lang = 'ar-SA'; // Coba gunakan bahasa Arab, jika tidak ada akan fallback
+      
+      utterance.onend = () => {
+        isSpeaking = false;
+        btn.classList.remove('active');
+      };
+      
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+
+  let wakeLock = null;
+
+  async function toggleWakeLock() {
+    const btn = document.getElementById('btn-wake');
+    if (wakeLock !== null) {
+      await wakeLock.release();
+      wakeLock = null;
+      btn.classList.remove('active');
+    } else {
+      try {
+        wakeLock = await navigator.wakeLock.request('screen');
+        btn.classList.add('active');
+        wakeLock.addEventListener('release', () => {
+          btn.classList.remove('active');
+          wakeLock = null;
+        });
+      } catch (err) {
+        alert('Fitur layar menyala tidak didukung di browser ini.');
+      }
+    }
+  }
+
+  // Tasbih Logic
+  let tasbihCount = 0;
+  let tasbihTarget = 100;
+
+  function countTasbih() {
+    if (tasbihCount < 999) {
+      tasbihCount++;
+      document.getElementById('tasbih-count').innerText = tasbihCount;
+      
+      // Efek Getar (Vibrate API)
+      if (navigator.vibrate) {
+        navigator.vibrate(50);
+      }
+      
+      // Jika mencapai target
+      if (tasbihCount === tasbihTarget) {
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+        playSound();
+      }
+    }
+  }
+
+  function resetTasbih() {
+    tasbihCount = 0;
+    document.getElementById('tasbih-count').innerText = tasbihCount;
+  }
+
+  function setTarget(target) {
+    tasbihTarget = target;
+    document.getElementById('tasbih-target-text').innerText = "dari " + target;
+    document.querySelectorAll('.btn-target').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    resetTasbih();
+  }
 
   // ====================================================
   // FUNGSI UTAMA & NAVIGASI
@@ -468,11 +490,29 @@
     animateStars();
   });
 
+  // Tangani tombol Back fisik di HP
+  window.addEventListener('popstate', function(event) {
+    try {
+      if (event.state) {
+        if (event.state.page === 'cover') showPage('page-cover', false);
+        else if (event.state.page === 'toc') showPage('page-toc', false);
+        else if (event.state.page === 'doa') openDoa(event.state.id, false);
+      } else {
+        showPage('page-cover', false);
+      }
+    } catch(e) {}
+  });
+
   function goBack() {
     const activePage = document.querySelector('.page.active');
     if (!activePage) return;
+
+    // Hentikan fitur yang sedang berjalan
+    if (isScrolling) toggleAutoScroll();
+    if (isSpeaking) toggleTTS();
+    if (wakeLock !== null) toggleWakeLock();
     
-    if (activePage.id === 'page-doa') {
+    if (activePage.id === 'page-doa' || activePage.id === 'page-tasbih') {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('page-toc').classList.add('active');
       document.getElementById('app-scroll').scrollTop = 0;
@@ -507,6 +547,10 @@
   function openDoa(id, pushHistory = true) {
     const doa = dataDoa[id];
     if (doa) {
+      // Hentikan fitur yang sedang berjalan sebelum buka doa baru
+      if (isScrolling) toggleAutoScroll();
+      if (isSpeaking) toggleTTS();
+      
       currentDoaId = id; 
       document.getElementById('doa-title').innerText = doa.title; 
       document.getElementById('doa-arabic').innerHTML = doa.arabic;
@@ -532,20 +576,8 @@
     }
   }
 
-  window.addEventListener('popstate', function(event) {
-    try {
-      if (event.state) {
-        if (event.state.page === 'cover') showPage('page-cover', false);
-        else if (event.state.page === 'toc') showPage('page-toc', false);
-        else if (event.state.page === 'doa') openDoa(event.state.id, false);
-      } else {
-        showPage('page-cover', false);
-      }
-    } catch(e) {}
-  });
-
   // ====================================================
-  // FUNGSI PENDUKUNG
+  // FUNGSI PENDUKUNG (Tema, Font, Salin, Favorit, dll)
   // ====================================================
 
   function renderTOC() {
@@ -679,23 +711,6 @@
         alert('Teks doa berhasil disalin ke clipboard!');
       }).catch(err => alert('Gagal menyalin teks.'));
     } catch(e) { alert('Browser tidak mendukung fitur salin.'); }
-    playSound();
-  }
-
-  function shareDoa() {
-    const title = document.getElementById('doa-title').innerText;
-    try {
-      if (navigator.share) {
-        navigator.share({
-          title: title,
-          text: `Baca ${title} di Aplikasi Buku Doa Digital.`,
-          url: window.location.href
-        }).catch(console.error);
-      } else {
-        navigator.clipboard.writeText(window.location.href);
-        alert('Link aplikasi berhasil disalin! Bagikan ke teman Anda.');
-      }
-    } catch(e) { alert('Browser tidak mendukung fitur bagikan.'); }
     playSound();
   }
 
