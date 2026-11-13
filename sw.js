@@ -1,4 +1,4 @@
-const CACHE_NAME = 'buku-doa-v23';
+const CACHE_NAME = 'buku-doa-v40';
 
 self.addEventListener('install', event => {
   self.skipWaiting();
