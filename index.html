@@ -68,6 +68,73 @@
   }
 
   /* =========================================
+     FITUR BARU: PWA INSTALL BANNER
+     ========================================= */
+  #pwa-install-banner {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: linear-gradient(180deg, #14543d 0%, #0f3d2e 100%);
+    color: #f8f1dc;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    z-index: 9999;
+    transform: translateY(-100%);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-family: 'Cormorant Garamond', serif;
+    border-bottom: 1px solid var(--gold);
+  }
+  #pwa-install-banner.show {
+    transform: translateY(0);
+  }
+  .banner-text {
+    flex-grow: 1;
+    margin-right: 15px;
+  }
+  .banner-text h4 {
+    margin: 0 0 4px 0;
+    color: var(--gold);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .banner-text p {
+    margin: 0;
+    font-size: 12px;
+    color: #cdbf8f;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+  .banner-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-install {
+    background: var(--gold);
+    color: #050807;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-install:hover { transform: scale(1.05); box-shadow: 0 0 10px rgba(212,175,55,0.5); }
+  .btn-close-banner {
+    background: none;
+    border: none;
+    color: #cdbf8f;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 5px;
+  }
+  .btn-close-banner:hover { color: #fff; }
+
+  /* =========================================
      1. DESAIN COVER (HALAMAN DEPAN)
      ========================================= */
   .cover {
@@ -213,6 +280,18 @@
 </head>
 <body>
 
+<!-- ====== PWA INSTALL BANNER ====== -->
+<div id="pwa-install-banner">
+  <div class="banner-text">
+    <h4>Instal Aplikasi Buku Doa</h4>
+    <p>Akses lebih cepat & bisa dibuka tanpa internet.</p>
+  </div>
+  <div class="banner-actions">
+    <button id="pwa-install-btn" class="btn-install">Instal</button>
+    <button id="pwa-close-btn" class="btn-close-banner">✕</button>
+  </div>
+</div>
+
 <div class="app-container" id="app-scroll">
   <!-- HALAMAN 1: COVER -->
   <div id="page-cover" class="page active cover">
@@ -253,7 +332,6 @@
   <div id="page-doa" class="page">
     <div class="doa-container">
       <div class="doa-header">
-        <!-- TOMBOL KEMBALI: Memanggil fungsi goBack() manual -->
         <a class="btn-back" onclick="goBack()">❮ Kembali</a>
         <button id="fav-btn-page" class="btn-fav-page" onclick="toggleCurrentFavorite()">☆</button>
       </div>
@@ -291,7 +369,53 @@
   };
 
   // ====================================================
-  // FUNGSI UTAMA
+  // LOGIKA PWA INSTALL BANNER
+  // ====================================================
+  let deferredPrompt;
+  const installBanner = document.getElementById('pwa-install-banner');
+  const installBtn = document.getElementById('pwa-install-btn');
+  const closeBtn = document.getElementById('pwa-close-btn');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Mencegah mini-infobar bawaan browser muncul
+    e.preventDefault();
+    // Simpan event agar bisa dipicu nanti
+    deferredPrompt = e;
+    
+    // Tampilkan banner kustom kita
+    installBanner.classList.add('show');
+  });
+
+  installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      // Tampilkan prompt instalasi asli
+      deferredPrompt.prompt();
+      // Tunggu pilihan pengguna
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        console.log('Pengguna menerima instalasi');
+      } else {
+        console.log('Pengguna menolak instalasi');
+      }
+      // Sembunyikan banner dan reset prompt
+      installBanner.classList.remove('show');
+      deferredPrompt = null;
+    }
+  });
+
+  closeBtn.addEventListener('click', () => {
+    installBanner.classList.remove('show');
+  });
+
+  window.addEventListener('appinstalled', () => {
+    // Sembunyikan banner jika aplikasi berhasil diinstal
+    installBanner.classList.remove('show');
+    console.log('Aplikasi berhasil diinstal');
+  });
+
+
+  // ====================================================
+  // FUNGSI UTAMA & NAVIGASI
   // ====================================================
   
   let favorites = [];
@@ -344,32 +468,22 @@
     animateStars();
   });
 
-  // ====================================================
-  // FUNGSI NAVIGASI MANUAL (Agar Tombol Kembali Pasti Berfungsi)
-  // ====================================================
-
   function goBack() {
     const activePage = document.querySelector('.page.active');
     if (!activePage) return;
     
     if (activePage.id === 'page-doa') {
-      // Ubah UI langsung ke Daftar Isi
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('page-toc').classList.add('active');
       document.getElementById('app-scroll').scrollTop = 0;
       playSound();
-      
-      // Update URL secara diam-diam agar tombol back HP tetap sinkron
       try { history.replaceState({page: 'toc'}, '', '#toc'); } catch(e){}
       
     } else if (activePage.id === 'page-toc') {
-      // Ubah UI langsung ke Cover
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('page-cover').classList.add('active');
       document.getElementById('app-scroll').scrollTop = 0;
       playSound();
-      
-      // Update URL secara diam-diam
       try { history.replaceState({page: 'cover'}, '', '#cover'); } catch(e){}
     }
   }
@@ -418,7 +532,6 @@
     }
   }
 
-  // Menangani Tombol Back Fisik di HP
   window.addEventListener('popstate', function(event) {
     try {
       if (event.state) {
