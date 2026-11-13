@@ -131,7 +131,6 @@
   body.light-mode .particle { background: radial-gradient(circle,#d4af37 0%,#8b6508 55%,transparent 100%); }
   @keyframes floatUp{0%{transform:translate(0,0);opacity:0}10%{opacity:.85}90%{opacity:.4}100%{transform:translate(var(--dx,20px),-110vh);opacity:0}}
   
-  /* Moon Icon - Sekarang bisa diklik untuk rahasia */
   .moon { position:absolute; top:40px; right:40px; width:1em; height:1em; font-size:60px; border-radius:50%; box-shadow:inset -.22em -.03em 0 0 #e8c766; animation:moonGlow 6s infinite; z-index:10; cursor:pointer; }
   body.light-mode .moon { box-shadow: inset -.22em -.03em 0 0 #8b6508; }
   @keyframes moonGlow{0%,100%{filter:drop-shadow(0 0 10px rgba(212,175,55,.35))}50%{filter:drop-shadow(0 0 24px rgba(232,199,102,.8))}}
@@ -197,7 +196,7 @@
   .translation-text { color:var(--text-main); font-size:18px; line-height:1.6; white-space: pre-wrap; display: none; }
 
   /* =========================================
-     MODE EDIT RAHASIA
+     MODE EDIT RAHASIA (Hanya Teks Doa)
      ========================================= */
   body.edit-mode .arabic-text,
   body.edit-mode .latin-text,
@@ -345,9 +344,9 @@
 
       <!-- KARTU DOA -->
       <div class="doa-card">
-        <div id="doa-arabic" class="arabic-text">Teks Arab...</div>
-        <div id="doa-latin" class="latin-text"></div>
-        <div id="doa-translation" class="translation-text"></div>
+        <div id="doa-arabic" class="arabic-text" oninput="autoSave()">Teks Arab...</div>
+        <div id="doa-latin" class="latin-text" oninput="autoSave()"></div>
+        <div id="doa-translation" class="translation-text" oninput="autoSave()"></div>
       </div>
     </div>
   </div>
@@ -375,9 +374,8 @@
 
 <!-- TOOLS MODE EDIT -->
 <div class="edit-tools" id="edit-tools">
-  <button class="btn-edit-action" onclick="saveDoaEdit()">💾 Simpan Edit</button>
-  <button class="btn-edit-action secondary" onclick="exportCode()">📤 Ekspor Kode</button>
-  <button class="btn-edit-action danger" onclick="enableEditMode()">❌ Selesai</button>
+  <button class="btn-edit-action secondary" onclick="exportCode()">📤 Ekspor Kode ke GitHub</button>
+  <button class="btn-edit-action danger" onclick="enableEditMode()">❌ Selesai Edit</button>
 </div>
 
 <script>
@@ -568,7 +566,7 @@
       if(arabicEl) arabicEl.style.fontSize = `calc(clamp(26px, 6vw, 34px) * ${scale})`;
       if(latinEl) latinEl.style.fontSize = `calc(16px * ${scale})`;
       if(transEl) transEl.style.fontSize = `calc(18px * ${scale})`;
-    } catch(e) { console.warn("Gagal set font size", e); }
+    } catch(e) { }
   }
 
   function openDoa(id, pushHistory = true) {
@@ -599,7 +597,7 @@
       try { savedScale = parseFloat(localStorage.getItem('doa_font_scale')) || 1; } catch(e) {}
       applyFontScale(savedScale);
 
-      updateEditability(); // Pastikan status edit sesuai
+      updateEditability(); 
 
       showPage('page-doa', false);
       
@@ -822,7 +820,7 @@
   animateStars();
 
   // ====================================================
-  // 6. FITUR EDIT RAHASIA
+  // 6. FITUR EDIT RAHASIA & AUTO SAVE
   // ====================================================
   
   let isEditMode = false;
@@ -848,7 +846,7 @@
     isEditMode = !isEditMode;
     if(isEditMode) {
       document.body.classList.add('edit-mode');
-      alert("✅ MODE EDIT AKTIF.\n\nBuka doa apa saja, lalu ketuk teks untuk mengeditnya.\n\nJangan lupa klik tombol 'Simpan Edit' dan 'Ekspor Kode' untuk memperbarui GitHub.");
+      alert("✅ MODE EDIT AKTIF.\n\nBuka doa apa saja, lalu ketuk teksnya untuk mengedit.\n\nSetiap ketikan Anda akan OTOMATIS TERSIMPAN di HP ini (tidak perlu klik simpan).\n\nJika ingin mengubah untuk semua orang, klik 'Ekspor Kode ke GitHub'.");
     } else {
       document.body.classList.remove('edit-mode');
       alert("Mode Edit Dimatikan.");
@@ -868,19 +866,18 @@
     });
   }
 
-  function saveDoaEdit() {
-    if (!currentDoaId) return;
+  // Fungsi Auto Save (Dipanggil setiap kali Anda mengetik)
+  function autoSave() {
+    if (!isEditMode || !currentDoaId) return;
     
     const updatedArabic = document.getElementById('doa-arabic').innerHTML;
     const updatedLatin = document.getElementById('doa-latin').innerHTML;
     const updatedTranslation = document.getElementById('doa-translation').innerHTML;
 
-    // Update memori
     dataDoa[currentDoaId].arabic = updatedArabic;
     dataDoa[currentDoaId].latin = updatedLatin;
     dataDoa[currentDoaId].translation = updatedTranslation;
 
-    // Simpan ke localStorage
     let customData = {};
     try { customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {}; } catch(e) {}
     customData[currentDoaId] = {
@@ -889,9 +886,6 @@
       translation: updatedTranslation
     };
     try { localStorage.setItem('custom_doa_data', JSON.stringify(customData)); } catch(e) {}
-    
-    alert('✅ Perubahan berhasil disimpan di HP ini!');
-    playSound();
   }
 
   function exportCode() {
@@ -926,7 +920,7 @@
   }
 
   // ====================================================
-  // 5. FITUR PWA & AUTO UPDATE (DI BUNGKUS TRY-CATCH)
+  // 5. FITUR PWA & AUTO UPDATE
   // ====================================================
   
   try {
