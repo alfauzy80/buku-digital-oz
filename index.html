@@ -21,7 +21,6 @@
     --card-border: rgba(212,175,55,0.2);
     --gold: #d4af37;
     --input-bg: rgba(255,255,255,0.05);
-    --font-scale: 1;
   }
   body.light-mode {
     --bg-main: #fdfaf6;
@@ -174,13 +173,10 @@
   .doa-title { font-size:clamp(24px, 5vw, 32px); color:var(--text-title); margin:0 0 20px; text-align: center; }
   .doa-card { background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:25px; margin-bottom:25px; }
   
-  .arabic-text { 
-    font-family: 'Amiri', 'Traditional Arabic', serif; 
-    font-size: clamp(calc(26px * var(--font-scale)), calc(6vw * var(--font-scale)), calc(34px * var(--font-scale))); 
-    color: var(--gold); direction: rtl; text-align: right; line-height: 2.5; margin-bottom: 20px; white-space: pre-wrap; 
-  }
-  .latin-text { font-style:italic; color:var(--text-muted); font-size:calc(16px * var(--font-scale)); line-height:1.6; margin-bottom:20px; border-left:2px solid var(--gold); padding-left:15px; white-space: pre-wrap; display: none; }
-  .translation-text { color:var(--text-main); font-size:calc(18px * var(--font-scale)); line-height:1.6; white-space: pre-wrap; display: none; }
+  /* Default Font Sizes (Akan ditimpa oleh JS) */
+  .arabic-text { font-family: 'Amiri', 'Traditional Arabic', serif; font-size: clamp(26px, 6vw, 34px); color: var(--gold); direction: rtl; text-align: right; line-height: 2.5; margin-bottom: 20px; white-space: pre-wrap; }
+  .latin-text { font-style:italic; color:var(--text-muted); font-size:16px; line-height:1.6; margin-bottom:20px; border-left:2px solid var(--gold); padding-left:15px; white-space: pre-wrap; display: none; }
+  .translation-text { color:var(--text-main); font-size:18px; line-height:1.6; white-space: pre-wrap; display: none; }
 
   /* =========================================
      4. TASBIH DIGITAL
@@ -273,8 +269,9 @@
       </div>
       
       <div class="doa-tools">
-        <button class="tool-btn" onclick="adjustFont(-0.1)">A-</button>
-        <button class="tool-btn" onclick="adjustFont(0.1)">A+</button>
+        <!-- Kita ubah ukuran langkah menjadi 0.3 agar lebih terasa -->
+        <button class="tool-btn" onclick="adjustFont(-0.3)">A-</button>
+        <button class="tool-btn" onclick="adjustFont(0.3)">A+</button>
         <button class="tool-btn" id="btn-scroll" onclick="toggleAutoScroll()">⏯️ Auto</button>
         <button class="tool-btn" id="btn-tts" onclick="toggleTTS()">🔊 Baca</button>
         <button class="tool-btn" id="btn-wake" onclick="toggleWakeLock()">💡 Layar</button>
@@ -327,7 +324,7 @@
   };
 
   // ====================================================
-  // 1. RENDER DAFTAR ISI (DIJALANKAN PERTAMA KALI)
+  // 1. RENDER DAFTAR ISI
   // ====================================================
   
   let favorites = [];
@@ -414,7 +411,6 @@
     if (allTitle) allTitle.style.display = (allVisibleCount > 0) ? 'block' : 'none';
   }
 
-  // Load Favorit & Render
   try { 
     const savedFav = localStorage.getItem('doa_favorites'); 
     if (savedFav) { const parsed = JSON.parse(savedFav); if (Array.isArray(parsed)) favorites = parsed; } 
@@ -477,6 +473,19 @@
     }
   }
 
+  // Fungsi Menerapkan Ukuran Font secara langsung (Inline Style)
+  function applyFontScale(scale) {
+    try {
+      const arabicEl = document.getElementById('doa-arabic');
+      const latinEl = document.getElementById('doa-latin');
+      const transEl = document.getElementById('doa-translation');
+      
+      if(arabicEl) arabicEl.style.fontSize = `calc(clamp(26px, 6vw, 34px) * ${scale})`;
+      if(latinEl) latinEl.style.fontSize = `calc(16px * ${scale})`;
+      if(transEl) transEl.style.fontSize = `calc(18px * ${scale})`;
+    } catch(e) { console.warn("Gagal set font size", e); }
+  }
+
   function openDoa(id, pushHistory = true) {
     const doa = dataDoa[id];
     if (doa) {
@@ -500,6 +509,12 @@
       }
       
       updateStarIcon(); 
+      
+      // Terapkan ukuran font yang tersimpan
+      let savedScale = 1;
+      try { savedScale = parseFloat(localStorage.getItem('doa_font_scale')) || 1; } catch(e) {}
+      applyFontScale(savedScale);
+
       showPage('page-doa', false);
       
       if (pushHistory) {
@@ -534,11 +549,6 @@
     }
   } catch(e) {}
 
-  try {
-    const scale = parseFloat(localStorage.getItem('doa_font_scale')) || 1;
-    document.documentElement.style.setProperty('--font-scale', scale);
-  } catch(e) {}
-
   function toggleTheme() {
     document.body.classList.toggle('light-mode');
     const isLight = document.body.classList.contains('light-mode');
@@ -555,10 +565,23 @@
     let scale = 1;
     try { scale = parseFloat(localStorage.getItem('doa_font_scale')) || 1; } catch(e) {}
     scale += step;
-    scale = Math.max(0.8, Math.min(1.5, scale));
+    
+    // Perbesar batas maksimal dari 1.5 ke 3.0
+    scale = Math.max(0.8, Math.min(3.0, scale));
+    
     try { localStorage.setItem('doa_font_scale', scale); } catch(e) {}
-    document.documentElement.style.setProperty('--font-scale', scale);
+    
+    applyFontScale(scale);
     playSound();
+    
+    // Tampilkan notifikasi pop-up kecil
+    try {
+      const toast = document.createElement('div');
+      toast.innerText = `Ukuran: ${Math.round(scale * 100)}%`;
+      toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--gold);color:#000;padding:8px 16px;border-radius:20px;font-weight:bold;z-index:9999;transition:opacity 0.5s;box-shadow:0 4px 10px rgba(0,0,0,0.3);font-family:Georgia,serif;';
+      document.body.appendChild(toast);
+      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 1000);
+    } catch(e){}
   }
 
   function copyDoa() {
@@ -719,7 +742,6 @@
   // ====================================================
   
   try {
-    // PWA Install Banner
     let deferredPrompt;
     const installBanner = document.getElementById('pwa-install-banner');
     const installBtn = document.getElementById('pwa-install-btn');
@@ -744,7 +766,6 @@
     if(closeBtn) closeBtn.addEventListener('click', () => { if(installBanner) installBanner.classList.remove('show'); });
     window.addEventListener('appinstalled', () => { if(installBanner) installBanner.classList.remove('show'); });
 
-    // Auto Update Logic
     let newWorker;
     const updateBanner = document.getElementById('update-banner');
     const btnUpdate = document.getElementById('btn-update');
