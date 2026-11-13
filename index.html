@@ -131,7 +131,8 @@
   body.light-mode .particle { background: radial-gradient(circle,#d4af37 0%,#8b6508 55%,transparent 100%); }
   @keyframes floatUp{0%{transform:translate(0,0);opacity:0}10%{opacity:.85}90%{opacity:.4}100%{transform:translate(var(--dx,20px),-110vh);opacity:0}}
   
-  .moon { position:absolute; top:40px; right:40px; width:1em; height:1em; font-size:60px; border-radius:50%; box-shadow:inset -.22em -.03em 0 0 #e8c766; animation:moonGlow 6s infinite; z-index:1; }
+  /* Moon Icon - Sekarang bisa diklik untuk rahasia */
+  .moon { position:absolute; top:40px; right:40px; width:1em; height:1em; font-size:60px; border-radius:50%; box-shadow:inset -.22em -.03em 0 0 #e8c766; animation:moonGlow 6s infinite; z-index:10; cursor:pointer; }
   body.light-mode .moon { box-shadow: inset -.22em -.03em 0 0 #8b6508; }
   @keyframes moonGlow{0%,100%{filter:drop-shadow(0 0 10px rgba(212,175,55,.35))}50%{filter:drop-shadow(0 0 24px rgba(232,199,102,.8))}}
 
@@ -148,8 +149,6 @@
   @keyframes spinSlow{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
   .desc { margin:0 auto 30px; max-width:30ch; font-style:italic; font-size:clamp(15px, 2.5vw, 20px); color:var(--text-muted); }
   .btn-open { padding:12px 30px; background:var(--card-bg); border:1px solid var(--gold); color:var(--gold); border-radius:30px; font-family:Georgia,serif; font-size:16px; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; box-shadow:0 0 15px rgba(212,175,55,0.2); }
-  
-  /* Footer diubah di sini */
   .cover-footer { position:absolute; bottom:30px; left:0; right:0; text-align:center; font-family:Georgia, serif; font-size:12px; letter-spacing:.1em; color:var(--text-muted); z-index:3; }
 
   /* =========================================
@@ -198,6 +197,42 @@
   .translation-text { color:var(--text-main); font-size:18px; line-height:1.6; white-space: pre-wrap; display: none; }
 
   /* =========================================
+     MODE EDIT RAHASIA
+     ========================================= */
+  body.edit-mode .arabic-text,
+  body.edit-mode .latin-text,
+  body.edit-mode .translation-text {
+    border: 2px dashed var(--gold) !important;
+    padding: 15px !important;
+    border-radius: 8px;
+    background: rgba(212,175,55,0.05);
+    cursor: text;
+    outline: none;
+  }
+  
+  .edit-tools {
+    display: none;
+    position: fixed; bottom: 20px; right: 20px;
+    z-index: 10000;
+    flex-direction: column; gap: 10px;
+  }
+  body.edit-mode .edit-tools { display: flex; }
+  
+  .btn-edit-action {
+    background: var(--gold); color: var(--bg-main);
+    padding: 12px 20px; border-radius: 30px; border: none;
+    font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    font-family: 'Cormorant Garamond', serif; font-size: 16px;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .btn-edit-action.secondary {
+    background: var(--bg-main); color: var(--gold); border: 1px solid var(--gold);
+  }
+  .btn-edit-action.danger {
+    background: #111; color: #ff4444; border: 1px solid #ff4444;
+  }
+
+  /* =========================================
      4. TASBIH DIGITAL
      ========================================= */
   .tasbih-container { width: 100%; max-width: 400px; margin: 0 auto; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100%; }
@@ -244,9 +279,11 @@
   <!-- COVER -->
   <div id="page-cover" class="page active cover">
     <button class="btn-theme" id="theme-btn" onclick="toggleTheme()">🌙</button>
+    <!-- MOON (3x Ketuk untuk Edit Mode) -->
+    <div class="moon" id="secret-moon" aria-hidden="true"></div>
     <div class="stars" aria-hidden="true"></div>
     <div class="particles" aria-hidden="true"></div>
-    <div class="moon" aria-hidden="true"></div>
+    
     <div class="cover-content">
       <p class="bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
       <div class="kicker">Buku Digital</div>
@@ -255,7 +292,6 @@
       <p class="desc">Panduan doa harian dan muqaddimah pilihan</p>
       <button class="btn-open" onclick="showPage('page-toc')">Buka Daftar Isi</button>
     </div>
-    <!-- Teks Footer Diperbarui -->
     <div class="cover-footer">buku digital v1.13.26 created by oznet</div>
   </div>
 
@@ -337,6 +373,13 @@
   </div>
 </div>
 
+<!-- TOOLS MODE EDIT -->
+<div class="edit-tools" id="edit-tools">
+  <button class="btn-edit-action" onclick="saveDoaEdit()">💾 Simpan Edit</button>
+  <button class="btn-edit-action secondary" onclick="exportCode()">📤 Ekspor Kode</button>
+  <button class="btn-edit-action danger" onclick="enableEditMode()">❌ Selesai</button>
+</div>
+
 <script>
   const dataDoa = {
     1: { title: "Doa Setelah Sholat Tahajud", arabic: `اللَّهُمَّ لَكَ الْحَمْدُ أَنْتَ قَيِّمُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ، وَلَكَ الْحَمْدُ لَكَ مُلْكُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ، وَلَكَ الْحَمْدُ نُورُ السَّمَوَاتِ وَالْأَرْضِ، وَلَكَ الْحَمْدُ أَنْتَ الْحَقُّ وَوَعْدُكَ الْحَقُّ وَلِقَاءُكَ حَقٌّ وَقَوْلُكَ حَقٌّ وَالْجَنَّةُ حَقٌّ وَالنَّارُ حَقٌّ، وَالنَّبِيُّونَ حَقٌّ، وَمُحَمَّدٌ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ حَقٌّ، وَالسَّاعَةُ حَقٌّ. اللَّهُمَّ لَكَ أَسْلَمْتُ، وَبِكَ آمَنْتُ، وَعَلَيْكَ تَوَكَّلْتُ وَإِلَيْكَ أَنَبْتُ وَبِكَ خَاصَمْتُ، وَإِلَيْكَ حَاكَمْتُ، فَاغْفِرْلِي مَا قَدَّمْتُ، وَمَا أَخَّرْتُ وَمَا أَسْرَرْتُ وَمَا أَعْلَنْتُ، أَنْتَ الْمُقَدِّمُ وَأَنْتَ الْمُؤَخِّرُ، لَا إِلَهَ إِلَّا أَنْتَ أَوْ لَا إِلَهَ غَيْرُكَ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ.`, latin: "", translation: "" },
@@ -351,6 +394,20 @@
     10: { title: "Contoh Muqoddimah Tahlil", arabic: `<div style="direction: ltr; text-align: left; font-family: 'Cormorant Garamond', Georgia, serif; white-space: normal; line-height: 1.6; color: #f8f1dc;"><h3 style="color: #d4af37; font-size: 20px; margin-bottom: 15px; border-bottom: 1px dashed rgba(212,175,55,0.4); padding-bottom: 5px;">• Versi Indonesia</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin rahimakumullah.</p><p style="margin-bottom: 15px;">Marilah kita panjatkan puji dan syukur ke hadirat Allah SWT, yang telah memberikan nikmat iman, Islam, kesehatan, serta kesempatan kepada kita untuk berkumpul di tempat ini.</p><p style="margin-bottom: 15px;">Hadirin yang dimuliakan Allah.</p><p style="margin-bottom: 15px;">Kita semua menyadari bahwa kehidupan di dunia ini hanyalah sementara. Sebagaimana firman Allah SWT dalam Surah Al-Ankabut ayat 57:</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">كُلُّ نَفْسٍ ذَائِقَةُ الْمَوْتِ ۖ ثُمَّ إِلَيْنَا تُرْجَعُونَ</div><p style="margin-bottom: 15px; font-style: italic; color: #cdbf8f;">"Setiap yang bernyawa akan merasakan mati. Kemudian hanya kepada Kamilah kamu dikembalikan."</p><p style="margin-bottom: 15px;">Dan ketika kita menghadapi musibah, Allah mengajarkan kita untuk senantiasa bersabar, sebagaimana firman-Nya dalam Surah Al-Baqarah ayat 156:</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ</div><p style="margin-bottom: 15px; font-style: italic; color: #cdbf8f;">"Sesungguhnya kami milik Allah dan kepada-Nyalah kami kembali."</p><p style="margin-bottom: 15px;">Hadirin sekalian.</p><p style="margin-bottom: 15px;">Maka pada kesempatan ini, marilah kita bersama-sama mendoakan almarhum/almarhumah. Semoga Allah SWT mengampuni segala dosa-dosanya, menerima amal ibadahnya, melapangkan alam kuburnya, serta menempatkannya di tempat terbaik di sisi-Nya.</p><p style="margin-bottom: 15px;">Atas nama keluarga, kami mengucapkan terima kasih atas kehadiran Bapak, Ibu, dan seluruh hadirin. Kami juga memohon maaf apabila semasa hidup almarhum/almarhumah terdapat kesalahan dan kekhilafan, baik disengaja maupun tidak disengaja.</p><p style="margin-bottom: 15px;">Akhir kata, marilah kita ikuti pembacaan tahlil dan doa ini dengan penuh kekhusyukan. Semoga Allah SWT mengabulkan doa-doa kita.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 25px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p><h3 style="color: #d4af37; font-size: 20px; margin-top: 30px; margin-bottom: 15px; border-bottom: 1px dashed rgba(212,175,55,0.4); padding-bottom: 5px;">• Versi Sunda</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin anu ku simkuring dipihormat, para sesepuh, alim ulama, Bapa-bapa, Ibu-ibu, sareng sadaya jamaah anu dirahmati ku Allah SWT.</p><p style="margin-bottom: 15px;">Mimiti, hayu urang sami-sami muji sareng ngucapkeun sukur ka Allah SWT, anu parantos maparin rahmat, nikmat, sareng karunia-Na, dugi ka dina wengi ieu urang sadaya tiasa kempel ngariung dina kaayaan séhat wal'afiat.</p><p style="margin-bottom: 15px;">Hadirin rahimakumullah.</p><p style="margin-bottom: 15px;">Urang sadaya tangtos parantos uninga, yén kahirupan di dunya ieu mung sakedap sareng sadaya mahluk anu hirup pasti bakal ngaraoskeun maot. Sakumaha dawuhan Allah SWT dina Al-Qur'an Surah Al-Ankabut ayat 57:</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">كُلُّ نَفْسٍ ذَائِقَةُ الْمَوْتِ ۖ ثُمَّ إِلَيْنَا تُرْجَعُونَ</div><p style="margin-bottom: 15px; font-style: italic; color: #cdbf8f;">Anu hartosna: "Satiap anu gaduh nyawa pasti bakal ngaraoskeun maot, teras ka Kami aranjeun sadayana bakal dipulangkeun."</p><p style="margin-bottom: 15px;">Sareng dina waktos urang ditimpa musibah, Allah SWT ngajarkeun urang sangkan tetep sabar sareng ikhlas, sakumaha dina Surah Al-Baqarah ayat 156:</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ</div><p style="margin-bottom: 15px; font-style: italic; color: #cdbf8f;">Anu hartosna: "Saéstuna urang sadaya kagungan Allah, sareng ka Mantenna urang sadaya bakal mulang."</p><p style="margin-bottom: 15px;">Ku kituna, dina ieu kasempetan, hayu urang sami-sami ngado'akeun almarhum/almarhumah, mugia Allah SWT ngahampura sagala kalepatanana, nampi amal ibadahna, ngalapangan alam kuburna, sareng maparin tempat anu mulya di sisi-Na.</p><p style="margin-bottom: 15px;">Salajengna, simkuring salaku wawakil ti pihak kulawarga ngahaturkeun nuhun anu teu kaétang kana kasumpingan Bapa, Ibu, sareng sadaya jamaah. Simkuring ogé nyuhunkeun dihapunten bilih salami almarhum/almarhumah hirup aya kalepatan, boh dina ucap boh dina lampah, dihaja atanapi teu dihaja.</p><p style="margin-bottom: 15px;">Pamungkas, hayu urang sami-sami ngalaksanakeun tahlil sareng ngadu'a kalayan khusyuk. Mugia sadaya amal sareng do'a urang ditampi ku Allah SWT.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 15px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p></div>`, latin: "", translation: "" },
     11: { title: "Contoh Muqoddimah Aqiqah", arabic: `<div style="direction: ltr; text-align: left; font-family: 'Cormorant Garamond', Georgia, serif; white-space: normal; line-height: 1.6; color: #f8f1dc;"><h3 style="color: #d4af37; font-size: 20px; margin-bottom: 15px; border-bottom: 1px dashed rgba(212,175,55,0.4); padding-bottom: 5px;">• Versi Bahasa Sunda</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin rahimakumullah.</p><p style="margin-bottom: 15px;">Mimiti, hayu urang sami-sami muji sareng ngucapkeun sukur ka Allah SWT, anu parantos maparin rahmat, nikmat, sareng karunia-Na, dugi ka dina ieu kasempetan urang tiasa kempel ngariung dina kaayaan séhat wal'afiat.</p><p style="margin-bottom: 15px;">Dina ieu kasempetan, urang sadaya ngariung dina raraga ngalaksanakeun syukuran aqiqah, minangka wujud rasa syukur kulawarga ka Allah SWT, anu parantos maparin amanah sareng karunia berupa lahirna putra/putri.</p><p style="margin-bottom: 15px;">Mugia ku dilaksanakeunana ieu aqiqah, janten jalan kahadéan, sareng mugia murangkalihna janten anak anu soleh/solehah, séhat, panjang yuswa, barokah umurna, taat ka Allah SWT, sareng janten kabagjaan kanggo sepuhna.</p><p style="margin-bottom: 15px;">Teu hilap, simkuring salaku wawakil kulawarga ngahaturkeun nuhun kana kasumpingan Bapa, Ibu, sareng sadaya tamu uleman. Hapunten bilih aya kakirangan dina panyambutan atanapi dina sagala rupi hidangan.</p><p style="margin-bottom: 15px;">Pamungkas, hayu urang sami-sami ngiringan ieu acara kalayan pinuh ku rasa syukur sareng ngadu'a, mugia sadayana dipaparin kalancaran sareng kaberkahan ku Allah SWT.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 25px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p><h3 style="color: #d4af37; font-size: 20px; margin-top: 30px; margin-bottom: 15px; border-bottom: 1px dashed rgba(212,175,55,0.4); padding-bottom: 5px;">• Versi Bahasa Indonesia</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin yang dirahmati Allah SWT.</p><p style="margin-bottom: 15px;">Pertama-tama, marilah kita panjatkan puji dan syukur ke hadirat Allah SWT, karena atas segala rahmat dan karunia-Nya, kita dapat berkumpul di tempat ini dalam keadaan sehat walafiat.</p><p style="margin-bottom: 15px;">Pada kesempatan yang penuh kebahagiaan ini, kita berkumpul dalam rangka melaksanakan syukuran aqiqah sebagai bentuk rasa syukur keluarga kepada Allah SWT atas anugerah dan amanah berupa kelahiran seorang putra/putri.</p><p style="margin-bottom: 15px;">Semoga melalui acara aqiqah ini, anak yang telah dianugerahkan menjadi anak yang saleh/salehah, berbakti kepada kedua orang tua, sehat, panjang umur, penuh keberkahan, serta kelak menjadi kebanggaan keluarga dan bermanfaat bagi agama, bangsa, dan sesama.</p><p style="margin-bottom: 15px;">Selanjutnya, kami mewakili keluarga mengucapkan terima kasih atas kehadiran Bapak, Ibu, serta seluruh tamu undangan. Kami juga memohon maaf apabila terdapat kekurangan dalam penyambutan maupun hidangan yang kami sajikan.</p><p style="margin-bottom: 15px;">Akhir kata, marilah kita ikuti rangkaian acara ini dengan penuh rasa syukur dan doa. Semoga Allah SWT senantiasa melimpahkan keberkahan kepada kita semua.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 15px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p></div>`, latin: "", translation: "" }
   };
+
+  // Load custom edits from localStorage
+  try {
+    const customData = JSON.parse(localStorage.getItem('custom_doa_data'));
+    if (customData) {
+      for (let id in customData) {
+        if (dataDoa[id]) {
+          dataDoa[id].arabic = customData[id].arabic;
+          dataDoa[id].latin = customData[id].latin;
+          dataDoa[id].translation = customData[id].translation;
+        }
+      }
+    }
+  } catch(e) { console.warn("Gagal load custom data", e); }
 
   // ====================================================
   // 1. RENDER DAFTAR ISI
@@ -526,13 +583,13 @@
       
       const latinEl = document.getElementById('doa-latin');
       if (latinEl) { 
-        if (doa.latin && doa.latin.trim() !== "") { latinEl.innerText = doa.latin; latinEl.style.display = "block"; } 
+        if (doa.latin && doa.latin.trim() !== "") { latinEl.innerHTML = doa.latin; latinEl.style.display = "block"; } 
         else { latinEl.style.display = "none"; } 
       }
       
       const transEl = document.getElementById('doa-translation');
       if (transEl) { 
-        if (doa.translation && doa.translation.trim() !== "") { transEl.innerText = doa.translation; transEl.style.display = "block"; } 
+        if (doa.translation && doa.translation.trim() !== "") { transEl.innerHTML = doa.translation; transEl.style.display = "block"; } 
         else { transEl.style.display = "none"; } 
       }
       
@@ -541,6 +598,8 @@
       let savedScale = 1;
       try { savedScale = parseFloat(localStorage.getItem('doa_font_scale')) || 1; } catch(e) {}
       applyFontScale(savedScale);
+
+      updateEditability(); // Pastikan status edit sesuai
 
       showPage('page-doa', false);
       
@@ -761,6 +820,110 @@
     }
   }
   animateStars();
+
+  // ====================================================
+  // 6. FITUR EDIT RAHASIA
+  // ====================================================
+  
+  let isEditMode = false;
+  let moonTapCount = 0;
+  let moonTapTimer;
+
+  const moonEl = document.getElementById('secret-moon');
+  if(moonEl) {
+    moonEl.addEventListener('click', () => {
+      moonTapCount++;
+      if (moonTapCount === 1) {
+        moonTapTimer = setTimeout(() => { moonTapCount = 0; }, 1000);
+      }
+      if (moonTapCount === 3) {
+        clearTimeout(moonTapTimer);
+        moonTapCount = 0;
+        enableEditMode();
+      }
+    });
+  }
+
+  function enableEditMode() {
+    isEditMode = !isEditMode;
+    if(isEditMode) {
+      document.body.classList.add('edit-mode');
+      alert("✅ MODE EDIT AKTIF.\n\nBuka doa apa saja, lalu ketuk teks untuk mengeditnya.\n\nJangan lupa klik tombol 'Simpan Edit' dan 'Ekspor Kode' untuk memperbarui GitHub.");
+    } else {
+      document.body.classList.remove('edit-mode');
+      alert("Mode Edit Dimatikan.");
+    }
+    updateEditability();
+    playSound();
+  }
+
+  function updateEditability() {
+    const els = ['doa-arabic', 'doa-latin', 'doa-translation'];
+    els.forEach(id => {
+      const el = document.getElementById(id);
+      if(el) {
+        if(isEditMode) el.setAttribute('contenteditable', 'true');
+        else el.removeAttribute('contenteditable');
+      }
+    });
+  }
+
+  function saveDoaEdit() {
+    if (!currentDoaId) return;
+    
+    const updatedArabic = document.getElementById('doa-arabic').innerHTML;
+    const updatedLatin = document.getElementById('doa-latin').innerHTML;
+    const updatedTranslation = document.getElementById('doa-translation').innerHTML;
+
+    // Update memori
+    dataDoa[currentDoaId].arabic = updatedArabic;
+    dataDoa[currentDoaId].latin = updatedLatin;
+    dataDoa[currentDoaId].translation = updatedTranslation;
+
+    // Simpan ke localStorage
+    let customData = {};
+    try { customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {}; } catch(e) {}
+    customData[currentDoaId] = {
+      arabic: updatedArabic,
+      latin: updatedLatin,
+      translation: updatedTranslation
+    };
+    try { localStorage.setItem('custom_doa_data', JSON.stringify(customData)); } catch(e) {}
+    
+    alert('✅ Perubahan berhasil disimpan di HP ini!');
+    playSound();
+  }
+
+  function exportCode() {
+    // Generate new dataDoa string
+    let newDataStr = "  const dataDoa = {\n";
+    Object.keys(dataDoa).forEach(id => {
+      const doa = dataDoa[id];
+      // Escape backticks so they don't break the template literal
+      const safeArabic = doa.arabic.replace(/`/g, '\\`');
+      const safeLatin = doa.latin.replace(/`/g, '\\`');
+      const safeTrans = doa.translation.replace(/`/g, '\\`');
+      
+      newDataStr += `    ${id}: { \n      title: "${doa.title}", \n      arabic: \`${safeArabic}\`, \n      latin: \`${safeLatin}\`, \n      translation: \`${safeTrans}\` \n    },\n`;
+    });
+    // Remove last comma
+    newDataStr = newDataStr.replace(/,\n$/, '\n');
+    newDataStr += "  };";
+
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:99999;display:flex;flex-direction:column;padding:20px;box-sizing:border-box;';
+    
+    modal.innerHTML = `
+      <h3 style="color:gold; margin-top:0; font-family:Georgia, serif;">Salin Kode Ini ke GitHub</h3>
+      <p style="color:#ccc; font-size:14px;">Ganti bagian <code>const dataDoa = { ... };</code> di file <code>index.html</code> Anda dengan kode di bawah ini agar semua orang melihat perubahannya. (Jangan lupa naikkan versi di sw.js agar terupdate otomatis).</p>
+      <textarea id="export-textarea" style="flex-grow:1; width:100%; background:#111; color:#00ff00; border:1px solid gold; padding:10px; font-family:monospace; font-size:12px; margin-bottom:10px; box-sizing:border-box;" readonly>${newDataStr}</textarea>
+      <div style="display:flex; gap:10px;">
+        <button onclick="document.getElementById('export-textarea').select(); document.execCommand('copy'); alert('Kode berhasil disalin!');" style="flex:1; padding:15px; background:gold; color:black; font-weight:bold; border:none; border-radius:8px; font-size:16px; cursor:pointer;">📋 Salin Kode</button>
+        <button onclick="this.parentElement.parentElement.remove()" style="flex:1; padding:15px; background:#333; color:white; font-weight:bold; border:none; border-radius:8px; font-size:16px; cursor:pointer;">Tutup</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
 
   // ====================================================
   // 5. FITUR PWA & AUTO UPDATE (DI BUNGKUS TRY-CATCH)
