@@ -52,6 +52,26 @@
   .page.active { display: flex; flex-direction: column; align-items: center; }
 
   /* =========================================
+     BANNER UPDATE APLIKASI
+     ========================================= */
+  #update-banner {
+    position: fixed; bottom: 20px; left: 20px; right: 20px;
+    background: linear-gradient(135deg, #1e5631 0%, #14543d 100%);
+    color: #fff; padding: 15px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    border: 1px solid var(--gold); z-index: 9999;
+    transform: translateY(200%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  #update-banner.show { transform: translateY(0); }
+  .update-text { flex-grow: 1; margin-right: 15px; font-weight: bold; font-size: 15px; }
+  .btn-update-now {
+    background: var(--gold); color: #050807; border: none;
+    padding: 8px 16px; border-radius: 20px; font-weight: bold;
+    font-size: 14px; cursor: pointer; white-space: nowrap;
+  }
+
+  /* =========================================
      PWA INSTALL BANNER
      ========================================= */
   #pwa-install-banner {
@@ -59,7 +79,7 @@
     background: linear-gradient(180deg, #14543d 0%, #0f3d2e 100%);
     color: #f8f1dc; padding: 15px;
     display: flex; align-items: center; justify-content: space-between;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 9999;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 9998;
     transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border-bottom: 1px solid var(--gold);
   }
@@ -124,7 +144,6 @@
   .search-input { width: 100%; padding: 12px 20px 12px 45px; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 25px; color: var(--text-main); font-family: 'Cormorant Garamond', serif; font-size: 18px; outline: none; }
   .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--gold); font-size: 18px; }
 
-  /* Tombol Tasbih di Daftar Isi */
   .btn-tasbih { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(212,175,55,0.1); border: 1px solid var(--gold); color: var(--gold); border-radius: 12px; font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
   .btn-tasbih:hover { background: var(--gold); color: var(--bg-main); }
 
@@ -188,6 +207,12 @@
 </head>
 <body>
 
+<!-- BANNER UPDATE APLIKASI -->
+<div id="update-banner">
+  <div class="update-text">✨ Versi baru telah rilis! Klik untuk update.</div>
+  <button id="btn-update" class="btn-update-now">Update</button>
+</div>
+
 <!-- PWA BANNER -->
 <div id="pwa-install-banner">
   <div class="banner-text">
@@ -226,7 +251,6 @@
         <span style="color:var(--gold); font-size:14px; letter-spacing:5px;">✦ ✦ ✦</span>
       </div>
       
-      <!-- TOMBOL TASBIH -->
       <button class="btn-tasbih" onclick="showPage('page-tasbih')">📿 Buka Tasbih Digital</button>
 
       <div class="search-container">
@@ -248,7 +272,6 @@
         <button id="fav-btn-page" class="btn-fav-page" onclick="toggleCurrentFavorite()">☆</button>
       </div>
       
-      <!-- FITUR BARU DI TOOLBAR -->
       <div class="doa-tools">
         <button class="tool-btn" onclick="adjustFont(-0.1)">A-</button>
         <button class="tool-btn" onclick="adjustFont(0.1)">A+</button>
@@ -304,281 +327,11 @@
   };
 
   // ====================================================
-  // LOGIKA PWA INSTALL BANNER
-  // ====================================================
-  let deferredPrompt;
-  const installBanner = document.getElementById('pwa-install-banner');
-  const installBtn = document.getElementById('pwa-install-btn');
-  const closeBtn = document.getElementById('pwa-close-btn');
-
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    installBanner.classList.add('show');
-  });
-
-  installBtn.addEventListener('click', async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      installBanner.classList.remove('show');
-      deferredPrompt = null;
-    }
-  });
-  closeBtn.addEventListener('click', () => installBanner.classList.remove('show'));
-  window.addEventListener('appinstalled', () => installBanner.classList.remove('show'));
-
-  // ====================================================
-  // LOGIKA FITUR BARU (AUTO SCROLL, TTS, WAKE LOCK, TASBIH)
-  // ====================================================
-  
-  let scrollInterval;
-  let isScrolling = false;
-  
-  function toggleAutoScroll() {
-    const btn = document.getElementById('btn-scroll');
-    if (isScrolling) {
-      clearInterval(scrollInterval);
-      btn.classList.remove('active');
-      isScrolling = false;
-    } else {
-      isScrolling = true;
-      btn.classList.add('active');
-      scrollInterval = setInterval(() => {
-        document.getElementById('app-scroll').scrollBy(0, 2); // Kecepatan gulir
-      }, 50);
-    }
-  }
-
-  let isSpeaking = false;
-
-  function toggleTTS() {
-    const btn = document.getElementById('btn-tts');
-    if (isSpeaking) {
-      window.speechSynthesis.cancel();
-      isSpeaking = false;
-      btn.classList.remove('active');
-    } else {
-      isSpeaking = true;
-      btn.classList.add('active');
-      
-      const arabicText = document.getElementById('doa-arabic').innerText;
-      const latinText = document.getElementById('doa-latin').innerText;
-      
-      const textToRead = arabicText + ". " + (latinText ? latinText : "");
-      
-      const utterance = new SpeechSynthesisUtterance(textToRead);
-      utterance.lang = 'ar-SA'; // Coba gunakan bahasa Arab, jika tidak ada akan fallback
-      
-      utterance.onend = () => {
-        isSpeaking = false;
-        btn.classList.remove('active');
-      };
-      
-      window.speechSynthesis.speak(utterance);
-    }
-  }
-
-  let wakeLock = null;
-
-  async function toggleWakeLock() {
-    const btn = document.getElementById('btn-wake');
-    if (wakeLock !== null) {
-      await wakeLock.release();
-      wakeLock = null;
-      btn.classList.remove('active');
-    } else {
-      try {
-        wakeLock = await navigator.wakeLock.request('screen');
-        btn.classList.add('active');
-        wakeLock.addEventListener('release', () => {
-          btn.classList.remove('active');
-          wakeLock = null;
-        });
-      } catch (err) {
-        alert('Fitur layar menyala tidak didukung di browser ini.');
-      }
-    }
-  }
-
-  // Tasbih Logic
-  let tasbihCount = 0;
-  let tasbihTarget = 100;
-
-  function countTasbih() {
-    if (tasbihCount < 999) {
-      tasbihCount++;
-      document.getElementById('tasbih-count').innerText = tasbihCount;
-      
-      // Efek Getar (Vibrate API)
-      if (navigator.vibrate) {
-        navigator.vibrate(50);
-      }
-      
-      // Jika mencapai target
-      if (tasbihCount === tasbihTarget) {
-        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-        playSound();
-      }
-    }
-  }
-
-  function resetTasbih() {
-    tasbihCount = 0;
-    document.getElementById('tasbih-count').innerText = tasbihCount;
-  }
-
-  function setTarget(target) {
-    tasbihTarget = target;
-    document.getElementById('tasbih-target-text').innerText = "dari " + target;
-    document.querySelectorAll('.btn-target').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-    resetTasbih();
-  }
-
-  // ====================================================
-  // FUNGSI UTAMA & NAVIGASI
+  // 1. RENDER DAFTAR ISI (DIJALANKAN PERTAMA KALI)
   // ====================================================
   
   let favorites = [];
   let currentDoaId = null;
-
-  document.addEventListener("DOMContentLoaded", function() {
-    try { 
-      const savedFav = localStorage.getItem('doa_favorites'); 
-      if (savedFav) { const parsed = JSON.parse(savedFav); if (Array.isArray(parsed)) favorites = parsed; } 
-    } catch (e) { }
-
-    try {
-      if (localStorage.getItem('doa_theme') === 'light') {
-        document.body.classList.add('light-mode');
-        document.getElementById('theme-btn').innerText = '☀️';
-        const meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.setAttribute('content', '#fdfaf6');
-      }
-    } catch(e) {}
-
-    try {
-      const scale = parseFloat(localStorage.getItem('doa_font_scale')) || 1;
-      document.documentElement.style.setProperty('--font-scale', scale);
-    } catch(e) {}
-
-    renderTOC();
-
-    try {
-      const hash = window.location.hash;
-      if (hash.startsWith('#doa-')) {
-        const id = hash.replace('#doa-', '');
-        if (dataDoa[id]) {
-            history.replaceState({page: 'doa', id: id}, '', hash);
-            openDoa(id, false);
-        } else {
-            history.replaceState({page: 'cover'}, '', '#cover');
-            showPage('page-cover', false);
-        }
-      } else if (hash === '#toc') {
-        history.replaceState({page: 'toc'}, '', '#toc');
-        showPage('page-toc', false);
-      } else {
-        history.replaceState({page: 'cover'}, '', '#cover');
-        showPage('page-cover', false);
-      }
-    } catch(e) {
-      showPage('page-cover', false);
-    }
-
-    animateStars();
-  });
-
-  // Tangani tombol Back fisik di HP
-  window.addEventListener('popstate', function(event) {
-    try {
-      if (event.state) {
-        if (event.state.page === 'cover') showPage('page-cover', false);
-        else if (event.state.page === 'toc') showPage('page-toc', false);
-        else if (event.state.page === 'doa') openDoa(event.state.id, false);
-      } else {
-        showPage('page-cover', false);
-      }
-    } catch(e) {}
-  });
-
-  function goBack() {
-    const activePage = document.querySelector('.page.active');
-    if (!activePage) return;
-
-    // Hentikan fitur yang sedang berjalan
-    if (isScrolling) toggleAutoScroll();
-    if (isSpeaking) toggleTTS();
-    if (wakeLock !== null) toggleWakeLock();
-    
-    if (activePage.id === 'page-doa' || activePage.id === 'page-tasbih') {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('page-toc').classList.add('active');
-      document.getElementById('app-scroll').scrollTop = 0;
-      playSound();
-      try { history.replaceState({page: 'toc'}, '', '#toc'); } catch(e){}
-      
-    } else if (activePage.id === 'page-toc') {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('page-cover').classList.add('active');
-      document.getElementById('app-scroll').scrollTop = 0;
-      playSound();
-      try { history.replaceState({page: 'cover'}, '', '#cover'); } catch(e){}
-    }
-  }
-
-  function showPage(pageId, pushHistory = true) {
-    playSound(); 
-    document.querySelectorAll('.page').forEach(page => { page.classList.remove('active'); });
-    const target = document.getElementById(pageId); 
-    if (target) target.classList.add('active');
-    const scroller = document.getElementById('app-scroll'); 
-    if (scroller) scroller.scrollTop = 0; 
-    
-    if (pushHistory) {
-      try {
-        if (pageId === 'page-cover') history.pushState({page: 'cover'}, '', '#cover');
-        else if (pageId === 'page-toc') history.pushState({page: 'toc'}, '', '#toc');
-      } catch(e) {}
-    }
-  }
-
-  function openDoa(id, pushHistory = true) {
-    const doa = dataDoa[id];
-    if (doa) {
-      // Hentikan fitur yang sedang berjalan sebelum buka doa baru
-      if (isScrolling) toggleAutoScroll();
-      if (isSpeaking) toggleTTS();
-      
-      currentDoaId = id; 
-      document.getElementById('doa-title').innerText = doa.title; 
-      document.getElementById('doa-arabic').innerHTML = doa.arabic;
-      
-      const latinEl = document.getElementById('doa-latin');
-      if (latinEl) { 
-        if (doa.latin && doa.latin.trim() !== "") { latinEl.innerText = doa.latin; latinEl.style.display = "block"; } 
-        else { latinEl.style.display = "none"; } 
-      }
-      
-      const transEl = document.getElementById('doa-translation');
-      if (transEl) { 
-        if (doa.translation && doa.translation.trim() !== "") { transEl.innerText = doa.translation; transEl.style.display = "block"; } 
-        else { transEl.style.display = "none"; } 
-      }
-      
-      updateStarIcon(); 
-      showPage('page-doa', false);
-      
-      if (pushHistory) {
-        try { history.pushState({page: 'doa', id: id}, '', '#doa-' + id); } catch(e) {}
-      }
-    }
-  }
-
-  // ====================================================
-  // FUNGSI PENDUKUNG (Tema, Font, Salin, Favorit, dll)
-  // ====================================================
 
   function renderTOC() {
     try {
@@ -661,6 +414,17 @@
     if (allTitle) allTitle.style.display = (allVisibleCount > 0) ? 'block' : 'none';
   }
 
+  // Load Favorit & Render
+  try { 
+    const savedFav = localStorage.getItem('doa_favorites'); 
+    if (savedFav) { const parsed = JSON.parse(savedFav); if (Array.isArray(parsed)) favorites = parsed; } 
+  } catch (e) { }
+  renderTOC();
+
+  // ====================================================
+  // 2. FUNGSI NAVIGASI
+  // ====================================================
+
   function playSound() {
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -672,6 +436,108 @@
       osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.2);
     } catch(e) { }
   }
+
+  function goBack() {
+    const activePage = document.querySelector('.page.active');
+    if (!activePage) return;
+
+    if (isScrolling) toggleAutoScroll();
+    if (isSpeaking) toggleTTS();
+    if (wakeLock !== null) toggleWakeLock();
+    
+    if (activePage.id === 'page-doa' || activePage.id === 'page-tasbih') {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-toc').classList.add('active');
+      document.getElementById('app-scroll').scrollTop = 0;
+      playSound();
+      try { history.replaceState({page: 'toc'}, '', '#toc'); } catch(e){}
+      
+    } else if (activePage.id === 'page-toc') {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-cover').classList.add('active');
+      document.getElementById('app-scroll').scrollTop = 0;
+      playSound();
+      try { history.replaceState({page: 'cover'}, '', '#cover'); } catch(e){}
+    }
+  }
+
+  function showPage(pageId, pushHistory = true) {
+    playSound(); 
+    document.querySelectorAll('.page').forEach(page => { page.classList.remove('active'); });
+    const target = document.getElementById(pageId); 
+    if (target) target.classList.add('active');
+    const scroller = document.getElementById('app-scroll'); 
+    if (scroller) scroller.scrollTop = 0; 
+    
+    if (pushHistory) {
+      try {
+        if (pageId === 'page-cover') history.pushState({page: 'cover'}, '', '#cover');
+        else if (pageId === 'page-toc') history.pushState({page: 'toc'}, '', '#toc');
+      } catch(e) {}
+    }
+  }
+
+  function openDoa(id, pushHistory = true) {
+    const doa = dataDoa[id];
+    if (doa) {
+      if (isScrolling) toggleAutoScroll();
+      if (isSpeaking) toggleTTS();
+      
+      currentDoaId = id; 
+      document.getElementById('doa-title').innerText = doa.title; 
+      document.getElementById('doa-arabic').innerHTML = doa.arabic;
+      
+      const latinEl = document.getElementById('doa-latin');
+      if (latinEl) { 
+        if (doa.latin && doa.latin.trim() !== "") { latinEl.innerText = doa.latin; latinEl.style.display = "block"; } 
+        else { latinEl.style.display = "none"; } 
+      }
+      
+      const transEl = document.getElementById('doa-translation');
+      if (transEl) { 
+        if (doa.translation && doa.translation.trim() !== "") { transEl.innerText = doa.translation; transEl.style.display = "block"; } 
+        else { transEl.style.display = "none"; } 
+      }
+      
+      updateStarIcon(); 
+      showPage('page-doa', false);
+      
+      if (pushHistory) {
+        try { history.pushState({page: 'doa', id: id}, '', '#doa-' + id); } catch(e) {}
+      }
+    }
+  }
+
+  window.addEventListener('popstate', function(event) {
+    try {
+      if (event.state) {
+        if (event.state.page === 'cover') showPage('page-cover', false);
+        else if (event.state.page === 'toc') showPage('page-toc', false);
+        else if (event.state.page === 'doa') openDoa(event.state.id, false);
+      } else {
+        showPage('page-cover', false);
+      }
+    } catch(e) {}
+  });
+
+  // ====================================================
+  // 3. FITUR TEMA, FONT, SALIN, FAVORIT
+  // ====================================================
+
+  try {
+    if (localStorage.getItem('doa_theme') === 'light') {
+      document.body.classList.add('light-mode');
+      const btn = document.getElementById('theme-btn');
+      if (btn) btn.innerText = '☀️';
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', '#fdfaf6');
+    }
+  } catch(e) {}
+
+  try {
+    const scale = parseFloat(localStorage.getItem('doa_font_scale')) || 1;
+    document.documentElement.style.setProperty('--font-scale', scale);
+  } catch(e) {}
 
   function toggleTheme() {
     document.body.classList.toggle('light-mode');
@@ -738,6 +604,99 @@
     }
   }
 
+  // ====================================================
+  // 4. FITUR BARU (AUTO SCROLL, TTS, WAKE LOCK, TASBIH)
+  // ====================================================
+  
+  let scrollInterval;
+  let isScrolling = false;
+  
+  function toggleAutoScroll() {
+    const btn = document.getElementById('btn-scroll');
+    if (isScrolling) {
+      clearInterval(scrollInterval);
+      btn.classList.remove('active');
+      isScrolling = false;
+    } else {
+      isScrolling = true;
+      btn.classList.add('active');
+      scrollInterval = setInterval(() => {
+        document.getElementById('app-scroll').scrollBy(0, 2);
+      }, 50);
+    }
+  }
+
+  let isSpeaking = false;
+
+  function toggleTTS() {
+    const btn = document.getElementById('btn-tts');
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      isSpeaking = false;
+      btn.classList.remove('active');
+    } else {
+      isSpeaking = true;
+      btn.classList.add('active');
+      
+      const arabicText = document.getElementById('doa-arabic').innerText;
+      const latinText = document.getElementById('doa-latin').innerText;
+      const textToRead = arabicText + ". " + (latinText ? latinText : "");
+      
+      const utterance = new SpeechSynthesisUtterance(textToRead);
+      utterance.lang = 'ar-SA'; 
+      utterance.onend = () => { isSpeaking = false; btn.classList.remove('active'); };
+      
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+
+  let wakeLock = null;
+
+  async function toggleWakeLock() {
+    const btn = document.getElementById('btn-wake');
+    if (wakeLock !== null) {
+      await wakeLock.release();
+      wakeLock = null;
+      btn.classList.remove('active');
+    } else {
+      try {
+        wakeLock = await navigator.wakeLock.request('screen');
+        btn.classList.add('active');
+        wakeLock.addEventListener('release', () => { btn.classList.remove('active'); wakeLock = null; });
+      } catch (err) {
+        alert('Fitur layar menyala tidak didukung di browser ini.');
+      }
+    }
+  }
+
+  let tasbihCount = 0;
+  let tasbihTarget = 100;
+
+  function countTasbih() {
+    if (tasbihCount < 999) {
+      tasbihCount++;
+      document.getElementById('tasbih-count').innerText = tasbihCount;
+      if (navigator.vibrate) navigator.vibrate(50);
+      if (tasbihCount === tasbihTarget) {
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+        playSound();
+      }
+    }
+  }
+
+  function resetTasbih() {
+    tasbihCount = 0;
+    document.getElementById('tasbih-count').innerText = tasbihCount;
+  }
+
+  function setTarget(target) {
+    tasbihTarget = target;
+    document.getElementById('tasbih-target-text').innerText = "dari " + target;
+    document.querySelectorAll('.btn-target').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    resetTasbih();
+  }
+
   function animateStars() {
     var s=document.querySelector('.stars'), p=document.querySelector('.particles'); if(!s||!p) return;
     var small=innerWidth<600, red=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -753,9 +712,70 @@
       }
     }
   }
+  animateStars();
 
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(err => console.log('SW gagal:', err));
+  // ====================================================
+  // 5. FITUR PWA & AUTO UPDATE (DI BUNGKUS TRY-CATCH)
+  // ====================================================
+  
+  try {
+    // PWA Install Banner
+    let deferredPrompt;
+    const installBanner = document.getElementById('pwa-install-banner');
+    const installBtn = document.getElementById('pwa-install-btn');
+    const closeBtn = document.getElementById('pwa-close-btn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if(installBanner) installBanner.classList.add('show');
+    });
+
+    if(installBtn) {
+      installBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          if(installBanner) installBanner.classList.remove('show');
+          deferredPrompt = null;
+        }
+      });
+    }
+    if(closeBtn) closeBtn.addEventListener('click', () => { if(installBanner) installBanner.classList.remove('show'); });
+    window.addEventListener('appinstalled', () => { if(installBanner) installBanner.classList.remove('show'); });
+
+    // Auto Update Logic
+    let newWorker;
+    const updateBanner = document.getElementById('update-banner');
+    const btnUpdate = document.getElementById('btn-update');
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(reg => {
+        reg.addEventListener('updatefound', () => {
+          newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              if(updateBanner) updateBanner.classList.add('show');
+            }
+          });
+        });
+      }).catch(err => console.log('SW gagal (mungkin di preview):', err));
+
+      if(btnUpdate) {
+        btnUpdate.addEventListener('click', () => {
+          if (newWorker) newWorker.postMessage({ action: 'skipWaiting' });
+        });
+      }
+
+      let refreshing;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        window.location.reload();
+        refreshing = true;
+      });
+    }
+  } catch(e) {
+    console.warn("PWA / SW tidak didukung di lingkungan ini.");
   }
 </script>
 </body>
