@@ -9,11 +9,9 @@
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest.json">
-<!-- LIBRARY UNTUK DRAG & DROP -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
 <style>
-  /* ==== VARIABEL TEMA ==== */
   :root {
     --bg-main: #050807;
     --text-main: #f8f1dc;
@@ -35,7 +33,6 @@
     --input-bg: rgba(0,0,0,0.05);
   }
 
-  /* ==== RESET & DASAR ==== */
   *{box-sizing:border-box;-webkit-text-size-adjust:100%}
   html, body {
     margin: 0; padding: 0; height: 100%; width: 100%;
@@ -52,54 +49,29 @@
   .page { display: none; min-height: 100%; width: 100%; }
   .page.active { display: flex; flex-direction: column; align-items: center; }
 
-  /* =========================================
-     STICKY HEADER (Terkunci di atas)
-     ========================================= */
   .sticky-wrapper {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: var(--bg-main);
-    width: 100%;
-    margin: -30px -20px 15px -20px; 
-    padding: 15px 15px 10px 15px;
+    position: sticky; top: 0; z-index: 100; background: var(--bg-main);
+    width: 100%; margin: -30px -20px 15px -20px; padding: 15px 15px 10px 15px;
     box-shadow: 0 10px 15px -10px rgba(0,0,0,0.5);
     border-bottom: 1px solid var(--card-border);
   }
-  body.light-mode .sticky-wrapper {
-    box-shadow: 0 10px 15px -10px rgba(0,0,0,0.1);
-  }
+  body.light-mode .sticky-wrapper { box-shadow: 0 10px 15px -10px rgba(0,0,0,0.1); }
 
-  /* =========================================
-     BANNER UPDATE APLIKASI
-     ========================================= */
   #update-banner {
     position: fixed; bottom: 20px; left: 20px; right: 20px;
     background: linear-gradient(135deg, #1e5631 0%, #14543d 100%);
-    color: #fff; padding: 15px 20px;
-    display: flex; align-items: center; justify-content: space-between;
+    color: #fff; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
     border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    border: 1px solid var(--gold); z-index: 9999;
-    transform: translateY(200%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid var(--gold); z-index: 9999; transform: translateY(200%); transition: transform 0.4s;
   }
   #update-banner.show { transform: translateY(0); }
   .update-text { flex-grow: 1; margin-right: 15px; font-weight: bold; font-size: 15px; }
-  .btn-update-now {
-    background: var(--gold); color: #050807; border: none;
-    padding: 8px 16px; border-radius: 20px; font-weight: bold;
-    font-size: 14px; cursor: pointer; white-space: nowrap;
-  }
+  .btn-update-now { background: var(--gold); color: #050807; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; cursor: pointer; }
 
-  /* =========================================
-     PWA INSTALL BANNER
-     ========================================= */
   #pwa-install-banner {
-    position: fixed; top: 0; left: 0; right: 0;
-    background: linear-gradient(180deg, #14543d 0%, #0f3d2e 100%);
-    color: #f8f1dc; padding: 15px;
-    display: flex; align-items: center; justify-content: space-between;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 9998;
-    transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: fixed; top: 0; left: 0; right: 0; background: linear-gradient(180deg, #14543d 0%, #0f3d2e 100%);
+    color: #f8f1dc; padding: 15px; display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 9998; transform: translateY(-100%); transition: transform 0.4s;
     border-bottom: 1px solid var(--gold);
   }
   #pwa-install-banner.show { transform: translateY(0); }
@@ -110,9 +82,6 @@
   .btn-install { background: var(--gold); color: #050807; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; cursor: pointer; }
   .btn-close-banner { background: none; border: none; color: #cdbf8f; font-size: 20px; cursor: pointer; padding: 0 5px; }
 
-  /* =========================================
-     1. COVER
-     ========================================= */
   .cover {
     justify-content: center; position: relative;
     background: radial-gradient(circle at 20% 20%, rgba(212,175,55,.14) 0 1.5px, transparent 2.5px), radial-gradient(circle at 80% 30%, rgba(212,175,55,.10) 0 1.5px, transparent 2.5px), radial-gradient(circle at 30% 80%, rgba(212,175,55,.08) 0 1.5px, transparent 2.5px), radial-gradient(ellipse at 50% 40%, rgba(212,175,55,.06), transparent 60%), linear-gradient(160deg, #0a0f0d 0%, #050807 55%, #000 100%);
@@ -152,28 +121,20 @@
   .btn-open { padding:12px 30px; background:var(--card-bg); border:1px solid var(--gold); color:var(--gold); border-radius:30px; font-family:Georgia,serif; font-size:16px; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; box-shadow:0 0 15px rgba(212,175,55,0.2); }
   .cover-footer { position:absolute; bottom:30px; left:0; right:0; text-align:center; font-family:Georgia, serif; font-size:12px; letter-spacing:.1em; color:var(--text-muted); z-index:3; }
 
-  /* =========================================
-     2. DAFTAR ISI
-     ========================================= */
   .toc-wrapper { width:100%; max-width:600px; margin:0 auto; padding:20px 15px 50px; position:relative; }
   
-  /* Header Row: Judul & Ikon */
   .toc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-  
-  /* Memperbesar Judul Daftar Isi */
   .toc-header h2 { margin:0; font-size:clamp(34px, 7vw, 46px); font-weight:700; letter-spacing:.1em; text-align: left; background:linear-gradient(100deg, var(--text-title) 0%, var(--gold) 50%, var(--text-title) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
   
   .icon-area { display: flex; gap: 8px; }
   .icon-btn { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--gold); font-size: 20px; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; }
   .icon-btn:hover { background: var(--gold); color: var(--bg-main); }
   
-  /* Search Container (Tersembunyi default) */
   .search-container { display: none; margin-top: 10px; margin-bottom: 5px; position: relative; width: 100%; }
   .search-container.active { display: block; }
   .search-input { width: 100%; padding: 10px 20px 10px 40px; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 25px; color: var(--text-main); font-family: 'Cormorant Garamond', serif; font-size: 16px; outline: none; }
   .search-icon-inside { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--gold); font-size: 16px; }
 
-  /* Sub-header: "Semua Doa" & Tombol Atur */
   .toc-sub-header { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px; }
   .section-title-inline { font-family: Georgia, serif; color: var(--gold); font-size: 14px; letter-spacing: .2em; text-transform: uppercase; display: block; }
   .btn-sort { background: var(--card-bg); border: 1px solid var(--gold); color: var(--gold); padding: 4px 10px; border-radius: 15px; font-family: 'Cormorant Garamond', serif; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: 0.3s; }
@@ -185,7 +146,6 @@
   .toc-item { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding-right: 15px; transition: transform 0.1s, box-shadow 0.1s; }
   .toc-item a { display: flex; align-items: center; text-decoration: none; padding: 12px 15px; flex-grow: 1; cursor: pointer; }
   
-  /* Memperbesar Nomor dan Judul Daftar Isi */
   .toc-number { font-size:clamp(18px, 3vw, 22px); color:var(--gold); margin-right:15px; font-weight:bold; min-width:24px; }
   .toc-title { font-size:clamp(20px, 3.5vw, 24px); font-weight:600; color:var(--text-main); flex-grow:1; }
   
@@ -193,7 +153,6 @@
   .btn-fav-toggle.active { color: #f6e7a8; text-shadow: 0 0 10px rgba(232,199,102,0.8); }
   body.light-mode .btn-fav-toggle.active { color: #b8860b; text-shadow: none; }
 
-  /* Drag & Drop Style */
   .sortable-ghost { opacity: 0.4; background: rgba(212,175,55,0.1) !important; border: 2px dashed var(--gold) !important; }
   .sortable-chosen { background: rgba(212,175,55,0.05); box-shadow: 0 5px 15px rgba(0,0,0,0.3); cursor: grabbing !important; }
   body.sort-mode-active .toc-item { cursor: grab; border-color: var(--gold); }
@@ -203,9 +162,6 @@
   .sort-hint { text-align: center; font-size: 14px; color: var(--gold); margin-bottom: 15px; font-style: italic; display: none; }
   body.sort-mode-active .sort-hint { display: block; }
 
-  /* =========================================
-     3. ISI DOA
-     ========================================= */
   .doa-container { width:100%; max-width:700px; margin:0 auto; padding:30px 20px 60px; }
   .doa-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
   .btn-back { display:inline-flex; align-items:center; gap:8px; color:var(--gold); font-size:16px; cursor:pointer; background:var(--card-bg); padding:6px 12px; border-radius:20px; border:1px solid var(--card-border); }
@@ -224,50 +180,58 @@
   .latin-text { font-style:italic; color:var(--text-muted); font-size:16px; line-height:1.6; margin-bottom:20px; border-left:2px solid var(--gold); padding-left:15px; white-space: pre-wrap; display: none; }
   .translation-text { color:var(--text-main); font-size:18px; line-height:1.6; white-space: pre-wrap; display: none; }
 
-  /* =========================================
-     MODE EDIT RAHASIA
-     ========================================= */
   body.edit-mode .arabic-text,
   body.edit-mode .latin-text,
   body.edit-mode .translation-text {
-    border: 2px dashed var(--gold) !important;
-    padding: 15px !important;
-    border-radius: 8px;
-    background: rgba(212,175,55,0.05);
-    cursor: text;
-    outline: none;
+    border: 2px dashed var(--gold) !important; padding: 15px !important;
+    border-radius: 8px; background: rgba(212,175,55,0.05); cursor: text; outline: none;
   }
   
-  .edit-tools {
-    display: none;
-    position: fixed; bottom: 20px; right: 20px;
-    z-index: 10000;
-    flex-direction: column; gap: 10px;
-  }
+  .edit-tools { display: none; position: fixed; bottom: 20px; right: 20px; z-index: 10000; flex-direction: column; gap: 10px; }
   body.edit-mode .edit-tools { display: flex; }
   
   .btn-edit-action {
-    background: var(--gold); color: var(--bg-main);
-    padding: 12px 20px; border-radius: 30px; border: none;
+    background: var(--gold); color: var(--bg-main); padding: 12px 20px; border-radius: 30px; border: none;
     font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     font-family: 'Cormorant Garamond', serif; font-size: 16px;
     display: flex; align-items: center; justify-content: center; gap: 5px;
   }
-  .btn-edit-action.secondary {
-    background: var(--bg-main); color: var(--gold); border: 1px solid var(--gold);
-  }
-  .btn-edit-action.danger {
-    background: #111; color: #ff4444; border: 1px solid #ff4444;
-  }
+  .btn-edit-action.secondary { background: var(--bg-main); color: var(--gold); border: 1px solid var(--gold); }
+  .btn-edit-action.danger { background: #111; color: #ff4444; border: 1px solid #ff4444; }
 
-  /* =========================================
-     4. TASBIH DIGITAL
-     ========================================= */
+  /* MODAL TAMBAH DOA */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    z-index: 20000; justify-content: center; align-items: center; padding: 20px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-content {
+    background: var(--bg-main); border: 1px solid var(--gold); border-radius: 12px;
+    width: 100%; max-width: 500px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    max-height: 90vh; overflow-y: auto;
+  }
+  .modal-content h3 { color: var(--gold); margin-top: 0; text-align: center; font-family: Georgia, serif; font-size: 22px; }
+  .modal-label { display: block; color: var(--gold); font-size: 14px; margin-bottom: 5px; font-weight: bold; }
+  .modal-input {
+    width: 100%; padding: 10px; margin-bottom: 15px;
+    background: var(--input-bg); border: 1px solid var(--card-border);
+    border-radius: 8px; color: var(--text-main); font-family: 'Cormorant Garamond', serif;
+    font-size: 16px; outline: none;
+  }
+  textarea.modal-input { resize: vertical; min-height: 80px; }
+  textarea.arabic-input { font-family: 'Amiri', serif; font-size: 20px; direction: rtl; text-align: right; line-height: 1.8; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 10px; }
+  .modal-btn {
+    flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold;
+    font-family: 'Cormorant Garamond', serif; font-size: 16px; cursor: pointer;
+  }
+  .modal-btn.save { background: var(--gold); color: var(--bg-main); }
+  .modal-btn.cancel { background: #333; color: #fff; }
+
   .tasbih-container { width: 100%; max-width: 400px; margin: 0 auto; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100%; }
   .tasbih-target { display: flex; gap: 10px; margin-bottom: 30px; }
   .btn-target { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--gold); background: var(--card-bg); color: var(--gold); font-size: 16px; font-weight: bold; cursor: pointer; }
   .btn-target.active { background: var(--gold); color: var(--bg-main); }
-  
   .tasbih-circle { 
     width: 250px; height: 250px; border-radius: 50%; 
     background: radial-gradient(circle, var(--bg-main) 30%, rgba(212,175,55,0.2) 100%);
@@ -279,19 +243,16 @@
   .tasbih-circle:active { transform: scale(0.95); }
   .tasbih-count { font-size: 80px; font-weight: bold; color: var(--gold); line-height: 1; }
   .tasbih-text { font-size: 20px; color: var(--text-muted); margin-top: 10px; }
-  
   .btn-reset-tasbih { background: none; border: 1px solid #ff4444; color: #ff4444; padding: 10px 20px; border-radius: 20px; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
 </style>
 </head>
 <body>
 
-<!-- BANNER UPDATE APLIKASI -->
 <div id="update-banner">
   <div class="update-text">✨ Versi baru telah rilis! Klik untuk update.</div>
   <button id="btn-update" class="btn-update-now">Update</button>
 </div>
 
-<!-- PWA BANNER -->
 <div id="pwa-install-banner">
   <div class="banner-text">
     <h4>Instal Aplikasi Buku Doa</h4>
@@ -304,10 +265,8 @@
 </div>
 
 <div class="app-container" id="app-scroll">
-  <!-- COVER -->
   <div id="page-cover" class="page active cover">
     <button class="btn-theme" id="theme-btn" onclick="toggleTheme()">🌙</button>
-    <!-- MOON (3x Ketuk untuk Edit Mode) -->
     <div class="moon" id="secret-moon" aria-hidden="true"></div>
     <div class="stars" aria-hidden="true"></div>
     <div class="particles" aria-hidden="true"></div>
@@ -323,27 +282,23 @@
     <div class="cover-footer">buku digital v1.13.26 created by oznet</div>
   </div>
 
-  <!-- DAFTAR ISI -->
   <div id="page-toc" class="page">
     <div class="toc-wrapper">
-      
-      <!-- STICKY HEADER TOC -->
       <div class="sticky-wrapper">
         <div class="toc-header">
           <h2>Daftar Isi</h2>
           <div class="icon-area">
+            <button class="icon-btn" onclick="openAddDoaModal()" title="Tambah Doa">➕</button>
             <button class="icon-btn" onclick="showPage('page-tasbih')" title="Tasbih Digital">📿</button>
             <button class="icon-btn" onclick="toggleSearch()" title="Cari Doa">🔍</button>
           </div>
         </div>
         
-        <!-- Kolom Pencarian (Tersembunyi, muncul saat ikon diklik) -->
         <div class="search-container" id="search-container">
           <span class="search-icon-inside">🔍</span>
           <input type="text" id="search-input" class="search-input" placeholder="Cari doa..." onkeyup="filterTOC()">
         </div>
 
-        <!-- Sub-header: "Semua Doa" & Tombol Atur -->
         <div class="toc-sub-header">
           <div class="section-title-inline" id="all-section-title" style="display: block;">Semua Doa</div>
           <button id="btn-sort" class="btn-sort" onclick="toggleSortMode()">🔀 Atur Urutan</button>
@@ -352,20 +307,15 @@
 
       <div class="sort-hint">Tekan & tahan judul, lalu geser ke atas/bawah.</div>
 
-      <!-- DAFTAR FAVORIT -->
       <div id="fav-section-title" class="section-title">⭐ Doa Favorit</div>
       <div id="fav-list" class="toc-list" style="margin-bottom: 20px;"></div>
       
-      <!-- DAFTAR SEMUA DOA -->
       <div id="all-list" class="toc-list"></div>
     </div>
   </div>
 
-  <!-- ISI DOA -->
   <div id="page-doa" class="page">
     <div class="doa-container">
-      
-      <!-- STICKY HEADER DOA -->
       <div class="sticky-wrapper">
         <div class="doa-header">
           <a class="btn-back" onclick="goBack()">❮ Kembali</a>
@@ -384,7 +334,6 @@
         <h2 id="doa-title" class="doa-title">Judul Doa</h2>
       </div>
 
-      <!-- KARTU DOA -->
       <div class="doa-card">
         <div id="doa-arabic" class="arabic-text" oninput="autoSave()">Teks Arab...</div>
         <div id="doa-latin" class="latin-text" oninput="autoSave()"></div>
@@ -393,7 +342,6 @@
     </div>
   </div>
 
-  <!-- TASBIH DIGITAL -->
   <div id="page-tasbih" class="page">
     <div class="tasbih-container">
       <a class="btn-back" style="align-self: flex-start; margin-bottom: 20px;" onclick="goBack()">❮ Kembali</a>
@@ -420,11 +368,31 @@
   <button class="btn-edit-action danger" onclick="enableEditMode()">❌ Selesai Edit</button>
 </div>
 
+<!-- MODAL TAMBAH DOA BARU -->
+<div class="modal-overlay" id="add-doa-modal">
+  <div class="modal-content">
+    <h3>Tambah Doa Baru</h3>
+    
+    <label class="modal-label">Judul Doa</label>
+    <input type="text" id="new-title" class="modal-input" placeholder="Contoh: Doa Sebelum Tidur">
+    
+    <label class="modal-label">Teks Arab</label>
+    <textarea id="new-arabic" class="modal-input arabic-input" placeholder="اللَّهُمَّ ..."></textarea>
+    
+    <label class="modal-label">Teks Latin (Opsional)</label>
+    <textarea id="new-latin" class="modal-input" placeholder="Allahumma ..."></textarea>
+    
+    <label class="modal-label">Terjemahan (Opsional)</label>
+    <textarea id="new-translation" class="modal-input" placeholder="Ya Allah ..."></textarea>
+    
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeAddDoaModal()">Batal</button>
+      <button class="modal-btn save" onclick="saveNewDoa()">Simpan Doa</button>
+    </div>
+  </div>
+</div>
+
 <script>
-  // ====================================================
-  // DATA DOA (Menggunakan ID Unik agar aman saat diacak)
-  // ====================================================
-  
   let dataDoa = [
     { id: "doa_1", title: "Doa Setelah Sholat Tahajud", arabic: `اللَّهُمَّ لَكَ الْحَمْدُ أَنْتَ قَيِّمُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ، وَلَكَ الْحَمْدُ لَكَ مُلْكُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ، وَلَكَ الْحَمْدُ نُورُ السَّمَوَاتِ وَالْأَرْضِ، وَلَكَ الْحَمْدُ أَنْتَ الْحَقُّ وَوَعْدُكَ الْحَقُّ وَلِقَاءُكَ حَقٌّ وَقَوْلُكَ حَقٌّ وَالْجَنَّةُ حَقٌّ وَالنَّارُ حَقٌّ، وَالنَّبِيُّونَ حَقٌّ، وَمُحَمَّدٌ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ حَقٌّ، وَالسَّاعَةُ حَقٌّ. اللَّهُمَّ لَكَ أَسْلَمْتُ، وَبِكَ آمَنْتُ، وَعَلَيْكَ تَوَكَّلْتُ وَإِلَيْكَ أَنَبْتُ وَبِكَ خَاصَمْتُ، وَإِلَيْكَ حَاكَمْتُ، فَاغْفِرْلِي مَا قَدَّمْتُ، وَمَا أَخَّرْتُ وَمَا أَسْرَرْتُ وَمَا أَعْلَنْتُ، أَنْتَ الْمُقَدِّمُ وَأَنْتَ الْمُؤَخِّرُ، لَا إِلَهَ إِلَّا أَنْتَ أَوْ لَا إِلَهَ غَيْرُكَ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ.`, latin: "", translation: "" },
     { id: "doa_2", title: "Doa Setelah Sholat Dhuha", arabic: `اَللَّهُمَّ إِنَّ الضُّحَاءَ ضُحَاؤُكَ وَالْبَهَاءَ بَهَاؤُكَ وَالْجَمَالَ جَمَالُكَ وَالْقُوَّةَ قُوَّتُكَ وَالْقُدْرَةَ قُدْرَتُكَ وَالْعِصْمَةَ عِصْمَتُكَ. اَللَّهُمَّ إِنْ كَانَ رِزْقِي فِي السَّمَاءِ فَأَنْزِلْهُ وَإِنْ كَانَ فِي الْأَرْضِ فَأَخْرِجْهُ وَإِنْ كَانَ مُعَسَّرًا فَيَسِّرْهُ وَإِنْ كَانَ حَرَامًا فَطَهِّرْهُ وَإِنْ كَانَ بَعِيدًا فَقَرِّبْهُ بِحَقِّ ضُحَائِكَ وَبَهَائِكَ وَجَمَالِكَ وَقُوَّتِكَ وَقُدْرَتِكَ آتِنِي مَا آتَيْتَ عِبَادَكَ الصَّالِحِينَ.`, latin: "", translation: "" },
@@ -439,12 +407,10 @@
     { id: "doa_11", title: "Contoh Muqoddimah Aqiqah", arabic: `<div style="direction: ltr; text-align: left; font-family: 'Cormorant Garamond', Georgia, serif; white-space: normal; line-height: 1.6; color: #f8f1dc;"><h3 style="color: #d4af37; font-size: 20px; margin-bottom: 15px; border-bottom: 1px dashed rgba(212,175,55,0.4); padding-bottom: 5px;">• Versi Bahasa Sunda</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin rahimakumullah.</p><p style="margin-bottom: 15px;">Mimiti, hayu urang sami-sami muji sareng ngucapkeun sukur ka Allah SWT, anu parantos maparin rahmat, nikmat, sareng karunia-Na, dugi ka dina ieu kasempetan urang tiasa kempel ngariung dina kaayaan séhat wal'afiat.</p><p style="margin-bottom: 15px;">Dina ieu kasempetan, urang sadaya ngariung dina raraga ngalaksanakeun syukuran aqiqah, minangka wujud rasa syukur kulawarga ka Allah SWT, anu parantos maparin amanah sareng karunia berupa lahirna putra/putri.</p><p style="margin-bottom: 15px;">Mugia ku dilaksanakeunana ieu aqiqah, janten jalan kahadéan, sareng mugia murangkalihna janten anak anu soleh/solehah, séhat, panjang yuswa, barokah umurna, taat ka Allah SWT, sareng janten kabagjaan kanggo sepuhna.</p><p style="margin-bottom: 15px;">Teu hilap, simkuring salaku wawakil kulawarga ngahaturkeun nuhun kana kasumpingan Bapa, Ibu, sareng sadaya tamu uleman. Hapunten bilih aya kakirangan dina panyambutan atanapi dina sagala rupi hidangan.</p><p style="margin-bottom: 15px;">Pamungkas, hayu urang sami-sami ngiringan ieu acara kalayan pinuh ku rasa syukur sareng ngadu'a, mugia sadayana dipaparin kalancaran sareng kaberkahan ku Allah SWT.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 25px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p><h3 style="color: #d4af37; font-size: 20px; margin-top: 30px; margin-bottom: 15px; border-bottom: 1px dashed rgba(212,175,55,0.4); padding-bottom: 5px;">• Versi Bahasa Indonesia</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: #e8c766; margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin yang dirahmati Allah SWT.</p><p style="margin-bottom: 15px;">Pertama-tama, marilah kita panjatkan puji dan syukur ke hadirat Allah SWT, karena atas segala rahmat dan karunia-Nya, kita dapat berkumpul di tempat ini dalam keadaan sehat walafiat.</p><p style="margin-bottom: 15px;">Pada kesempatan yang penuh kebahagiaan ini, kita berkumpul dalam rangka melaksanakan syukuran aqiqah sebagai bentuk rasa syukur keluarga kepada Allah SWT atas anugerah dan amanah berupa kelahiran seorang putra/putri.</p><p style="margin-bottom: 15px;">Semoga melalui acara aqiqah ini, anak yang telah dianugerahkan menjadi anak yang saleh/salehah, berbakti kepada kedua orang tua, sehat, panjang umur, penuh keberkahan, serta kelak menjadi kebanggaan keluarga dan bermanfaat bagi agama, bangsa, dan sesama.</p><p style="margin-bottom: 15px;">Selanjutnya, kami mewakili keluarga mengucapkan terima kasih atas kehadiran Bapak, Ibu, serta seluruh tamu undangan. Kami juga memohon maaf apabila terdapat kekurangan dalam penyambutan maupun hidangan yang kami sajikan.</p><p style="margin-bottom: 15px;">Akhir kata, marilah kita ikuti rangkaian acara ini dengan penuh rasa syukur dan doa. Semoga Allah SWT senantiasa melimpahkan keberkahan kepada kita semua.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 15px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p></div>`, latin: "", translation: "" }
   ];
 
-  // Pastikan semua item punya ID unik
   dataDoa.forEach((doa, index) => {
     if (!doa.id) doa.id = 'doa_' + (index + 1);
   });
 
-  // Load custom data & order from localStorage
   try {
     const customData = JSON.parse(localStorage.getItem('custom_doa_data'));
     if (customData) {
@@ -471,10 +437,6 @@
     }
   } catch(e) { console.warn("Gagal load data", e); }
 
-  // ====================================================
-  // 1. RENDER DAFTAR ISI & SORTING
-  // ====================================================
-  
   let favorites = [];
   let currentDoaId = null;
   let sortableInstance = null;
@@ -638,7 +600,55 @@
   renderTOC();
 
   // ====================================================
-  // 2. FUNGSI NAVIGASI
+  // FUNGSI TAMBAH DOA BARU
+  // ====================================================
+  
+  function openAddDoaModal() {
+    document.getElementById('add-doa-modal').classList.add('active');
+  }
+
+  function closeAddDoaModal() {
+    document.getElementById('add-doa-modal').classList.remove('active');
+    document.getElementById('new-title').value = '';
+    document.getElementById('new-arabic').value = '';
+    document.getElementById('new-latin').value = '';
+    document.getElementById('new-translation').value = '';
+  }
+
+  function saveNewDoa() {
+    const title = document.getElementById('new-title').value.trim();
+    const arabic = document.getElementById('new-arabic').value.trim();
+    const latin = document.getElementById('new-latin').value.trim();
+    const translation = document.getElementById('new-translation').value.trim();
+
+    if (!title || !arabic) {
+      alert('Judul dan Teks Arab wajib diisi!');
+      return;
+    }
+
+    const newId = 'doa_' + Date.now();
+    const newDoa = { id: newId, title: title, arabic: arabic, latin: latin, translation: translation };
+    
+    dataDoa.push(newDoa);
+
+    // Simpan ke localStorage
+    try {
+      let customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {};
+      customData[newId] = { arabic: arabic, latin: latin, translation: translation };
+      localStorage.setItem('custom_doa_data', JSON.stringify(customData));
+
+      const currentOrder = dataDoa.map(d => d.id);
+      localStorage.setItem('custom_doa_order', JSON.stringify(currentOrder));
+    } catch(e) { console.warn("Gagal simpan ke localStorage", e); }
+
+    closeAddDoaModal();
+    renderTOC();
+    playSound();
+    alert('Doa baru berhasil ditambahkan ke urutan paling bawah!');
+  }
+
+  // ====================================================
+  // FUNGSI LAINNYA
   // ====================================================
 
   function playSound() {
@@ -764,10 +774,6 @@
     } catch(e) {}
   });
 
-  // ====================================================
-  // 3. FITUR TEMA, FONT, SALIN, FAVORIT
-  // ====================================================
-
   try {
     if (localStorage.getItem('doa_theme') === 'light') {
       document.body.classList.add('light-mode');
@@ -794,11 +800,8 @@
     let scale = 1;
     try { scale = parseFloat(localStorage.getItem('doa_font_scale')) || 1; } catch(e) {}
     scale += step;
-    
     scale = Math.max(0.8, Math.min(4.5, scale));
-    
     try { localStorage.setItem('doa_font_scale', scale); } catch(e) {}
-    
     applyFontScale(scale);
     playSound();
     
@@ -854,10 +857,6 @@
     }
   }
 
-  // ====================================================
-  // 4. FITUR BARU (AUTO SCROLL, TTS, WAKE LOCK, TASBIH)
-  // ====================================================
-  
   let scrollInterval;
   let isScrolling = false;
   
@@ -964,10 +963,6 @@
   }
   animateStars();
 
-  // ====================================================
-  // 6. FITUR EDIT RAHASIA & AUTO SAVE
-  // ====================================================
-  
   let isEditMode = false;
   let moonTapCount = 0;
   let moonTapTimer;
@@ -1062,10 +1057,6 @@
     document.body.appendChild(modal);
   }
 
-  // ====================================================
-  // 5. FITUR PWA & AUTO UPDATE
-  // ====================================================
-  
   try {
     let deferredPrompt;
     const installBanner = document.getElementById('pwa-install-banner');
