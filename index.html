@@ -51,6 +51,25 @@
   .page.active { display: flex; flex-direction: column; align-items: center; }
 
   /* =========================================
+     STICKY HEADER (Terkunci di atas)
+     ========================================= */
+  .sticky-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-main); /* Latar belakang solid agar teks di bawahnya tertutup */
+    width: 100%;
+    /* Trik margin negatif untuk menutupi padding parent */
+    margin: -30px -20px 15px -20px; 
+    padding: 20px 20px 15px 20px;
+    box-shadow: 0 10px 15px -10px rgba(0,0,0,0.5); /* Bayangan di bawah header */
+    border-bottom: 1px solid var(--card-border);
+  }
+  body.light-mode .sticky-wrapper {
+    box-shadow: 0 10px 15px -10px rgba(0,0,0,0.1);
+  }
+
+  /* =========================================
      BANNER UPDATE APLIKASI
      ========================================= */
   #update-banner {
@@ -139,11 +158,11 @@
   .toc-header { text-align:center; margin-bottom:20px; }
   .toc-header h2 { margin:0; font-size:clamp(28px, 5vw, 38px); font-weight:700; letter-spacing:.1em; background:linear-gradient(100deg, var(--text-title) 0%, var(--gold) 50%, var(--text-title) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
   
-  .search-container { margin-bottom: 20px; position: relative; }
+  .search-container { margin-bottom: 10px; position: relative; } /* Margin bottom dikurangi karena sudah ada padding sticky */
   .search-input { width: 100%; padding: 12px 20px 12px 45px; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 25px; color: var(--text-main); font-family: 'Cormorant Garamond', serif; font-size: 18px; outline: none; }
   .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--gold); font-size: 18px; }
 
-  .btn-tasbih { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(212,175,55,0.1); border: 1px solid var(--gold); color: var(--gold); border-radius: 12px; font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+  .btn-tasbih { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(212,175,55,0.1); border: 1px solid var(--gold); color: var(--gold); border-radius: 12px; font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
   .btn-tasbih:hover { background: var(--gold); color: var(--bg-main); }
 
   .section-title { font-family: Georgia, serif; color: var(--gold); font-size: 14px; letter-spacing: .2em; text-transform: uppercase; margin: 25px 0 10px 5px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px; display: none; }
@@ -160,20 +179,20 @@
      3. ISI DOA
      ========================================= */
   .doa-container { width:100%; max-width:700px; margin:0 auto; padding:30px 20px 60px; }
-  .doa-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom:1px solid var(--card-border); padding-bottom:15px; }
+  .doa-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
   .btn-back { display:inline-flex; align-items:center; gap:8px; color:var(--gold); font-size:16px; cursor:pointer; background:var(--card-bg); padding:6px 12px; border-radius:20px; border:1px solid var(--card-border); }
   .btn-fav-page { background: none; border: none; font-size: 28px; cursor: pointer; color: #555; }
   .btn-fav-page.active { color: #f6e7a8; text-shadow: 0 0 15px rgba(232,199,102,0.8); }
   body.light-mode .btn-fav-page.active { color: #b8860b; text-shadow: none; }
 
-  .doa-tools { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-  .tool-btn { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--gold); padding: 8px 12px; border-radius: 20px; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 5px; }
+  .doa-tools { display: flex; justify-content: center; gap: 6px; margin-bottom: 15px; flex-wrap: wrap; }
+  .tool-btn { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--gold); padding: 6px 10px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 4px; }
   .tool-btn:hover, .tool-btn.active { background: var(--gold); color: var(--bg-main); }
 
-  .doa-title { font-size:clamp(24px, 5vw, 32px); color:var(--text-title); margin:0 0 20px; text-align: center; }
+  .doa-title { font-size:clamp(20px, 4.5vw, 28px); color:var(--text-title); margin:0 0 10px; text-align: center; }
   .doa-card { background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:25px; margin-bottom:25px; }
   
-  /* Default Font Sizes (Akan ditimpa oleh JS) */
+  /* Default Font Sizes */
   .arabic-text { font-family: 'Amiri', 'Traditional Arabic', serif; font-size: clamp(26px, 6vw, 34px); color: var(--gold); direction: rtl; text-align: right; line-height: 2.5; margin-bottom: 20px; white-space: pre-wrap; }
   .latin-text { font-style:italic; color:var(--text-muted); font-size:16px; line-height:1.6; margin-bottom:20px; border-left:2px solid var(--gold); padding-left:15px; white-space: pre-wrap; display: none; }
   .translation-text { color:var(--text-main); font-size:18px; line-height:1.6; white-space: pre-wrap; display: none; }
@@ -242,17 +261,21 @@
   <!-- DAFTAR ISI -->
   <div id="page-toc" class="page">
     <div class="toc-wrapper">
-      <div class="toc-header">
-        <h2>Daftar Isi</h2>
-        <span style="color:var(--gold); font-size:14px; letter-spacing:5px;">✦ ✦ ✦</span>
-      </div>
       
-      <button class="btn-tasbih" onclick="showPage('page-tasbih')">📿 Buka Tasbih Digital</button>
-
-      <div class="search-container">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="search-input" class="search-input" placeholder="Cari doa atau muqaddimah..." onkeyup="filterTOC()">
+      <!-- STICKY HEADER TOC -->
+      <div class="sticky-wrapper">
+        <div class="toc-header">
+          <h2>Daftar Isi</h2>
+          <span style="color:var(--gold); font-size:14px; letter-spacing:5px;">✦ ✦ ✦</span>
+        </div>
+        <button class="btn-tasbih" onclick="showPage('page-tasbih')">📿 Buka Tasbih Digital</button>
+        <div class="search-container">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" class="search-input" placeholder="Cari doa atau muqaddimah..." onkeyup="filterTOC()">
+        </div>
       </div>
+
+      <!-- DAFTAR DOA -->
       <div id="fav-section-title" class="section-title">⭐ Doa Favorit</div>
       <div id="fav-list" class="toc-list" style="margin-bottom: 20px;"></div>
       <div id="all-section-title" class="section-title" style="display: block;">Semua Doa</div>
@@ -263,22 +286,28 @@
   <!-- ISI DOA -->
   <div id="page-doa" class="page">
     <div class="doa-container">
-      <div class="doa-header">
-        <a class="btn-back" onclick="goBack()">❮ Kembali</a>
-        <button id="fav-btn-page" class="btn-fav-page" onclick="toggleCurrentFavorite()">☆</button>
-      </div>
       
-      <div class="doa-tools">
-        <!-- Kita ubah ukuran langkah menjadi 0.3 agar lebih terasa -->
-        <button class="tool-btn" onclick="adjustFont(-0.3)">A-</button>
-        <button class="tool-btn" onclick="adjustFont(0.3)">A+</button>
-        <button class="tool-btn" id="btn-scroll" onclick="toggleAutoScroll()">⏯️ Auto</button>
-        <button class="tool-btn" id="btn-tts" onclick="toggleTTS()">🔊 Baca</button>
-        <button class="tool-btn" id="btn-wake" onclick="toggleWakeLock()">💡 Layar</button>
-        <button class="tool-btn" onclick="copyDoa()">📋 Salin</button>
+      <!-- STICKY HEADER DOA -->
+      <div class="sticky-wrapper">
+        <div class="doa-header">
+          <a class="btn-back" onclick="goBack()">❮ Kembali</a>
+          <button id="fav-btn-page" class="btn-fav-page" onclick="toggleCurrentFavorite()">☆</button>
+        </div>
+        
+        <div class="doa-tools">
+          <!-- Step diperbesar menjadi 0.5 -->
+          <button class="tool-btn" onclick="adjustFont(-0.5)">A-</button>
+          <button class="tool-btn" onclick="adjustFont(0.5)">A+</button>
+          <button class="tool-btn" id="btn-scroll" onclick="toggleAutoScroll()">⏯️ Auto</button>
+          <button class="tool-btn" id="btn-tts" onclick="toggleTTS()">🔊 Baca</button>
+          <button class="tool-btn" id="btn-wake" onclick="toggleWakeLock()">💡 Layar</button>
+          <button class="tool-btn" onclick="copyDoa()">📋 Salin</button>
+        </div>
+
+        <h2 id="doa-title" class="doa-title">Judul Doa</h2>
       </div>
 
-      <h2 id="doa-title" class="doa-title">Judul Doa</h2>
+      <!-- KARTU DOA -->
       <div class="doa-card">
         <div id="doa-arabic" class="arabic-text">Teks Arab...</div>
         <div id="doa-latin" class="latin-text"></div>
@@ -473,7 +502,6 @@
     }
   }
 
-  // Fungsi Menerapkan Ukuran Font secara langsung (Inline Style)
   function applyFontScale(scale) {
     try {
       const arabicEl = document.getElementById('doa-arabic');
@@ -510,7 +538,6 @@
       
       updateStarIcon(); 
       
-      // Terapkan ukuran font yang tersimpan
       let savedScale = 1;
       try { savedScale = parseFloat(localStorage.getItem('doa_font_scale')) || 1; } catch(e) {}
       applyFontScale(savedScale);
@@ -566,8 +593,8 @@
     try { scale = parseFloat(localStorage.getItem('doa_font_scale')) || 1; } catch(e) {}
     scale += step;
     
-    // Perbesar batas maksimal dari 1.5 ke 3.0
-    scale = Math.max(0.8, Math.min(3.0, scale));
+    // Maksimal 4.5x lipat
+    scale = Math.max(0.8, Math.min(4.5, scale));
     
     try { localStorage.setItem('doa_font_scale', scale); } catch(e) {}
     
