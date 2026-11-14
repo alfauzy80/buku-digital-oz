@@ -1,69 +1,1507 @@
-const CACHE_NAME = 'buku-doa-v50';
-const ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon.png',
-  'https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&display=swap',
-  'https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js'
-];
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kumpulan Doa & Muqaddimah</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#050807" id="meta-theme">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest.json">
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache =>
-      Promise.all(
-        ASSETS.map(url =>
-          cache.add(url).catch(err => console.warn('Precache skip:', url, err))
-        )
-      )
-    )
-  );
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys()
-      .then(names => Promise.all(
-        names.filter(n => n !== CACHE_NAME).map(n => caches.delete(n))
-      ))
-      .then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener('fetch', event => {
-  const req = event.request;
-  if (req.method !== 'GET') return;
-
-  if (req.mode === 'navigate') {
-    event.respondWith(
-      fetch(req)
-        .then(res => {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then(c => c.put(req, clone));
-          return res;
-        })
-        .catch(() => caches.match(req).then(r => r || caches.match('./index.html')))
-    );
-    return;
+<style>
+  :root {
+    --bg-main: #050807; --text-main: #f8f1dc; --text-muted: #cdbf8f;
+    --text-title: #f6e7a8; --card-bg: rgba(255,255,255,0.02);
+    --card-border: rgba(212,175,55,0.2); --gold: #d4af37;
+    --input-bg: rgba(255,255,255,0.05);
+  }
+  body.light-mode {
+    --bg-main: #fdfaf6; --text-main: #2c2a26; --text-muted: #5c554a;
+    --text-title: #8b6508; --card-bg: rgba(0,0,0,0.03);
+    --card-border: rgba(139,101,8,0.3); --gold: #9b7605;
+    --input-bg: rgba(0,0,0,0.05);
   }
 
-  event.respondWith(
-    caches.match(req).then(cached => {
-      const network = fetch(req)
-        .then(res => {
-          if (res && (res.status === 200 || res.type === 'opaque')) {
-            const clone = res.clone();
-            caches.open(CACHE_NAME).then(c => c.put(req, clone));
-          }
-          return res;
-        })
-        .catch(() => cached);
-      return cached || network;
-    })
-  );
-});
+  *{box-sizing:border-box;-webkit-text-size-adjust:100%}
+  html, body {
+    margin: 0; padding: 0; height: 100%; width: 100%;
+    overflow: hidden; background: var(--bg-main);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    color: var(--text-main); transition: background 0.3s, color 0.3s;
+  }
 
-self.addEventListener('message', event => {
-  if (event.data && event.data.action === 'skipWaiting') self.skipWaiting();
-});
+  .app-container { position: relative; width: 100%; height: 100dvh; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; }
+  .page { display: none; min-height: 100%; width: 100%; }
+  .page.active { display: flex; flex-direction: column; align-items: center; }
+
+  .sticky-wrapper {
+    position: sticky; top: 0; z-index: 100; background: var(--bg-main);
+    width: 100%; margin: -30px -20px 15px -20px; padding: 15px 15px 10px 15px;
+    box-shadow: 0 10px 15px -10px rgba(0,0,0,0.5);
+    border-bottom: 1px solid var(--card-border);
+  }
+  body.light-mode .sticky-wrapper { box-shadow: 0 10px 15px -10px rgba(0,0,0,0.1); }
+
+  #update-banner {
+    position: fixed; bottom: 20px; left: 20px; right: 20px;
+    background: linear-gradient(135deg, #1e5631 0%, #14543d 100%);
+    color: #fff; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
+    border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    border: 1px solid var(--gold); z-index: 9999; transform: translateY(200%); transition: transform 0.4s;
+  }
+  #update-banner.show { transform: translateY(0); }
+  .update-text { flex-grow: 1; margin-right: 15px; font-weight: bold; font-size: 15px; }
+  .btn-update-now { background: var(--gold); color: #050807; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; cursor: pointer; }
+
+  #pwa-install-banner {
+    position: fixed; top: 0; left: 0; right: 0; background: linear-gradient(180deg, #14543d 0%, #0f3d2e 100%);
+    color: #f8f1dc; padding: 15px; display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 9998; transform: translateY(-100%); transition: transform 0.4s;
+    border-bottom: 1px solid var(--gold);
+  }
+  #pwa-install-banner.show { transform: translateY(0); }
+  .banner-text { flex-grow: 1; margin-right: 15px; }
+  .banner-text h4 { margin: 0 0 4px 0; color: var(--gold); font-size: 16px; font-weight: 700; }
+  .banner-text p { margin: 0; font-size: 12px; color: #cdbf8f; }
+  .banner-actions { display: flex; align-items: center; gap: 10px; }
+  .btn-install { background: var(--gold); color: #050807; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; cursor: pointer; }
+  .btn-close-banner { background: none; border: none; color: #cdbf8f; font-size: 20px; cursor: pointer; padding: 0 5px; }
+
+  .btn-clear-cache {
+    position: fixed; bottom: 8px; right: 8px;
+    background: transparent; border: 1px solid transparent;
+    color: var(--text-muted); font-size: 14px; line-height: 1;
+    padding: 3px 5px; cursor: pointer; opacity: 0.55;
+    transition: opacity 0.25s, transform 0.15s, background 0.25s, border-color 0.25s;
+    z-index: 50; border-radius: 6px; user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-clear-cache:hover { opacity: 1; background: var(--card-bg); border-color: var(--card-border); }
+  .btn-clear-cache:active { transform: scale(0.9); opacity: 1; }
+  body.edit-mode .btn-clear-cache,
+  body.sort-mode-active .btn-clear-cache { display: none; }
+
+  .cover {
+    justify-content: center; position: relative;
+    background: radial-gradient(circle at 20% 20%, rgba(212,175,55,.14) 0 1.5px, transparent 2.5px), radial-gradient(circle at 80% 30%, rgba(212,175,55,.10) 0 1.5px, transparent 2.5px), radial-gradient(circle at 30% 80%, rgba(212,175,55,.08) 0 1.5px, transparent 2.5px), radial-gradient(ellipse at 50% 40%, rgba(212,175,55,.06), transparent 60%), linear-gradient(160deg, #0a0f0d 0%, #050807 55%, #000 100%);
+    background-size: 46px 46px, 62px 62px, 54px 54px, cover, cover; transition: background 0.5s;
+  }
+  body.light-mode .cover {
+    background: radial-gradient(circle at 20% 20%, rgba(139,101,8,.14) 0 1.5px, transparent 2.5px), radial-gradient(circle at 80% 30%, rgba(139,101,8,.10) 0 1.5px, transparent 2.5px), radial-gradient(circle at 30% 80%, rgba(139,101,8,.08) 0 1.5px, transparent 2.5px), radial-gradient(ellipse at 50% 40%, rgba(139,101,8,.06), transparent 60%), linear-gradient(160deg, #f5ebd6 0%, #fdfaf6 55%, #ffffff 100%);
+  }
+  .cover::before { content:""; position:absolute; inset:15px; border:1px solid rgba(212,175,55,.55); border-radius:6px; pointer-events:none; z-index:2; animation:framePulse 8s infinite; }
+  body.light-mode .cover::before { border-color: rgba(139,101,8,.55); }
+  @keyframes framePulse{0%,100%{box-shadow:inset 0 0 60px rgba(212,175,55,.05)}50%{box-shadow:inset 0 0 90px rgba(212,175,55,.14),0 0 30px rgba(212,175,55,.18)}}
+
+  .stars, .particles { position:absolute; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .star { position:absolute; background:#ffe9a8; border-radius:50%; box-shadow:0 0 6px 1px rgba(232,199,102,.65); animation:twinkle var(--d,3s) infinite; animation-delay:var(--delay,0s); }
+  body.light-mode .star { background: #d4af37; box-shadow: 0 0 6px 1px rgba(139,101,8,.65); }
+  @keyframes twinkle{0%,100%{opacity:.1;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+  .particle { position:absolute; bottom:-20px; border-radius:50%; background:radial-gradient(circle,#ffe9a8 0%,#d4af37 55%,transparent 100%); box-shadow:0 0 10px rgba(212,175,55,.7); opacity:0; animation:floatUp var(--dur,14s) linear infinite; animation-delay:var(--delay,0s); }
+  body.light-mode .particle { background: radial-gradient(circle,#d4af37 0%,#8b6508 55%,transparent 100%); }
+  @keyframes floatUp{0%{transform:translate(0,0);opacity:0}10%{opacity:.85}90%{opacity:.4}100%{transform:translate(var(--dx,20px),-110vh);opacity:0}}
+
+  .moon { position:absolute; top:40px; right:40px; width:1em; height:1em; font-size:60px; border-radius:50%; box-shadow:inset -.22em -.03em 0 0 #e8c766; animation:moonGlow 6s infinite; z-index:10; cursor:pointer; }
+  body.light-mode .moon { box-shadow: inset -.22em -.03em 0 0 #8b6508; }
+  @keyframes moonGlow{0%,100%{filter:drop-shadow(0 0 10px rgba(212,175,55,.35))}50%{filter:drop-shadow(0 0 24px rgba(232,199,102,.8))}}
+
+  .btn-theme { position: absolute; top: 20px; left: 20px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--gold); font-size: 24px; padding: 8px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; }
+  .cover-content { position:relative; z-index:3; width:100%; display:flex; flex-direction:column; align-items:center; text-align:center; padding:20px; }
+  .bismillah { font-family:'Amiri',serif; font-size:clamp(22px, 5vw, 34px); color:var(--gold); line-height:1.8; margin:0 0 15px; animation:softGlow 5s infinite; direction: rtl; }
+  @keyframes softGlow{0%,100%{text-shadow:0 0 14px rgba(212,175,55,.2)}50%{text-shadow:0 0 28px rgba(232,199,102,.65)}}
+  .kicker { font-family:Georgia,serif; font-size:clamp(10px, 1.5vw, 13px); letter-spacing:.4em; text-transform:uppercase; color:var(--gold); margin:0 0 15px; }
+  h1.cover-title { margin:0; font-weight:700; font-size:clamp(38px, 8vw, 76px); line-height:1.04; background:linear-gradient(100deg,#f6e7a8 0%,#d4af37 22%,#fff6cf 42%,#b8860b 62%,#f6e7a8 82%,#d4af37 100%); background-size:220% 100%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 2px 10px rgba(0,0,0,.7)); animation:shimmer 7s linear infinite; }
+  body.light-mode h1.cover-title { background: linear-gradient(100deg, #8b6508 0%, #d4af37 22%, #5c4402 42%, #b8860b 62%, #8b6508 82%, #d4af37 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  @keyframes shimmer{0%{background-position:0% 50%}100%{background-position:-220% 50%}}
+  .divider { position:relative; width:clamp(80px, 30vw, 170px); height:1px; margin:20px auto; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
+  .divider span { position:absolute; left:50%; top:50%; background:var(--bg-main); padding:0 10px; color:var(--gold); font-size:16px; animation:spinSlow 14s linear infinite; }
+  @keyframes spinSlow{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+  .desc { margin:0 auto 30px; max-width:30ch; font-style:italic; font-size:clamp(15px, 2.5vw, 20px); color:var(--text-muted); }
+  .btn-open { padding:12px 30px; background:var(--card-bg); border:1px solid var(--gold); color:var(--gold); border-radius:30px; font-family:Georgia,serif; font-size:16px; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; box-shadow:0 0 15px rgba(212,175,55,0.2); }
+  .cover-footer { position:absolute; bottom:30px; left:0; right:0; text-align:center; font-family:Georgia, serif; font-size:12px; letter-spacing:.1em; color:var(--text-muted); z-index:3; }
+
+  body.edit-mode #cover-bismillah,
+  body.edit-mode #cover-kicker,
+  body.edit-mode #cover-title,
+  body.edit-mode #cover-desc,
+  body.edit-mode #cover-footer {
+    outline: 2px dashed var(--gold) !important;
+    outline-offset: 6px; border-radius: 4px; cursor: text;
+    padding: 2px 6px; transition: outline-color 0.2s; position: relative;
+  }
+  body.edit-mode #cover-bismillah:focus,
+  body.edit-mode #cover-kicker:focus,
+  body.edit-mode #cover-title:focus,
+  body.edit-mode #cover-desc:focus,
+  body.edit-mode #cover-footer:focus {
+    outline-style: solid; outline-color: #fff; background: rgba(212,175,55,0.08);
+  }
+  body.light-mode.edit-mode #cover-bismillah:focus,
+  body.light-mode.edit-mode #cover-kicker:focus,
+  body.light-mode.edit-mode #cover-title:focus,
+  body.light-mode.edit-mode #cover-desc:focus,
+  body.light-mode.edit-mode #cover-footer:focus { outline-color: #050807; }
+
+  .cover-edit-hint {
+    display: none; position: fixed; top: 78px; left: 50%; transform: translateX(-50%);
+    background: var(--gold); color: var(--bg-main); padding: 6px 8px 6px 14px;
+    border-radius: 20px; font-size: 12px; font-weight: bold; z-index: 150;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5); align-items: center; gap: 8px;
+    white-space: nowrap; pointer-events: auto;
+  }
+  body.edit-mode .cover-edit-hint { display: flex; }
+  .cover-edit-hint .hint-text { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 13px; line-height: 1; }
+  .cover-reset-btn {
+    background: var(--bg-main); color: var(--gold); border: none;
+    padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;
+    cursor: pointer; font-family: 'Cormorant Garamond', Georgia, serif; transition: opacity 0.2s;
+  }
+  .cover-reset-btn:hover { opacity: 0.85; }
+  .cover-reset-btn:active { transform: scale(0.95); }
+
+  .toc-wrapper { width:100%; max-width:600px; margin:0 auto; padding:20px 15px 50px; position:relative; }
+  .toc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; flex-wrap: wrap; gap: 8px; }
+  .toc-header h2 { margin:0; font-size:clamp(34px, 7vw, 46px); font-weight:700; letter-spacing:.1em; text-align: left; background:linear-gradient(100deg, var(--text-title) 0%, var(--gold) 50%, var(--text-title) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation; cursor: default; }
+  .icon-area { display: flex; gap: 6px; flex-shrink: 0; }
+  .icon-btn { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--gold); font-size: 18px; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  .icon-btn:hover { background: var(--gold); color: var(--bg-main); }
+
+  .icon-btn.tapping { animation: tripleTapPulse 0.35s ease-out; }
+  @keyframes tripleTapPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.28); background: var(--gold); color: var(--bg-main); box-shadow: 0 0 20px rgba(212,175,55,.8); }
+    100% { transform: scale(1); }
+  }
+  #toc-heading.tapping { animation: headingTapPulse 0.35s ease-out; }
+  @keyframes headingTapPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.06); filter: drop-shadow(0 0 8px rgba(212,175,55,.9)); }
+    100% { transform: scale(1); }
+  }
+  .btn-icon-action.tapping { animation: tripleTapPulse 0.35s ease-out; }
+
+  .search-container { display: none; margin-top: 10px; margin-bottom: 5px; position: relative; width: 100%; }
+  .search-container.active { display: block; }
+  .search-input { width: 100%; padding: 10px 20px 10px 40px; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 25px; color: var(--text-main); font-family: 'Cormorant Garamond', serif; font-size: 16px; outline: none; }
+  .search-icon-inside { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--gold); font-size: 16px; }
+
+  .toc-sub-header { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px; }
+  .section-title-inline { font-family: Georgia, serif; color: var(--gold); font-size: 14px; letter-spacing: .2em; text-transform: uppercase; display: block; }
+  .btn-sort { background: var(--card-bg); border: 1px solid var(--gold); color: var(--gold); padding: 4px 10px; border-radius: 15px; font-family: 'Cormorant Garamond', serif; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: 0.3s; }
+  .btn-sort.active { background: var(--gold); color: var(--bg-main); }
+
+  .section-title { font-family: Georgia, serif; color: var(--gold); font-size: 14px; letter-spacing: .2em; text-transform: uppercase; margin: 25px 0 10px 5px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px; display: none; }
+  .toc-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+
+  .toc-item { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding-right: 15px; transition: transform 0.1s, box-shadow 0.1s; }
+  .toc-item a { display: flex; align-items: center; text-decoration: none; padding: 12px 15px; flex-grow: 1; cursor: pointer; }
+
+  .toc-number { font-size:clamp(18px, 3vw, 22px); color:var(--gold); margin-right:15px; font-weight:bold; min-width:24px; }
+  .toc-title { font-size:clamp(20px, 3.5vw, 24px); font-weight:600; color:var(--text-main); flex-grow:1; }
+
+  .btn-fav-toggle { background: none; border: none; font-size: 24px; cursor: pointer; color: #555; }
+  .btn-fav-toggle.active { color: #f6e7a8; text-shadow: 0 0 10px rgba(232,199,102,0.8); }
+  body.light-mode .btn-fav-toggle.active { color: #b8860b; text-shadow: none; }
+
+  .sortable-ghost { opacity: 0.4; background: rgba(212,175,55,0.1) !important; border: 2px dashed var(--gold) !important; }
+  .sortable-chosen { background: rgba(212,175,55,0.05); box-shadow: 0 5px 15px rgba(0,0,0,0.3); cursor: grabbing !important; }
+  body.sort-mode-active .toc-item { cursor: grab; border-color: var(--gold); }
+  body.sort-mode-active .toc-item a { pointer-events: none; }
+  body.sort-mode-active .btn-fav-toggle { opacity: 0.3; pointer-events: none; }
+
+  .sort-hint { text-align: center; font-size: 14px; color: var(--gold); margin-bottom: 15px; font-style: italic; display: none; }
+  body.sort-mode-active .sort-hint { display: block; }
+
+  .doa-container { width:100%; max-width:700px; margin:0 auto; padding:30px 20px 60px; }
+  .doa-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 8px; }
+  .doa-header-actions { display: flex; align-items: center; gap: 6px; }
+  .btn-back { display:inline-flex; align-items:center; gap:8px; color:var(--gold); font-size:16px; cursor:pointer; background:var(--card-bg); padding:6px 12px; border-radius:20px; border:1px solid var(--card-border); }
+  .btn-fav-page { background: none; border: none; font-size: 28px; cursor: pointer; color: #555; }
+  .btn-fav-page.active { color: #f6e7a8; text-shadow: 0 0 15px rgba(232,199,102,0.8); }
+  body.light-mode .btn-fav-page.active { color: #b8860b; text-shadow: none; }
+
+  .btn-icon-action {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    color: var(--gold); font-size: 16px; width: 36px; height: 36px;
+    border-radius: 50%; display: none; align-items: center; justify-content: center;
+    cursor: pointer; transition: 0.3s; -webkit-tap-highlight-color: transparent;
+  }
+  .btn-icon-action:hover { background: var(--gold); color: var(--bg-main); }
+  .btn-icon-action.danger { color: #ff6b6b; border-color: rgba(255,107,107,0.4); }
+  .btn-icon-action.danger:hover { background: #ff4444; color: white; border-color: #ff4444; }
+
+  .doa-tools { display: flex; justify-content: center; gap: 6px; margin-bottom: 15px; flex-wrap: wrap; }
+  .tool-btn { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--gold); padding: 6px 10px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 4px; }
+  .tool-btn:hover, .tool-btn.active { background: var(--gold); color: var(--bg-main); }
+
+  .doa-title { font-size:clamp(20px, 4.5vw, 28px); color:var(--text-title); margin:0 0 10px; text-align: center; }
+  .doa-card { background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:25px; margin-bottom:25px; }
+
+  .arabic-text { font-family: 'Amiri', 'Traditional Arabic', serif; font-size: clamp(26px, 6vw, 34px); color: var(--gold); direction: rtl; text-align: right; line-height: 2.5; margin-bottom: 20px; white-space: pre-wrap; }
+  .latin-text { font-style:italic; color:var(--text-muted); font-size:16px; line-height:1.6; margin-bottom:20px; border-left:2px solid var(--gold); padding-left:15px; white-space: pre-wrap; display: none; }
+  .translation-text { color:var(--text-main); font-size:18px; line-height:1.6; white-space: pre-wrap; display: none; }
+
+  body.edit-mode .arabic-text,
+  body.edit-mode .latin-text,
+  body.edit-mode .translation-text {
+    display: block !important;
+    border: 2px dashed var(--gold) !important; padding: 15px !important;
+    border-radius: 8px; background: rgba(212,175,55,0.05); cursor: text; outline: none;
+  }
+
+  .edit-tools { display: none; position: fixed; bottom: 20px; right: 20px; z-index: 10000; flex-direction: column; gap: 10px; }
+  body.edit-mode .edit-tools { display: flex; }
+
+  .btn-edit-action {
+    background: var(--gold); color: var(--bg-main); padding: 12px 20px; border-radius: 30px; border: none;
+    font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    font-family: 'Cormorant Garamond', serif; font-size: 16px;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .btn-edit-action.secondary { background: var(--bg-main); color: var(--gold); border: 1px solid var(--gold); }
+  .btn-edit-action.danger { background: #111; color: #ff4444; border: 1px solid #ff4444; }
+
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    z-index: 20000; justify-content: center; align-items: center; padding: 20px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-content {
+    background: var(--bg-main); border: 1px solid var(--gold); border-radius: 12px;
+    width: 100%; max-width: 500px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    max-height: 90vh; overflow-y: auto;
+  }
+  .modal-content h3 { color: var(--gold); margin-top: 0; text-align: center; font-family: Georgia, serif; font-size: 22px; }
+  .modal-label { display: block; color: var(--gold); font-size: 14px; margin-bottom: 5px; font-weight: bold; }
+  .modal-hint { font-size: 12px; color: var(--text-muted); font-style: italic; margin-bottom: 12px; line-height: 1.5; }
+  .modal-input {
+    width: 100%; padding: 10px; margin-bottom: 15px;
+    background: var(--input-bg); border: 1px solid var(--card-border);
+    border-radius: 8px; color: var(--text-main); font-family: 'Cormorant Garamond', serif;
+    font-size: 16px; outline: none;
+  }
+  textarea.modal-input { resize: vertical; min-height: 80px; }
+  textarea.arabic-input { font-family: 'Amiri', serif; font-size: 20px; direction: rtl; text-align: right; line-height: 1.8; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 10px; }
+  .modal-btn {
+    flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold;
+    font-family: 'Cormorant Garamond', serif; font-size: 16px; cursor: pointer;
+  }
+  .modal-btn.save { background: var(--gold); color: var(--bg-main); }
+  .modal-btn.cancel { background: #333; color: #fff; }
+  .modal-btn.alt { background: var(--card-bg); color: var(--gold); border: 1px solid var(--gold); }
+
+  .backup-info {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 8px; padding: 12px 15px; margin-bottom: 15px;
+    font-size: 14px; line-height: 1.7; color: var(--text-muted);
+  }
+  .backup-info strong { color: var(--gold); }
+
+  .tasbih-container { width: 100%; max-width: 400px; margin: 0 auto; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100%; }
+  .tasbih-target { display: flex; gap: 10px; margin-bottom: 30px; }
+  .btn-target { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--gold); background: var(--card-bg); color: var(--gold); font-size: 16px; font-weight: bold; cursor: pointer; }
+  .btn-target.active { background: var(--gold); color: var(--bg-main); }
+  .tasbih-circle {
+    width: 250px; height: 250px; border-radius: 50%;
+    background: radial-gradient(circle, var(--bg-main) 30%, rgba(212,175,55,0.2) 100%);
+    border: 3px solid var(--gold); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 0 30px rgba(212,175,55,0.3); transition: transform 0.1s;
+    user-select: none; margin-bottom: 30px;
+  }
+  .tasbih-circle:active { transform: scale(0.95); }
+  .tasbih-count { font-size: 80px; font-weight: bold; color: var(--gold); line-height: 1; }
+  .tasbih-text { font-size: 20px; color: var(--text-muted); margin-top: 10px; }
+  .btn-reset-tasbih { background: none; border: 1px solid #ff4444; color: #ff4444; padding: 10px 20px; border-radius: 20px; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+</style>
+</head>
+<body>
+
+<div id="update-banner">
+  <div class="update-text">✨ Versi baru telah rilis! Klik untuk update.</div>
+  <button id="btn-update" class="btn-update-now">Update</button>
+</div>
+
+<div id="pwa-install-banner">
+  <div class="banner-text">
+    <h4>Instal Aplikasi Buku Doa</h4>
+    <p>Akses lebih cepat & bisa dibuka tanpa internet.</p>
+  </div>
+  <div class="banner-actions">
+    <button id="pwa-install-btn" class="btn-install">Instal</button>
+    <button id="pwa-close-btn" class="btn-close-banner">✕</button>
+  </div>
+</div>
+
+<div class="app-container" id="app-scroll">
+  <div id="page-cover" class="page active cover">
+    <button class="btn-theme" id="theme-btn" onclick="toggleTheme()">🌙</button>
+    <div class="moon" id="secret-moon" aria-hidden="true"></div>
+    <div class="stars" aria-hidden="true"></div>
+    <div class="particles" aria-hidden="true"></div>
+
+    <div id="cover-edit-hint" class="cover-edit-hint">
+      <span class="hint-text">✏️ Ketuk teks untuk mengedit</span>
+      <button class="cover-reset-btn" onclick="resetCoverTexts()">↺ Reset</button>
+    </div>
+
+    <div class="cover-content">
+      <p class="bismillah" id="cover-bismillah" oninput="autoSaveCover()">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
+      <div class="kicker" id="cover-kicker" oninput="autoSaveCover()">Buku Digital</div>
+      <h1 class="cover-title" id="cover-title" oninput="autoSaveCover()">Kumpulan Doa<br>&amp; Muqaddimah</h1>
+      <div class="divider"><span>✦</span></div>
+      <p class="desc" id="cover-desc" oninput="autoSaveCover()">Panduan doa harian dan muqaddimah pilihan</p>
+      <button class="btn-open" onclick="showPage('page-toc')">Buka Daftar Isi</button>
+    </div>
+    <div class="cover-footer" id="cover-footer" oninput="autoSaveCover()">buku digital v1.23.26 created by oznet</div>
+  </div>
+
+  <div id="page-toc" class="page">
+    <div class="toc-wrapper">
+      <div class="sticky-wrapper">
+        <a class="btn-back" style="margin-bottom: 10px;" onclick="goToCover()">❮ Kembali ke Cover</a>
+        <div class="toc-header">
+          <h2 id="toc-heading">Daftar Isi</h2>
+          <div class="icon-area">
+            <button class="icon-btn" id="add-doa-btn" title="Tambah Doa (ketuk 3×)">➕</button>
+            <button class="icon-btn" onclick="openBackupModal()" title="Backup / Restore">💾</button>
+            <button class="icon-btn" onclick="showPage('page-tasbih')" title="Tasbih Digital">📿</button>
+            <button class="icon-btn" onclick="toggleSearch()" title="Cari Doa">🔍</button>
+          </div>
+        </div>
+
+        <div class="search-container" id="search-container">
+          <span class="search-icon-inside">🔍</span>
+          <input type="text" id="search-input" class="search-input" placeholder="Cari doa..." onkeyup="filterTOC()">
+        </div>
+
+        <div class="toc-sub-header">
+          <div class="section-title-inline" id="all-section-title" style="display: block;">Semua Doa</div>
+          <button id="btn-sort" class="btn-sort" onclick="toggleSortMode()">🔀 Atur Urutan</button>
+        </div>
+      </div>
+
+      <div class="sort-hint">Tekan & tahan judul, lalu geser ke atas/bawah.</div>
+
+      <div id="fav-section-title" class="section-title">⭐ Doa Favorit</div>
+      <div id="fav-list" class="toc-list" style="margin-bottom: 20px;"></div>
+
+      <div id="all-list" class="toc-list"></div>
+    </div>
+  </div>
+
+  <div id="page-doa" class="page">
+    <div class="doa-container">
+      <div class="sticky-wrapper">
+        <div class="doa-header">
+          <a class="btn-back" onclick="goBack()">❮ Kembali</a>
+          <div class="doa-header-actions">
+            <button id="rename-custom-btn" class="btn-icon-action" title="Edit Judul (ketuk 3×)">✏️</button>
+            <button id="delete-custom-btn" class="btn-icon-action danger" onclick="deleteCurrentDoa()" title="Hapus Doa">🗑️</button>
+            <button id="fav-btn-page" class="btn-fav-page" onclick="toggleCurrentFavorite()">☆</button>
+          </div>
+        </div>
+
+        <div class="doa-tools">
+          <button class="tool-btn" onclick="adjustFont(-0.5)">A-</button>
+          <button class="tool-btn" onclick="adjustFont(0.5)">A+</button>
+          <button class="tool-btn" id="btn-scroll" onclick="toggleAutoScroll()">⏯️ Auto</button>
+          <button class="tool-btn" id="btn-tts" onclick="toggleTTS()">🔊 Baca</button>
+          <button class="tool-btn" id="btn-wake" onclick="toggleWakeLock()">💡 Layar</button>
+          <button class="tool-btn" onclick="copyDoa()">📋 Salin</button>
+        </div>
+
+        <h2 id="doa-title" class="doa-title">Judul Doa</h2>
+      </div>
+
+      <div class="doa-card">
+        <div id="doa-arabic" class="arabic-text" oninput="autoSave()">Teks Arab...</div>
+        <div id="doa-latin" class="latin-text" oninput="autoSave()"></div>
+        <div id="doa-translation" class="translation-text" oninput="autoSave()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-tasbih" class="page">
+    <div class="tasbih-container">
+      <a class="btn-back" style="align-self: flex-start; margin-bottom: 20px;" onclick="goBack()">❮ Kembali</a>
+
+      <div class="tasbih-target">
+        <button class="btn-target" onclick="setTarget(33, event)">33x</button>
+        <button class="btn-target" onclick="setTarget(99, event)">99x</button>
+        <button class="btn-target active" onclick="setTarget(100, event)">100x</button>
+      </div>
+
+      <div class="tasbih-circle" onclick="countTasbih()">
+        <div class="tasbih-count" id="tasbih-count">0</div>
+        <div class="tasbih-text" id="tasbih-target-text">dari 100</div>
+      </div>
+
+      <button class="btn-reset-tasbih" onclick="resetTasbih()">🔄 Reset</button>
+    </div>
+  </div>
+</div>
+
+<button id="btn-clear-cache" class="btn-clear-cache" onclick="clearAppCache()" title="Hapus Cache Aplikasi" aria-label="Hapus Cache Aplikasi">🧹</button>
+
+<div class="edit-tools" id="edit-tools">
+  <button class="btn-edit-action secondary" onclick="exportCode()">📤 Ekspor Kode ke GitHub</button>
+  <button class="btn-edit-action danger" onclick="enableEditMode()">❌ Selesai Edit</button>
+</div>
+
+<div class="modal-overlay" id="add-doa-modal">
+  <div class="modal-content">
+    <h3>Tambah Doa Baru</h3>
+    <label class="modal-label">Judul Doa</label>
+    <input type="text" id="new-title" class="modal-input" placeholder="Contoh: Doa Sebelum Tidur">
+    <label class="modal-label">Teks Arab</label>
+    <textarea id="new-arabic" class="modal-input arabic-input" placeholder="اللَّهُمَّ ..."></textarea>
+    <label class="modal-label">Teks Latin (Opsional)</label>
+    <textarea id="new-latin" class="modal-input" placeholder="Allahumma ..."></textarea>
+    <label class="modal-label">Terjemahan / Konten (Opsional)</label>
+    <textarea id="new-translation" class="modal-input" placeholder="Ya Allah ..."></textarea>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeAddDoaModal()">Batal</button>
+      <button class="modal-btn save" onclick="saveNewDoa()">Simpan Doa</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="rename-doa-modal">
+  <div class="modal-content">
+    <h3>✏️ Edit Judul Doa</h3>
+    <p class="modal-hint">Berlaku untuk semua doa (bawaan maupun buatan sendiri). Perubahan judul tersimpan otomatis di perangkat ini.</p>
+    <label class="modal-label">Judul Baru</label>
+    <input type="text" id="rename-title" class="modal-input" placeholder="Judul doa...">
+    <button id="rename-reset-btn" class="modal-btn alt" onclick="resetDoaTitle()" style="width:100%; margin-bottom:8px; display:none;">↺ Reset ke Judul Asli</button>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeRenameModal()">Batal</button>
+      <button class="modal-btn save" onclick="saveRenameDoa()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="backup-modal">
+  <div class="modal-content">
+    <h3>💾 Backup & Restore</h3>
+    <div class="backup-info" id="backup-info">Memuat info...</div>
+    <p style="color:var(--text-muted); font-size:13px; line-height:1.5; margin-bottom:15px;">
+      Backup berisi semua data: doa buatan sendiri, judul yang diubah, favorit, urutan, tema, ukuran font, dan teks cover.
+    </p>
+    <div class="modal-actions" style="flex-direction:column;">
+      <button class="modal-btn save" onclick="exportBackup()" style="width:100%;">📤 Ekspor Backup (.json)</button>
+      <button class="modal-btn alt" onclick="document.getElementById('restore-file').click()" style="width:100%;">📥 Impor Backup</button>
+      <input type="file" id="restore-file" accept=".json,application/json" style="display:none;" onchange="importBackup(event)">
+      <button class="modal-btn cancel" onclick="document.getElementById('backup-modal').classList.remove('active')" style="width:100%;">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ====================================================
+  // DATA DOA (BUILT-IN)
+  // ====================================================
+  let dataDoa = [
+    { id: "doa_1", title: "Doa Setelah Sholat Tahajud", arabic: `اللَّهُمَّ لَكَ الْحَمْدُ أَنْتَ قَيِّمُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ، وَلَكَ الْحَمْدُ لَكَ مُلْكُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ، وَلَكَ الْحَمْدُ نُورُ السَّمَوَاتِ وَالْأَرْضِ، وَلَكَ الْحَمْدُ أَنْتَ الْحَقُّ وَوَعْدُكَ الْحَقُّ وَلِقَاءُكَ حَقٌّ وَقَوْلُكَ حَقٌّ وَالْجَنَّةُ حَقٌّ وَالنَّارُ حَقٌّ، وَالنَّبِيُّونَ حَقٌّ، وَمُحَمَّدٌ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ حَقٌّ، وَالسَّاعَةُ حَقٌّ. اللَّهُمَّ لَكَ أَسْلَمْتُ، وَبِكَ آمَنْتُ، وَعَلَيْكَ تَوَكَّلْتُ وَإِلَيْكَ أَنَبْتُ وَبِكَ خَاصَمْتُ، وَإِلَيْكَ حَاكَمْتُ، فَاغْفِرْلِي مَا قَدَّمْتُ، وَمَا أَخَّرْتُ وَمَا أَسْرَرْتُ وَمَا أَعْلَنْتُ، أَنْتَ الْمُقَدِّمُ وَأَنْتَ الْمُؤَخِّرُ، لَا إِلَهَ إِلَّا أَنْتَ أَوْ لَا إِلَهَ غَيْرُكَ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ.`, latin: "", translation: "" },
+    { id: "doa_2", title: "Doa Setelah Sholat Dhuha", arabic: `اَللَّهُمَّ إِنَّ الضُّحَاءَ ضُحَاؤُكَ وَالْبَهَاءَ بَهَاؤُكَ وَالْجَمَالَ جَمَالُكَ وَالْقُوَّةَ قُوَّتُكَ وَالْقُدْرَةَ قُدْرَتُكَ وَالْعِصْمَةَ عِصْمَتُكَ. اَللَّهُمَّ إِنْ كَانَ رِزْقِي فِي السَّمَاءِ فَأَنْزِلْهُ وَإِنْ كَانَ فِي الْأَرْضِ فَأَخْرِجْهُ وَإِنْ كَانَ مُعَسَّرًا فَيَسِّرْهُ وَإِنْ كَانَ حَرَامًا فَطَهِّرْهُ وَإِنْ كَانَ بَعِيدًا فَقَرِّبْهُ بِحَقِّ ضُحَائِكَ وَبَهَائِكَ وَجَمَالِكَ وَقُوَّتِكَ وَقُدْرَتِكَ آتِنِي مَا آتَيْتَ عِبَادَكَ الصَّالِحِينَ.`, latin: "", translation: "" },
+    { id: "doa_3", title: "Doa Setelah Sholat Witir", arabic: `اَللّٰهُمَّ اِنَّا نَسْأَلُكَ اِيْمَانًا دَائِمًا. وَنَسْأَلُكَ قَلْبًا خَاشِعًا. وَنَسْأَلُكَ عِلْمًا نَافِعًا. وَنَسْأَلُكَ يَقِيْنًا صَادِقًا. وَنَسْأَلُكَ عَمَلًا صَالِحًا. وَنَسْأَلُكَ دِيْنًا قَيِّمًا. وَنَسْأَلُكَ خَيْرًا كَثِيْرًا. وَنَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ. وَنَسْأَلُكَ تَمَامَ الْعَافِيَةِ. وَنَسْأَلُكَ الشُّكْرَ عَلَى الْعَافِيَةِ. وَنَسْأَلُكَ الْغِنَاءَ عَنِ النَّاسِ. اَللّٰهُمَّ رَبَّنَا تَقَبَّلْ مِنَّا صَلَاتَنَا وَصِيَامَنَا وَقِيَامَنَا وَتَخَشُّعَنَا وَتَضَرُّعَنَا وَتَعَبُّدَنَا وَتَمِّمْ تَقْصِيْرَنَا يَا اَللّٰهُ يَا اَللّٰهُ يَا اَللّٰهُ يَا اَرْحَمَ الرَّاحِمِيْنَ. وَصَلَّى اللّٰهُ عَلَى خَيْرِ خَلْقِهِ مُحَمَّدٍ وَعَلَى اٰلِهِ وَصَحْبِهِ اَجْمَعِيْنَ وَالْحَمْدُ لِلّٰهِ رَبِّ الْعَالَمِيْنَ.`, latin: "", translation: "" },
+    { id: "doa_4", title: "Doa Pengusir Jin Ifrit", arabic: `أَعُوذُ بِوَجْهِ اللهِ الْكَرِيمِ وَبِكَلِمَاتِ اللهِ التَّآمَّاتِ اللَّاتِيْ لَا يُجَاوِزُهُنَّ بَرٌّ وَلَا فَاجِرٌ مِنْ شَرِّ مَا يَنْزِلُ مِنَ السَّمَآءِ وَشَرِّ مَا يَخْرُجُ فِيهَا وَشَرِّ مَا ذَرَأَ فِي الْأَرْضِ وَشَرِّ مَا يَخْرُجُ مِنْهَا وَمِنْ فِتَنِ اللَّيْلِ وَالنَّهَارِ وَمِنْ طَوَارِقِ اللَّيْلِ وَالنَّهَارِ إِلَّا طَارِقًا يَطْرُقُ بِخَيْرٍ يَا رَحْمَنُ`, latin: "", translation: "" },
+    { id: "doa_5", title: "Doa Mencukur Rambut Bayi", arabic: `اَللّٰهُمَّ نُوْرُ السَّمٰوَاتِ وَ نُوْرُ الشَّمْسِ وَالْقَمَرِ اَللّٰهُمَّ سَرُّاللّٰهِ نُوْرُ النُّبُوَّةِ رَسُوْلِ اللّٰهِﷺ`, latin: "", translation: "" },
+    { id: "doa_6", title: "Doa Khatam Quran", arabic: `اللَّهُمَّ ارْحَمْنِي بِالْقُرْآنِ وَاجْعَلْهُ لِيْ إِمَامًا وَنُوْرًا وَهُدًى وَرَحْمَةً . اللَّهُمَّ ذَكِّرْنِي مِنْهُ مَا نَسِيْتُ وَعَلِّمْنِي مِنْهُ مَا جَهِلْتُ وَارْزُقْنِي تِلَاوَتَهُ آنَاءَ اللَّيْلِ وَأَطْرَافَ النَّهَارِ وَاجْعَلْهُ لِي حُجَّةً يَا رَبَّ الْعَالَمِينَ`, latin: "", translation: "" },
+    { id: "doa_7", title: "Doa Talqin Mayit", arabic: `لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيْكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ يُحْيِى وَيُمِيْتُ، وَهُوَ حَيٌّ دَائِمٌ لَا يَمُوْتُ، بِيَدِهِ الخَيْرُ يَفْعَلُ مَا يَشَاءُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيْرٌ، كُلُّ نَفْسٍ ذَائِقَةُ المَوْتِ وَإِنَّمَا تُوَفَّوْنَ أُجُوْرَكُمْ يَوْمَ القِيَامَةِ، فَمَنْ زُحْزِحَ عَنِ النَّارِ وَأُدْخِلَ الجَنَّةَ فَقَدْ فَازَ، وَمَا الحَيَاةُ الدُّنْيَا إِلَّا مَتَاعُ الغُرُوْرِ يَا عَبْدَ اللهِ، ابْنَ عَبْدَيِ اللهِ (يَا أَمَةَ اللهِ، بِنْتَ عَبْدَيِ اللهِ) يَا عَبْدَ اللهِ، ابْنَ حَوَاء (يَا أَمَةَ اللهِ، بِنْتَ حَوَاء) اذْكُرِ (اذْكُرِي) العَهْدَ الَّذِيْ خَرَجْتَ (خَرَجْتِ) عَلَيْهِ مِنْ دَارِ الدُّنْيَا، وَهُوَ شَهَادَةُ أَنْ لَّا إِلَهَ إِلَّا اللهُ وَأَنَّ مُحَمَّدًا رَّسُوْلُ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، وَأَنَّ المَوْتَ حَقٌّ، وَأَنَّ القَبْرَ حَقٌّ، وَأَنَّ نَعِيْمَهُ حَقٌّ، وَأَنَّ عَذَابَهُ حَقٌّ، وَأَنَّ سُؤَالَ مُنْكَرٍ وَنَكِيْرٍ فِيْهِ حَقٌّ، وَأَنَّ البَعْثَ حَقٌّ، وَأَنَّ الحِسَابَ حَقٌّ، وَأَنَّ المِيْزَانَ حَقٌّ، وَأَنَّ الصِّرَاطَ حَقٌّ، وَأَنَّ شَفَاعَةَ سَيِّدِنَا مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ حَقٌّ، وَأَنَّ الجَنَّةَ حَقٌّ، وَأَنَّ النَّارَ حَقٌّ، وَأَنَّ لِقَاءَ اللهِ تَعَالَى لِأَهْلِ الحَقِّ حَقٌّ، وَأَنَّ السَّاعَةَ آتِيَةٌ لَا رَيْبَ فِيْهَا، وَأَنَّ اللهَ يَبْعَثُ مَنْ فِي القُبُوْرِ، . الآنَ قَدْ صِرْتَ (صِرْتِ) فِي أَطْبَاقِ الثَّرَى وَبَيْنَ عَسَاكِرِ المَوْتَى، فَإِذَا جَاءَكَ (جَاءَكِ) المَلَكَانِ المُوَكَّلَانِ بِكَ (بِكِ)، وَهُمَا مُنْكَرٌ وَنَكِيْرٌ فَلَا يُفْزِعَاكَ (يُفْزِعَاكِ) وَلَا يُرْهِبَاكَ (يُرْهِبَاكِ)، فَإِنَّهُمَا خَلْقٌ مِنْ خَلْقِ اللهِ تَعَالَى عَزَّ وَجَلَّ، وَإِذَا سَأَلَاكَ (سَأَلَاكِ) "مَنْ رَبُّكَ (رَبُّكِ) ومَنْ نَبِيُّكَ (نَبِيُّكِ) وَمَا دِيْنُكَ (دِيْنُكِ) وَمَا قِبْلَتُكَ (قِبْلَتُكِ) وَمَا إِمَامُكَ (إِمَامُكِ) وَمَنْ إِخْوَانُكَ (إِخْوَانُكِ)" فَقُلْ (فَقُوْلِيْ) لَهُمَا بِلِسَانٍ فَصِيْحٍ وَاعْتِقَادٍ صَحِيْحٍ "اللهُ رَبِّي ومُحَمَّدٌ نَبِيِّى وَالإِسْلَامُ دِيْنِي وَالكَعْبَةُ قِبْلَتِي وَالقُرْآنُ إِمَامِي وَالمُسْلِمُوْنَ وَالمُؤْمِنُوْنَ إِخْوَانِي،" وَقُلْ (وَقُوْلِيْ) "رَضِيْتُ بِاللهِ رَبًّا وَبِالإِسْلَامِ دِيْنًا وَبِمُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا وَرَسُوْلًا" عَلَى ذَلِكَ حُيِّيْتَ (حُيِّيْتِ) وَعَلَى ذَلِكَ مِتَّ (مِتِّ) وَبِذَلِكَ تُبْعَثُ (تُبْعَثِيْنَ) إِنْ شَاءَ اللهُ تَعَالَى مِنَ الآمِنِيْنَ ثَبَّتَكِ اللهُ بِالقَوْلِ الثَّابِتِ ٣ ثَبَّتَكَ اللهُ بِالقَوْلِ الثَّابِتِ ٣ يُثَبِّتُ اللهُ الَّذِيْنَ آمَنُوْا بِالقَوْلِ الثَّابِتِ فِي الحَيَاةِ الدُّنْيَا وَفِي الآخِرَةِ، يَا أَيَّتُهَا النَّفْسُ المُطْمَئِنَّةُ، ارْجِعِي إِلَى رَبِّكِ رَاضِيَةً مَرْضِيَّةً، فَادْخُلِى فِي عِبَادِي وَادْخُلِي جَنَّتِي`, latin: "", translation: "" },
+    { id: "doa_8", title: "Doa Menghindari Fitnah Dajjal", arabic: `اللّٰهُمَّ اِنِّى اَعُوْذُ بِكَ مِنْ عَذَابِ جَهَنَّمَ، وَمِنْ عَذَابِ الْقَبْرِ وَمِنْ فِتْنَةِ الْمَحْيَا وَالْمَمَاتِ وَمِنْ شَرِّ فِتْنَةِ الْمَسِيْحِ الدَّجَّالِ`, latin: "", translation: "" },
+    { id: "doa_9", title: "Doa Setelah Sholat Fardu", arabic: `اَلْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِيْنَ. حَمْدًا يُوَافِيْ نِعَمَهُ وَيُكَافِئُ مَزِيْدَهُ. يَا رَبَّنَا لَكَ الْحَمْدُ كَمَا يَنْبَغِيْ لِجَلاَلِ وَجْهِكَ الْكَرِيْمِ وَعَظِيْمِ سُلْطَانِكَ اَللَّهُمَّ صَلِّ عَلىَ سَيِّدِنَا مُحَمَّدٍ وَعَلىَ آلِ سَيِّدِنَا مُحَمَّدٍ اَللَّهُمَّ رَبَّنَا تَـقَـبَّلْ مِنَّا صَلاَتَنَا وَصِيَا مَنَا وَرُكُوْ عَنَا وَسُجُوْدَنَا وَقُعُوْدَنَا وَتَضَرُّ عَنَا وَتَخَشُّوْعَنَا وَتَعَبُّدَنَا وَتَمِّمْ تَقْصِيْرَنَا يَا اَلله يَا رَبَّ الْعَالَمِيْنَ`, latin: "", translation: "" },
+    { id: "doa_10", title: "Contoh Muqoddimah Tahlil", arabic: ``, latin: "", translation: `<div style="direction: ltr; text-align: left; font-family: 'Cormorant Garamond', Georgia, serif; white-space: normal; line-height: 1.6;"><h3 style="color: var(--gold); font-size: 1.15em; margin-bottom: 15px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px;">• Versi Indonesia</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin rahimakumullah.</p><p style="margin-bottom: 15px;">Marilah kita panjatkan puji dan syukur ke hadirat Allah SWT, yang telah memberikan nikmat iman, Islam, kesehatan, serta kesempatan kepada kita untuk berkumpul di tempat ini.</p><p style="margin-bottom: 15px;">Hadirin yang dimuliakan Allah.</p><p style="margin-bottom: 15px;">Kita semua menyadari bahwa kehidupan di dunia ini hanyalah sementara. Sebagaimana firman Allah SWT dalam Surah Al-Ankabut ayat 57:</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">كُلُّ نَفْسٍ ذَائِقَةُ الْمَوْتِ ۖ ثُمَّ إِلَيْنَا تُرْجَعُونَ</div><p style="margin-bottom: 15px; font-style: italic; color: var(--text-muted);">"Setiap yang bernyawa akan merasakan mati. Kemudian hanya kepada Kamilah kamu dikembalikan."</p><p style="margin-bottom: 15px;">Dan ketika kita menghadapi musibah, Allah mengajarkan kita untuk senantiasa bersabar, sebagaimana firman-Nya dalam Surah Al-Baqarah ayat 156:</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ</div><p style="margin-bottom: 15px; font-style: italic; color: var(--text-muted);">"Sesungguhnya kami milik Allah dan kepada-Nyalah kami kembali."</p><p style="margin-bottom: 15px;">Hadirin sekalian.</p><p style="margin-bottom: 15px;">Maka pada kesempatan ini, marilah kita bersama-sama mendoakan almarhum/almarhumah. Semoga Allah SWT mengampuni segala dosa-dosanya, menerima amal ibadahnya, melapangkan alam kuburnya, serta menempatkannya di tempat terbaik di sisi-Nya.</p><p style="margin-bottom: 15px;">Atas nama keluarga, kami mengucapkan terima kasih atas kehadiran Bapak, Ibu, dan seluruh hadirin. Kami juga memohon maaf apabila semasa hidup almarhum/almarhumah terdapat kesalahan dan kekhilafan, baik disengaja maupun tidak disengaja.</p><p style="margin-bottom: 15px;">Akhir kata, marilah kita ikuti pembacaan tahlil dan doa ini dengan penuh kekhusyukan. Semoga Allah SWT mengabulkan doa-doa kita.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 25px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p><h3 style="color: var(--gold); font-size: 1.15em; margin-top: 30px; margin-bottom: 15px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px;">• Versi Sunda</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin anu ku simkuring dipihormat, para sesepuh, alim ulama, Bapa-bapa, Ibu-ibu, sareng sadaya jamaah anu dirahmati ku Allah SWT.</p><p style="margin-bottom: 15px;">Mimiti, hayu urang sami-sami muji sareng ngucapkeun sukur ka Allah SWT, anu parantos maparin rahmat, nikmat, sareng karunia-Na, dugi ka dina wengi ieu urang sadaya tiasa kempel ngariung dina kaayaan séhat wal'afiat.</p><p style="margin-bottom: 15px;">Hadirin rahimakumullah.</p><p style="margin-bottom: 15px;">Urang sadaya tangtos parantos uninga, yén kahirupan di dunya ieu mung sakedap sareng sadaya mahluk anu hirup pasti bakal ngaraoskeun maot. Sakumaha dawuhan Allah SWT dina Al-Qur'an Surah Al-Ankabut ayat 57:</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">كُلُّ نَفْسٍ ذَائِقَةُ الْمَوْتِ ۖ ثُمَّ إِلَيْنَا تُرْجَعُونَ</div><p style="margin-bottom: 15px; font-style: italic; color: var(--text-muted);">Anu hartosna: "Satiap anu gaduh nyawa pasti bakal ngaraoskeun maot, teras ka Kami aranjeun sadayana bakal dipulangkeun."</p><p style="margin-bottom: 15px;">Sareng dina waktos urang ditimpa musibah, Allah SWT ngajarkeun urang sangkan tetep sabar sareng ikhlas, sakumaha dina Surah Al-Baqarah ayat 156:</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ</div><p style="margin-bottom: 15px; font-style: italic; color: var(--text-muted);">Anu hartosna: "Saéstuna urang sadaya kagungan Allah, sareng ka Mantenna urang sadaya bakal mulang."</p><p style="margin-bottom: 15px;">Ku kituna, dina ieu kasempetan, hayu urang sami-sami ngado'akeun almarhum/almarhumah, mugia Allah SWT ngahampura sagala kalepatanana, nampi amal ibadahna, ngalapangan alam kuburna, sareng maparin tempat anu mulya di sisi-Na.</p><p style="margin-bottom: 15px;">Salajengna, simkuring salaku wawakil ti pihak kulawarga ngahaturkeun nuhun anu teu kaétang kana kasumpingan Bapa, Ibu, sareng sadaya jamaah. Simkuring ogé nyuhunkeun dihapunten bilih salami almarhum/almarhumah hirup aya kalepatan, boh dina ucap boh dina lampah, dihaja atanapi teu dihaja.</p><p style="margin-bottom: 15px;">Pamungkas, hayu urang sami-sami ngalaksanakeun tahlil sareng ngadu'a kalayan khusyuk. Mugia sadaya amal sareng do'a urang ditampi ku Allah SWT.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 15px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p></div>` },
+    { id: "doa_11", title: "Contoh Muqoddimah Aqiqah", arabic: ``, latin: "", translation: `<div style="direction: ltr; text-align: left; font-family: 'Cormorant Garamond', Georgia, serif; white-space: normal; line-height: 1.6;"><h3 style="color: var(--gold); font-size: 1.15em; margin-bottom: 15px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px;">• Versi Bahasa Sunda</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin rahimakumullah.</p><p style="margin-bottom: 15px;">Mimiti, hayu urang sami-sami muji sareng ngucapkeun sukur ka Allah SWT, anu parantos maparin rahmat, nikmat, sareng karunia-Na, dugi ka dina ieu kasempetan urang tiasa kempel ngariung dina kaayaan séhat wal'afiat.</p><p style="margin-bottom: 15px;">Dina ieu kasempetan, urang sadaya ngariung dina raraga ngalaksanakeun syukuran aqiqah, minangka wujud rasa syukur kulawarga ka Allah SWT, anu parantos maparin amanah sareng karunia berupa lahirna putra/putri.</p><p style="margin-bottom: 15px;">Mugia ku dilaksanakeunana ieu aqiqah, janten jalan kahadéan, sareng mugia murangkalihna janten anak anu soleh/solehah, séhat, panjang yuswa, barokah umurna, taat ka Allah SWT, sareng janten kabagjaan kanggo sepuhna.</p><p style="margin-bottom: 15px;">Teu hilap, simkuring salaku wawakil kulawarga ngahaturkeun nuhun kana kasumpingan Bapa, Ibu, sareng sadaya tamu uleman. Hapunten bilih aya kakirangan dina panyambutan atanapi dina sagala rupi hidangan.</p><p style="margin-bottom: 15px;">Pamungkas, hayu urang sami-sami ngiringan ieu acara kalayan pinuh ku rasa syukur sareng ngadu'a, mugia sadayana dipaparin kalancaran sareng kaberkahan ku Allah SWT.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 25px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p><h3 style="color: var(--gold); font-size: 1.15em; margin-top: 30px; margin-bottom: 15px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px;">• Versi Bahasa Indonesia</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin yang dirahmati Allah SWT.</p><p style="margin-bottom: 15px;">Pertama-tama, marilah kita panjatkan puji dan syukur ke hadirat Allah SWT, karena atas segala rahmat dan karunia-Nya, kita dapat berkumpul di tempat ini dalam keadaan sehat walafiat.</p><p style="margin-bottom: 15px;">Pada kesempatan yang penuh kebahagiaan ini, kita berkumpul dalam rangka melaksanakan syukuran aqiqah sebagai bentuk rasa syukur keluarga kepada Allah SWT atas anugerah dan amanah berupa kelahiran seorang putra/putri.</p><p style="margin-bottom: 15px;">Semoga melalui acara aqiqah ini, anak yang telah dianugerahkan menjadi anak yang saleh/salehah, berbakti kepada kedua orang tua, sehat, panjang umur, penuh keberkahan, serta kelak menjadi kebanggaan keluarga dan bermanfaat bagi agama, bangsa, dan sesama.</p><p style="margin-bottom: 15px;">Selanjutnya, kami mewakili keluarga mengucapkan terima kasih atas kehadiran Bapak, Ibu, serta seluruh tamu undangan. Kami juga memohon maaf apabila terdapat kekurangan dalam penyambutan maupun hidangan yang kami sajikan.</p><p style="margin-bottom: 15px;">Akhir kata, marilah kita ikuti rangkaian acara ini dengan penuh rasa syukur dan doa. Semoga Allah SWT senantiasa melimpahkan keberkahan kepada kita semua.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 15px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p></div>` }
+  ];
+
+  dataDoa.forEach((doa, index) => { if (!doa.id) doa.id = 'doa_' + (index + 1); });
+
+  const BUILTIN_IDS = new Set(dataDoa.map(d => d.id));
+  const isCustomDoa = (id) => !BUILTIN_IDS.has(id);
+
+  const ORIGINAL_TITLES = {};
+  dataDoa.forEach(d => { ORIGINAL_TITLES[d.id] = d.title; });
+
+  const COVER_DEFAULTS = {
+    bismillah: 'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ',
+    kicker: 'Buku Digital',
+    title: 'Kumpulan Doa<br>&amp; Muqaddimah',
+    desc: 'Panduan doa harian dan muqaddimah pilihan',
+    footer: 'buku digital v1.23.26 created by oznet'
+  };
+
+  let coverTexts = { ...COVER_DEFAULTS };
+
+  try {
+    const savedCover = JSON.parse(localStorage.getItem('cover_texts'));
+    if (savedCover && typeof savedCover === 'object') {
+      Object.keys(COVER_DEFAULTS).forEach(k => {
+        if (typeof savedCover[k] === 'string') coverTexts[k] = savedCover[k];
+      });
+    }
+  } catch(e) { console.warn('Gagal load cover_texts:', e); }
+
+  function sanitizeHTML(html) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    tmp.querySelectorAll('script,iframe,object,embed,link,style,meta').forEach(e => e.remove());
+    tmp.querySelectorAll('*').forEach(el => {
+      [...el.attributes].forEach(attr => {
+        const name = attr.name.toLowerCase();
+        const value = String(attr.value || '').trim().toLowerCase();
+        if (name.startsWith('on') || (name === 'href' && value.startsWith('javascript:'))) {
+          el.removeAttribute(attr.name);
+        }
+      });
+    });
+    return tmp.innerHTML;
+  }
+
+  function applyCoverTexts() {
+    const map = {
+      'cover-bismillah': coverTexts.bismillah,
+      'cover-kicker': coverTexts.kicker,
+      'cover-title': coverTexts.title,
+      'cover-desc': coverTexts.desc,
+      'cover-footer': coverTexts.footer
+    };
+    Object.keys(map).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = map[id];
+    });
+  }
+  applyCoverTexts();
+
+  function autoSaveCover() {
+    ['bismillah', 'kicker', 'title', 'desc', 'footer'].forEach(key => {
+      const el = document.getElementById('cover-' + key);
+      if (el) coverTexts[key] = sanitizeHTML(el.innerHTML);
+    });
+    try { localStorage.setItem('cover_texts', JSON.stringify(coverTexts)); } catch(e) {}
+  }
+
+  function resetCoverTexts() {
+    const allDefault = Object.keys(COVER_DEFAULTS).every(k => coverTexts[k] === COVER_DEFAULTS[k]);
+    if (allDefault) { alert('Teks cover sudah dalam kondisi default.'); return; }
+    if (!confirm('↺ Reset semua teks cover ke default?\n\nJudul, deskripsi, kicker, bismillah, dan footer akan dikembalikan ke pengaturan awal.')) return;
+    coverTexts = { ...COVER_DEFAULTS };
+    try { localStorage.removeItem('cover_texts'); } catch(e) {}
+    applyCoverTexts();
+    playSound();
+    alert('✅ Teks cover berhasil direset ke default.');
+  }
+
+  try {
+    const customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {};
+    const savedOrder = JSON.parse(localStorage.getItem('custom_doa_order')) || [];
+    let mutated = false;
+
+    dataDoa.forEach(doa => {
+      const cd = customData[doa.id];
+      if (!cd) return;
+      if (cd.arabic && cd.arabic.trim().startsWith('<div') && !cd.translation) {
+        cd.translation = cd.arabic; cd.arabic = ''; mutated = true;
+      }
+      doa.arabic      = cd.arabic      ?? doa.arabic;
+      doa.latin       = cd.latin       ?? doa.latin;
+      doa.translation = cd.translation ?? doa.translation;
+      if (cd.title && cd.title !== ORIGINAL_TITLES[doa.id]) {
+        doa.title = cd.title;
+      }
+    });
+
+    Object.keys(customData).forEach(id => {
+      if (dataDoa.some(d => d.id === id)) return;
+      const cd = customData[id];
+      if (!cd || !cd.title) return;
+      dataDoa.push({
+        id, title: cd.title,
+        arabic: cd.arabic || '', latin: cd.latin || '', translation: cd.translation || ''
+      });
+    });
+
+    if (Array.isArray(savedOrder) && savedOrder.length) {
+      const newOrder = [];
+      savedOrder.forEach(id => {
+        const found = dataDoa.find(d => d.id === id);
+        if (found) newOrder.push(found);
+      });
+      dataDoa.forEach(d => { if (!newOrder.some(n => n.id === d.id)) newOrder.push(d); });
+      dataDoa = newOrder;
+    }
+
+    if (mutated) localStorage.setItem('custom_doa_data', JSON.stringify(customData));
+  } catch(e) { console.warn("Gagal load data:", e); }
+
+  let favorites = [];
+  let currentDoaId = null;
+  let sortableInstance = null;
+
+  function renderTOC() {
+    try {
+      const favList = document.getElementById('fav-list');
+      const allList = document.getElementById('all-list');
+      const favTitle = document.getElementById('fav-section-title');
+      if (!favList || !allList) return;
+      favList.innerHTML = ''; allList.innerHTML = ''; let hasFav = false;
+      dataDoa.forEach((doa, index) => {
+        const id = doa.id; const isFav = favorites.includes(id);
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'toc-item'; itemDiv.setAttribute('data-id', id);
+        const a = document.createElement('a'); a.setAttribute('onclick', `openDoa('${id}')`);
+        const numSpan = document.createElement('span'); numSpan.className='toc-number'; numSpan.innerText = String(index+1).padStart(2,'0');
+        const titleSpan = document.createElement('span'); titleSpan.className='toc-title'; titleSpan.innerText = doa.title;
+        a.appendChild(numSpan); a.appendChild(titleSpan);
+        const favBtn = document.createElement('button');
+        favBtn.className = `btn-fav-toggle ${isFav ? 'active' : ''}`;
+        favBtn.setAttribute('onclick', `toggleFav('${id}', event)`);
+        favBtn.innerHTML = isFav ? '⭐' : '☆';
+        itemDiv.appendChild(a); itemDiv.appendChild(favBtn);
+        if (isFav) { favList.appendChild(itemDiv); hasFav = true; } else { allList.appendChild(itemDiv); }
+      });
+      if (favTitle) favTitle.style.display = hasFav ? 'block' : 'none';
+      filterTOC(); initSortable();
+    } catch (error) { console.error("Gagal render:", error); }
+  }
+
+  function initSortable() {
+    const allList = document.getElementById('all-list'); if (!allList) return;
+    if (sortableInstance) sortableInstance.destroy();
+    sortableInstance = new Sortable(allList, {
+      animation: 150, delay: 300, delayOnTouchOnly: true,
+      ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen',
+      disabled: !document.body.classList.contains('sort-mode-active'),
+      onEnd: function (evt) {
+        const newOrderIds = [];
+        document.querySelectorAll('#all-list .toc-item').forEach(item => newOrderIds.push(item.getAttribute('data-id')));
+        let newDataDoa = []; newOrderIds.forEach(id => { const found = dataDoa.find(d => d.id === id); if (found) newDataDoa.push(found); });
+        dataDoa = newDataDoa;
+        try { localStorage.setItem('custom_doa_order', JSON.stringify(newOrderIds)); } catch(e) {}
+        renderTOC(); playSound();
+      }
+    });
+  }
+
+  function toggleSortMode() {
+    const body = document.body; const btn = document.getElementById('btn-sort');
+    const isSorting = body.classList.contains('sort-mode-active');
+    if (isSorting) {
+      body.classList.remove('sort-mode-active'); btn.classList.remove('active');
+      btn.innerHTML = '🔀 Atur Urutan'; if (sortableInstance) sortableInstance.option("disabled", true);
+    } else {
+      body.classList.add('sort-mode-active'); btn.classList.add('active');
+      btn.innerHTML = '✅ Selesai Atur'; if (sortableInstance) sortableInstance.option("disabled", false);
+    }
+    playSound();
+  }
+
+  function toggleSearch() {
+    const container = document.getElementById('search-container'); const input = document.getElementById('search-input');
+    if (container.classList.contains('active')) { container.classList.remove('active'); input.value = ''; filterTOC(); }
+    else { container.classList.add('active'); input.focus(); }
+    playSound();
+  }
+
+  function filterTOC() {
+    const searchInput = document.getElementById('search-input'); if (!searchInput) return;
+    const query = searchInput.value.toLowerCase();
+    const allItems = document.querySelectorAll('.toc-item');
+    let favVisibleCount = 0; let allVisibleCount = 0;
+    allItems.forEach(item => {
+      const titleEl = item.querySelector('.toc-title'); if (!titleEl) return;
+      const title = titleEl.innerText.toLowerCase(); const isMatch = title.includes(query);
+      if (isMatch) {
+        item.style.display = 'flex';
+        if (item.parentElement.id === 'fav-list') favVisibleCount++;
+        if (item.parentElement.id === 'all-list') allVisibleCount++;
+      } else { item.style.display = 'none'; }
+    });
+    const favTitle = document.getElementById('fav-section-title'); const allTitle = document.getElementById('all-section-title');
+    if (favTitle) favTitle.style.display = (favVisibleCount > 0) ? 'block' : 'none';
+    if (allTitle) allTitle.style.display = (allVisibleCount > 0) ? 'block' : 'none';
+  }
+
+  try {
+    const savedFav = localStorage.getItem('doa_favorites');
+    if (savedFav) { const parsed = JSON.parse(savedFav); if (Array.isArray(parsed)) favorites = parsed; }
+  } catch (e) { }
+  renderTOC();
+
+  // ====================================================
+  // TRIPLE-TAP (➕, heading, ✏️ pensil) — TANPA NOTIF
+  // ====================================================
+  const TRIPLE_TAP_WINDOW = 1000;
+  let addBtnCount = 0, addBtnTimer = null;
+  let headingCount = 0, headingTimer = null;
+  let pencilCount = 0, pencilTimer = null;
+
+  function pulseElement(el) {
+    if (!el) return;
+    el.classList.remove('tapping');
+    void el.offsetWidth;
+    el.classList.add('tapping');
+  }
+
+  function handleAddTap(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    const btn = document.getElementById('add-doa-btn');
+    pulseElement(btn);
+
+    addBtnCount++;
+    if (addBtnTimer) clearTimeout(addBtnTimer);
+
+    if (addBtnCount >= 3) {
+      addBtnCount = 0;
+      addBtnTimer = null;
+      openAddDoaModal();
+      return;
+    }
+    addBtnTimer = setTimeout(() => {
+      addBtnCount = 0;
+      addBtnTimer = null;
+    }, TRIPLE_TAP_WINDOW);
+  }
+
+  function handleHeadingTap(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    const h = document.getElementById('toc-heading');
+    pulseElement(h);
+
+    headingCount++;
+    if (headingTimer) clearTimeout(headingTimer);
+
+    if (headingCount >= 3) {
+      headingCount = 0;
+      headingTimer = null;
+      openAddDoaModal();
+      return;
+    }
+    headingTimer = setTimeout(() => {
+      headingCount = 0;
+      headingTimer = null;
+    }, TRIPLE_TAP_WINDOW);
+  }
+
+  function handlePencilTap(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    const btn = document.getElementById('rename-custom-btn');
+    pulseElement(btn);
+
+    pencilCount++;
+    if (pencilTimer) clearTimeout(pencilTimer);
+
+    if (pencilCount >= 3) {
+      pencilCount = 0;
+      pencilTimer = null;
+      openRenameModal();
+      return;
+    }
+    pencilTimer = setTimeout(() => {
+      pencilCount = 0;
+      pencilTimer = null;
+    }, TRIPLE_TAP_WINDOW);
+  }
+
+  (function bindTripleTap() {
+    const btn = document.getElementById('add-doa-btn');
+    const heading = document.getElementById('toc-heading');
+    const pencil = document.getElementById('rename-custom-btn');
+    if (btn) btn.addEventListener('click', handleAddTap);
+    if (heading) heading.addEventListener('click', handleHeadingTap);
+    if (pencil) pencil.addEventListener('click', handlePencilTap);
+  })();
+
+  // ====================================================
+  // MODAL TAMBAH DOA
+  // ====================================================
+  function openAddDoaModal() {
+    playSound();
+    document.getElementById('add-doa-modal').classList.add('active');
+  }
+  function closeAddDoaModal() {
+    document.getElementById('add-doa-modal').classList.remove('active');
+    document.getElementById('new-title').value = ''; document.getElementById('new-arabic').value = '';
+    document.getElementById('new-latin').value = ''; document.getElementById('new-translation').value = '';
+  }
+
+  function saveNewDoa() {
+    const title = document.getElementById('new-title').value.trim();
+    const arabic = document.getElementById('new-arabic').value.trim();
+    const latin = document.getElementById('new-latin').value.trim();
+    const translation = document.getElementById('new-translation').value.trim();
+    if (!title || (!arabic && !translation)) {
+      alert('Judul dan minimal salah satu teks (Arab / Terjemahan) wajib diisi!');
+      return;
+    }
+    const newId = 'doa_' + Date.now();
+    dataDoa.push({ id: newId, title, arabic, latin, translation });
+    try {
+      let customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {};
+      customData[newId] = { title, arabic, latin, translation };
+      localStorage.setItem('custom_doa_data', JSON.stringify(customData));
+      localStorage.setItem('custom_doa_order', JSON.stringify(dataDoa.map(d => d.id)));
+    } catch(e) {}
+    closeAddDoaModal(); renderTOC(); playSound();
+    alert('✅ Doa baru berhasil ditambahkan dan tersimpan permanen di perangkat ini!');
+  }
+
+  function openRenameModal() {
+    if (!currentDoaId) return;
+    const doa = dataDoa.find(d => d.id === currentDoaId);
+    if (!doa) return;
+    document.getElementById('rename-title').value = doa.title;
+    const resetBtn = document.getElementById('rename-reset-btn');
+    if (resetBtn) {
+      const isBuiltin = BUILTIN_IDS.has(currentDoaId);
+      const isChanged = isBuiltin && ORIGINAL_TITLES[currentDoaId] && doa.title !== ORIGINAL_TITLES[currentDoaId];
+      resetBtn.style.display = isChanged ? 'block' : 'none';
+    }
+    document.getElementById('rename-doa-modal').classList.add('active');
+    playSound();
+  }
+
+  function closeRenameModal() { document.getElementById('rename-doa-modal').classList.remove('active'); }
+
+  function saveRenameDoa() {
+    if (!currentDoaId) return;
+    const newTitle = document.getElementById('rename-title').value.trim();
+    if (!newTitle) { alert('Judul tidak boleh kosong.'); return; }
+    const doa = dataDoa.find(d => d.id === currentDoaId);
+    if (!doa) return;
+    doa.title = newTitle;
+    try {
+      let customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {};
+      if (!customData[currentDoaId]) {
+        customData[currentDoaId] = { arabic: doa.arabic, latin: doa.latin, translation: doa.translation };
+      }
+      if (BUILTIN_IDS.has(currentDoaId) && newTitle === ORIGINAL_TITLES[currentDoaId]) {
+        delete customData[currentDoaId].title;
+      } else {
+        customData[currentDoaId].title = newTitle;
+      }
+      localStorage.setItem('custom_doa_data', JSON.stringify(customData));
+    } catch(e) {}
+    document.getElementById('doa-title').innerText = newTitle;
+    renderTOC(); closeRenameModal(); playSound();
+  }
+
+  function resetDoaTitle() {
+    if (!currentDoaId || !BUILTIN_IDS.has(currentDoaId)) return;
+    const original = ORIGINAL_TITLES[currentDoaId];
+    if (!original) return;
+    document.getElementById('rename-title').value = original;
+  }
+
+  function deleteCurrentDoa() {
+    if (!currentDoaId || !isCustomDoa(currentDoaId)) return;
+    const doa = dataDoa.find(d => d.id === currentDoaId);
+    if (!doa) return;
+    if (!confirm(`Hapus doa "${doa.title}"?\n\nTindakan ini tidak bisa dibatalkan.`)) return;
+
+    const deletedId = currentDoaId;
+    dataDoa = dataDoa.filter(d => d.id !== deletedId);
+    favorites = favorites.filter(f => f !== deletedId);
+
+    try {
+      let customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {};
+      delete customData[deletedId];
+      localStorage.setItem('custom_doa_data', JSON.stringify(customData));
+      localStorage.setItem('custom_doa_order', JSON.stringify(dataDoa.map(d => d.id)));
+      localStorage.setItem('doa_favorites', JSON.stringify(favorites));
+    } catch(e) {}
+
+    currentDoaId = null;
+    renderTOC();
+    goBack();
+    alert('Doa berhasil dihapus.');
+  }
+
+  function openBackupModal() {
+    try {
+      const customData = JSON.parse(localStorage.getItem('custom_doa_data') || '{}');
+      const customCount = dataDoa.filter(d => isCustomDoa(d.id)).length;
+      const renamedCount = dataDoa.filter(d => BUILTIN_IDS.has(d.id) && d.title !== ORIGINAL_TITLES[d.id]).length;
+      const coverCustomized = Object.keys(COVER_DEFAULTS).filter(k => coverTexts[k] !== COVER_DEFAULTS[k]).length;
+      const coverTotal = Object.keys(COVER_DEFAULTS).length;
+      const totalSize = new Blob([JSON.stringify(customData)]).size;
+      const sizeKB = (totalSize / 1024).toFixed(1);
+      const info = document.getElementById('backup-info');
+      if (info) {
+        info.innerHTML =
+          `📊 Doa buatan sendiri: <strong>${customCount}</strong><br>` +
+          `✏️ Judul doa diubah: <strong>${renamedCount}</strong><br>` +
+          `🎨 Cover dikustomisasi: <strong>${coverCustomized}/${coverTotal} bagian</strong><br>` +
+          `⭐ Favorit: <strong>${favorites.length}</strong><br>` +
+          `📚 Total doa: <strong>${dataDoa.length}</strong><br>` +
+          `💾 Ukuran data: <strong>~${sizeKB} KB</strong>`;
+      }
+    } catch(e) {}
+    document.getElementById('backup-modal').classList.add('active');
+    playSound();
+  }
+
+  function exportBackup() {
+    try {
+      let customData = {};
+      try { customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {}; } catch(e) {}
+      const backup = {
+        version: 1, app: 'buku-doa', exportedAt: new Date().toISOString(),
+        data: {
+          custom_doa_data: customData,
+          custom_doa_order: dataDoa.map(d => d.id),
+          doa_favorites: favorites,
+          doa_theme: localStorage.getItem('doa_theme') || 'dark',
+          doa_font_scale: parseFloat(localStorage.getItem('doa_font_scale')) || 1,
+          cover_texts: coverTexts
+        }
+      };
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const date = new Date().toISOString().slice(0, 10);
+      a.download = `buku-doa-backup-${date}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      playSound();
+    } catch(e) { alert('Gagal membuat backup: ' + e.message); }
+  }
+
+  function importBackup(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const parsed = JSON.parse(e.target.result);
+        if (!parsed || parsed.app !== 'buku-doa' || !parsed.data) {
+          alert('❌ File backup tidak valid.');
+          return;
+        }
+        if (!confirm('⚠️ Impor backup akan MENGGANTI semua data saat ini.\n\nLanjutkan?')) return;
+        const d = parsed.data;
+        if (d.custom_doa_data)   localStorage.setItem('custom_doa_data', JSON.stringify(d.custom_doa_data));
+        if (d.custom_doa_order)  localStorage.setItem('custom_doa_order', JSON.stringify(d.custom_doa_order));
+        if (d.doa_favorites)     localStorage.setItem('doa_favorites', JSON.stringify(d.doa_favorites));
+        if (d.doa_theme)         localStorage.setItem('doa_theme', d.doa_theme);
+        if (typeof d.doa_font_scale === 'number') localStorage.setItem('doa_font_scale', d.doa_font_scale);
+        if (d.cover_texts)       localStorage.setItem('cover_texts', JSON.stringify(d.cover_texts));
+        alert('✅ Backup berhasil diimpor! Halaman akan dimuat ulang.');
+        location.reload();
+      } catch(err) {
+        alert('❌ Gagal membaca file backup: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+  }
+
+  async function clearAppCache() {
+    const offlineWarning = !navigator.onLine
+      ? '\n\n⚠️ PERINGATAN: Anda sedang OFFLINE.\nMenghapus cache saat offline akan membuat aplikasi TIDAK BISA DIBUKA sampai ada koneksi internet.'
+      : '';
+    const ok = confirm(
+      '🧹 Hapus cache aplikasi?\n\n' +
+      '• File aplikasi akan diunduh ulang dari server (versi terbaru).\n' +
+      '• Data doa, favorit, pengaturan, dan teks cover Anda TIDAK akan terhapus.' +
+      offlineWarning + '\n\nLanjutkan?'
+    );
+    if (!ok) return;
+    try {
+      let cleared = 0;
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        cleared = keys.length;
+        await Promise.all(keys.map(k => caches.delete(k)));
+      }
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(r => r.unregister()));
+      }
+      alert('✅ Cache berhasil dihapus (' + cleared + ' entri).\nAplikasi akan dimuat ulang dengan file terbaru.');
+      const url = new URL(window.location.href);
+      url.searchParams.set('_cb', Date.now());
+      window.location.replace(url.toString());
+    } catch(e) {
+      alert('❌ Gagal menghapus cache: ' + e.message + '\n\nMencoba memuat ulang halaman...');
+      window.location.reload();
+    }
+  }
+
+  function playSound() {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext; if (!AudioContext) return;
+      const ctx = new AudioContext(); const osc = ctx.createOscillator(); const gain = ctx.createGain();
+      osc.type = 'sine'; osc.frequency.setValueAtTime(800, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+      osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.2);
+    } catch(e) { }
+  }
+
+  function goBack() {
+    const activePage = document.querySelector('.page.active'); if (!activePage) return;
+    if (isScrolling) toggleAutoScroll();
+    if (isSpeaking) toggleTTS();
+    if (wakeLock !== null) toggleWakeLock();
+    if (activePage.id === 'page-doa' || activePage.id === 'page-tasbih') {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-toc').classList.add('active');
+      document.getElementById('app-scroll').scrollTop = 0; playSound();
+      try { history.replaceState({page: 'toc'}, '', '#toc'); } catch(e){}
+    } else if (activePage.id === 'page-toc') {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-cover').classList.add('active');
+      document.getElementById('app-scroll').scrollTop = 0; playSound();
+      try { history.replaceState({page: 'cover'}, '', '#cover'); } catch(e){}
+    }
+  }
+
+  function goToCover() {
+    if (isScrolling) toggleAutoScroll();
+    if (isSpeaking) toggleTTS();
+    if (wakeLock !== null) toggleWakeLock();
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-cover').classList.add('active');
+    document.getElementById('app-scroll').scrollTop = 0;
+    try { history.replaceState({page: 'cover'}, '', '#cover'); } catch(e){}
+    playSound();
+  }
+
+  function showPage(pageId, pushHistory = true) {
+    playSound();
+    if (pageId === 'page-toc') {
+      document.getElementById('search-container').classList.remove('active');
+      document.getElementById('search-input').value = ''; filterTOC();
+    }
+    document.querySelectorAll('.page').forEach(page => { page.classList.remove('active'); });
+    const target = document.getElementById(pageId); if (target) target.classList.add('active');
+    const scroller = document.getElementById('app-scroll'); if (scroller) scroller.scrollTop = 0;
+    if (pushHistory) {
+      try {
+        if (pageId === 'page-cover') history.pushState({page: 'cover'}, '', '#cover');
+        else if (pageId === 'page-toc') history.pushState({page: 'toc'}, '', '#toc');
+      } catch(e) {}
+    }
+  }
+
+  function applyFontScale(scale) {
+    try {
+      const arabicEl = document.getElementById('doa-arabic');
+      const latinEl = document.getElementById('doa-latin');
+      const transEl = document.getElementById('doa-translation');
+      if(arabicEl) arabicEl.style.fontSize = `calc(clamp(26px, 6vw, 34px) * ${scale})`;
+      if(latinEl) latinEl.style.fontSize = `calc(16px * ${scale})`;
+      if(transEl) transEl.style.fontSize = `calc(18px * ${scale})`;
+    } catch(e) { }
+  }
+
+  function openDoa(id, pushHistory = true) {
+    if (document.body.classList.contains('sort-mode-active')) return;
+    const doa = dataDoa.find(d => d.id === id);
+    if (!doa) return;
+
+    if (isScrolling) toggleAutoScroll();
+    if (isSpeaking) toggleTTS();
+
+    // Reset triple-tap pensil saat buka doa lain
+    pencilCount = 0;
+    if (pencilTimer) { clearTimeout(pencilTimer); pencilTimer = null; }
+
+    currentDoaId = id;
+    document.getElementById('doa-title').innerText = doa.title;
+
+    const arabicEl = document.getElementById('doa-arabic');
+    const latinEl = document.getElementById('doa-latin');
+    const transEl = document.getElementById('doa-translation');
+
+    const arabicContent = (doa.arabic || '').trim();
+    const latinContent = (doa.latin || '').trim();
+    const transContent = (doa.translation || '').trim();
+
+    arabicEl.innerHTML = arabicContent || '';
+    latinEl.innerHTML = latinContent || '';
+    transEl.innerHTML = transContent || '';
+
+    if (!isEditMode) {
+      arabicEl.style.display = arabicContent ? 'block' : 'none';
+      latinEl.style.display = latinContent ? 'block' : 'none';
+      transEl.style.display = transContent ? 'block' : 'none';
+    }
+
+    const custom = isCustomDoa(id);
+    const renameBtn = document.getElementById('rename-custom-btn');
+    const deleteBtn = document.getElementById('delete-custom-btn');
+    if (renameBtn) renameBtn.style.display = 'flex';
+    if (deleteBtn) deleteBtn.style.display = custom ? 'flex' : 'none';
+
+    updateStarIcon();
+
+    let savedScale = 1;
+    try { savedScale = parseFloat(localStorage.getItem('doa_font_scale')) || 1; } catch(e) {}
+    applyFontScale(savedScale);
+
+    updateEditability();
+    showPage('page-doa', false);
+
+    if (pushHistory) {
+      try { history.pushState({page: 'doa', id: id}, '', '#doa-' + id); } catch(e) {}
+    }
+  }
+
+  window.addEventListener('popstate', function(event) {
+    try {
+      if (event.state) {
+        if (event.state.page === 'cover') showPage('page-cover', false);
+        else if (event.state.page === 'toc') showPage('page-toc', false);
+        else if (event.state.page === 'doa') openDoa(event.state.id, false);
+      } else {
+        showPage('page-cover', false);
+      }
+    } catch(e) {}
+  });
+
+  try {
+    if (localStorage.getItem('doa_theme') === 'light') {
+      document.body.classList.add('light-mode');
+      const btn = document.getElementById('theme-btn'); if (btn) btn.innerText = '☀️';
+      const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', '#fdfaf6');
+    }
+  } catch(e) {}
+
+  function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    const isLight = document.body.classList.contains('light-mode');
+    try { localStorage.setItem('doa_theme', isLight ? 'light' : 'dark'); } catch(e) {}
+    const btn = document.getElementById('theme-btn'); if (btn) btn.innerText = isLight ? '☀️' : '🌙';
+    const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', isLight ? '#fdfaf6' : '#050807');
+    playSound();
+  }
+
+  function adjustFont(step) {
+    let scale = 1; try { scale = parseFloat(localStorage.getItem('doa_font_scale')) || 1; } catch(e) {}
+    scale += step; scale = Math.max(0.8, Math.min(4.5, scale));
+    try { localStorage.setItem('doa_font_scale', scale); } catch(e) {}
+    applyFontScale(scale); playSound();
+    try {
+      const toast = document.createElement('div');
+      toast.innerText = `Ukuran: ${Math.round(scale * 100)}%`;
+      toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--gold);color:#000;padding:8px 16px;border-radius:20px;font-weight:bold;z-index:9999;transition:opacity 0.5s;box-shadow:0 4px 10px rgba(0,0,0,0.3);font-family:Georgia,serif;';
+      document.body.appendChild(toast);
+      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 1000);
+    } catch(e){}
+  }
+
+  function copyDoa() {
+    const title = document.getElementById('doa-title').innerText.trim();
+    const arabicEl = document.getElementById('doa-arabic');
+    const latinEl = document.getElementById('doa-latin');
+    const transEl = document.getElementById('doa-translation');
+
+    const arabic = arabicEl.style.display === 'none' ? '' : arabicEl.innerText.trim();
+    const latin = latinEl.style.display === 'none' ? '' : latinEl.innerText.trim();
+    const trans = transEl.style.display === 'none' ? '' : transEl.innerText.trim();
+
+    const parts = [title];
+    if (arabic) parts.push(arabic);
+    if (latin) parts.push(latin);
+    if (trans) parts.push(arabic ? `Artinya:\n${trans}` : trans);
+    parts.push('(Dikutip dari Aplikasi Kumpulan Doa & Muqaddimah)');
+    const textToCopy = parts.join('\n\n');
+
+    try {
+      navigator.clipboard.writeText(textToCopy)
+        .then(() => alert('Teks doa berhasil disalin ke clipboard!'))
+        .catch(() => alert('Gagal menyalin teks.'));
+    } catch(e) { alert('Browser tidak mendukung fitur salin.'); }
+    playSound();
+  }
+
+  function toggleFav(id, event) {
+    if (event) event.stopPropagation();
+    const idStr = String(id);
+    if (favorites.includes(idStr)) favorites = favorites.filter(favId => favId !== idStr);
+    else favorites.push(idStr);
+    try { localStorage.setItem('doa_favorites', JSON.stringify(favorites)); } catch(e) {}
+    renderTOC(); updateStarIcon(); playSound();
+  }
+  function toggleCurrentFavorite() { if (currentDoaId) toggleFav(currentDoaId); }
+  function updateStarIcon() {
+    const btn = document.getElementById('fav-btn-page'); if (!btn) return;
+    if (currentDoaId && favorites.includes(String(currentDoaId))) { btn.innerHTML = '⭐'; btn.classList.add('active'); }
+    else { btn.innerHTML = '☆'; btn.classList.remove('active'); }
+  }
+
+  let scrollInterval; let isScrolling = false;
+  function toggleAutoScroll() {
+    const btn = document.getElementById('btn-scroll');
+    if (isScrolling) { clearInterval(scrollInterval); btn.classList.remove('active'); isScrolling = false; }
+    else {
+      isScrolling = true; btn.classList.add('active');
+      scrollInterval = setInterval(() => { document.getElementById('app-scroll').scrollBy(0, 2); }, 50);
+    }
+  }
+
+  let isSpeaking = false;
+  function toggleTTS() {
+    const btn = document.getElementById('btn-tts');
+    if (isSpeaking) {
+      window.speechSynthesis.cancel(); isSpeaking = false; btn.classList.remove('active');
+      return;
+    }
+    const arabicEl = document.getElementById('doa-arabic');
+    const latinEl = document.getElementById('doa-latin');
+    const transEl = document.getElementById('doa-translation');
+
+    const hasArabic = arabicEl.style.display !== 'none' && arabicEl.innerText.trim();
+    const visible = [];
+    if (hasArabic) visible.push(arabicEl.innerText);
+    if (latinEl.style.display !== 'none' && latinEl.innerText.trim()) visible.push(latinEl.innerText);
+    if (!hasArabic && transEl.style.display !== 'none' && transEl.innerText.trim()) visible.push(transEl.innerText);
+
+    const textToRead = visible.join('. ');
+    if (!textToRead.trim()) { alert('Tidak ada teks untuk dibaca.'); return; }
+
+    isSpeaking = true; btn.classList.add('active');
+    const utterance = new SpeechSynthesisUtterance(textToRead);
+    utterance.lang = hasArabic ? 'ar-SA' : 'id-ID';
+    utterance.onend = () => { isSpeaking = false; btn.classList.remove('active'); };
+    window.speechSynthesis.speak(utterance);
+  }
+
+  let wakeLock = null;
+  async function toggleWakeLock() {
+    const btn = document.getElementById('btn-wake');
+    if (wakeLock !== null) { await wakeLock.release(); wakeLock = null; btn.classList.remove('active'); }
+    else {
+      try {
+        wakeLock = await navigator.wakeLock.request('screen'); btn.classList.add('active');
+        wakeLock.addEventListener('release', () => { btn.classList.remove('active'); wakeLock = null; });
+      } catch (err) { alert('Fitur layar menyala tidak didukung di browser ini.'); }
+    }
+  }
+
+  let tasbihCount = 0; let tasbihTarget = 100;
+  function countTasbih() {
+    if (tasbihCount < 999) {
+      tasbihCount++; document.getElementById('tasbih-count').innerText = tasbihCount;
+      if (navigator.vibrate) navigator.vibrate(50);
+      if (tasbihCount === tasbihTarget) { if (navigator.vibrate) navigator.vibrate([100,50,100]); playSound(); }
+    }
+  }
+  function resetTasbih() { tasbihCount = 0; document.getElementById('tasbih-count').innerText = tasbihCount; }
+  function setTarget(target, evt) {
+    tasbihTarget = target;
+    document.getElementById('tasbih-target-text').innerText = "dari " + target;
+    document.querySelectorAll('.btn-target').forEach(btn => btn.classList.remove('active'));
+    if (evt && evt.target) evt.target.classList.add('active');
+    resetTasbih();
+  }
+
+  function animateStars() {
+    var s = document.querySelector('.stars'), p = document.querySelector('.particles'); if(!s||!p) return;
+    var small = innerWidth < 600, red = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    for (var i=0; i<(small?28:55); i++) {
+      var e = document.createElement('span'); e.className='star';
+      e.style.left = (Math.random()*100).toFixed(2)+'%'; e.style.top = (Math.random()*100).toFixed(2)+'%';
+      var z = 1+Math.random()*2; e.style.width = z+'px'; e.style.height = z+'px';
+      e.style.setProperty('--d',(2.5+Math.random()*4).toFixed(2)+'s');
+      e.style.setProperty('--delay',(Math.random()*6).toFixed(2)+'s'); s.appendChild(e);
+    }
+    if (!red) {
+      for (var j=0; j<(small?8:16); j++) {
+        var q = document.createElement('span'); q.className='particle';
+        q.style.left = (Math.random()*100).toFixed(2)+'%';
+        var w = 2+Math.random()*3; q.style.width = w+'px'; q.style.height = w+'px';
+        q.style.setProperty('--dur',(12+Math.random()*10).toFixed(2)+'s');
+        q.style.setProperty('--delay',(Math.random()*16).toFixed(2)+'s');
+        q.style.setProperty('--dx',((Math.random()-0.5)*120).toFixed(1)+'px'); p.appendChild(q);
+      }
+    }
+  }
+  animateStars();
+
+  let isEditMode = false; let moonTapCount = 0; let moonTapTimer;
+  const moonEl = document.getElementById('secret-moon');
+  if (moonEl) {
+    moonEl.addEventListener('click', () => {
+      moonTapCount++;
+      if (moonTapCount === 1) moonTapTimer = setTimeout(() => { moonTapCount = 0; }, 1000);
+      if (moonTapCount === 3) { clearTimeout(moonTapTimer); moonTapCount = 0; enableEditMode(); }
+    });
+  }
+
+  function enableEditMode() {
+    isEditMode = !isEditMode;
+    if (isEditMode) {
+      document.body.classList.add('edit-mode');
+      alert("✅ MODE EDIT AKTIF.\n\n" +
+            "• Di halaman COVER: ketuk judul / teks untuk mengedit.\n" +
+            "• Di halaman DOA: ketuk teks Arab / Latin / Terjemahan untuk mengedit.\n\n" +
+            "Semua perubahan otomatis tersimpan di HP ini.");
+    } else {
+      document.body.classList.remove('edit-mode');
+      alert("Mode Edit Dimatikan.");
+    }
+    updateEditability(); playSound();
+  }
+
+  function updateEditability() {
+    ['doa-arabic', 'doa-latin', 'doa-translation'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        if (isEditMode) el.setAttribute('contenteditable','true');
+        else el.removeAttribute('contenteditable');
+      }
+    });
+    ['cover-bismillah', 'cover-kicker', 'cover-title', 'cover-desc', 'cover-footer'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        if (isEditMode) el.setAttribute('contenteditable','true');
+        else el.removeAttribute('contenteditable');
+      }
+    });
+
+    if (!isEditMode && currentDoaId) {
+      const doa = dataDoa.find(d => d.id === currentDoaId);
+      if (doa) {
+        const arabicEl = document.getElementById('doa-arabic');
+        const latinEl = document.getElementById('doa-latin');
+        const transEl = document.getElementById('doa-translation');
+        arabicEl.style.display = (doa.arabic && doa.arabic.trim()) ? 'block' : 'none';
+        latinEl.style.display = (doa.latin && doa.latin.trim()) ? 'block' : 'none';
+        transEl.style.display = (doa.translation && doa.translation.trim()) ? 'block' : 'none';
+      }
+    }
+  }
+
+  function autoSave() {
+    if (!isEditMode || !currentDoaId) return;
+    const updatedArabic = document.getElementById('doa-arabic').innerHTML;
+    const updatedLatin = document.getElementById('doa-latin').innerHTML;
+    const updatedTranslation = document.getElementById('doa-translation').innerHTML;
+
+    const doa = dataDoa.find(d => d.id === currentDoaId);
+    if (doa) {
+      doa.arabic = updatedArabic;
+      doa.latin = updatedLatin;
+      doa.translation = updatedTranslation;
+    }
+
+    let customData = {};
+    try { customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {}; } catch(e) {}
+
+    const entry = {
+      ...(customData[currentDoaId] || {}),
+      arabic: updatedArabic, latin: updatedLatin, translation: updatedTranslation
+    };
+
+    if (doa && doa.title) {
+      if (BUILTIN_IDS.has(currentDoaId)) {
+        if (doa.title !== ORIGINAL_TITLES[currentDoaId]) entry.title = doa.title;
+        else delete entry.title;
+      } else {
+        entry.title = doa.title;
+      }
+    }
+
+    customData[currentDoaId] = entry;
+    try { localStorage.setItem('custom_doa_data', JSON.stringify(customData)); } catch(e) {}
+  }
+
+  function exportCode() {
+    let newDataStr = "  let dataDoa = [\n";
+    dataDoa.forEach((doa, index) => {
+      const safeArabic = doa.arabic.replace(/`/g, '\\`');
+      const safeLatin = doa.latin.replace(/`/g, '\\`');
+      const safeTrans = doa.translation.replace(/`/g, '\\`');
+      newDataStr += `    // Urutan ${index + 1}\n`;
+      newDataStr += `    { \n      id: "${doa.id}",\n      title: "${doa.title.replace(/"/g, '\\"')}", \n      arabic: \`${safeArabic}\`, \n      latin: \`${safeLatin}\`, \n      translation: \`${safeTrans}\` \n    },\n\n`;
+    });
+    newDataStr += "  ];";
+
+    let coverStr = "\n\n  const COVER_DEFAULTS = {\n";
+    Object.keys(coverTexts).forEach(k => {
+      const safe = String(coverTexts[k]).replace(/`/g, '\\`');
+      coverStr += `    ${k}: \`${safe}\`,\n`;
+    });
+    coverStr += "  };";
+
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:99999;display:flex;flex-direction:column;padding:20px;box-sizing:border-box;';
+    modal.innerHTML = `
+      <h3 style="color:gold; margin-top:0; font-family:Georgia, serif;">Salin Kode Ini ke GitHub</h3>
+      <p style="color:#ccc; font-size:14px;">Ganti bagian <code>let dataDoa = [ ... ];</code> dan <code>const COVER_DEFAULTS = { ... };</code> di file <code>index.html</code>. (Jangan lupa naikkan versi di sw.js).</p>
+      <textarea id="export-textarea" style="flex-grow:1; width:100%; background:#111; color:#00ff00; border:1px solid gold; padding:10px; font-family:monospace; font-size:12px; margin-bottom:10px; box-sizing:border-box;" readonly>${(newDataStr + coverStr).replace(/</g, '&lt;')}</textarea>
+      <div style="display:flex; gap:10px;">
+        <button onclick="document.getElementById('export-textarea').select(); document.execCommand('copy'); alert('Kode berhasil disalin!');" style="flex:1; padding:15px; background:gold; color:black; font-weight:bold; border:none; border-radius:8px; font-size:16px; cursor:pointer;">📋 Salin Kode</button>
+        <button onclick="this.parentElement.parentElement.remove()" style="flex:1; padding:15px; background:#333; color:white; font-weight:bold; border:none; border-radius:8px; font-size:16px; cursor:pointer;">Tutup</button>
+      </div>`;
+    document.body.appendChild(modal);
+  }
+
+  try {
+    let deferredPrompt;
+    const installBanner = document.getElementById('pwa-install-banner');
+    const installBtn = document.getElementById('pwa-install-btn');
+    const closeBtn = document.getElementById('pwa-close-btn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault(); deferredPrompt = e;
+      if (installBanner) installBanner.classList.add('show');
+    });
+
+    if (installBtn) {
+      installBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          if (installBanner) installBanner.classList.remove('show');
+          deferredPrompt = null;
+        }
+      });
+    }
+    if (closeBtn) closeBtn.addEventListener('click', () => { if (installBanner) installBanner.classList.remove('show'); });
+    window.addEventListener('appinstalled', () => { if (installBanner) installBanner.classList.remove('show'); });
+
+    let newWorker;
+    const updateBanner = document.getElementById('update-banner');
+    const btnUpdate = document.getElementById('btn-update');
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(reg => {
+        reg.addEventListener('updatefound', () => {
+          newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              if (updateBanner) updateBanner.classList.add('show');
+            }
+          });
+        });
+      }).catch(err => console.log('SW gagal (mungkin di preview):', err));
+
+      if (btnUpdate) {
+        btnUpdate.addEventListener('click', () => { if (newWorker) newWorker.postMessage({ action: 'skipWaiting' }); });
+      }
+
+      let refreshing;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        window.location.reload();
+        refreshing = true;
+      });
+    }
+  } catch(e) {
+    console.warn("PWA / SW tidak didukung di lingkungan ini.");
+  }
+</script>
+</body>
+</html>
