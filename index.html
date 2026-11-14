@@ -176,7 +176,6 @@
   .modal-hint { font-size:12px; color:var(--text-muted); font-style:italic; margin-bottom:12px; line-height:1.5; }
   .modal-input { width:100%; padding:10px; margin-bottom:15px; background:var(--input-bg); border:1px solid var(--card-border); border-radius:8px; color:var(--text-main); font-family:'Cormorant Garamond',serif; font-size:16px; outline:none; }
 
-  /* Contenteditable inputs — MATCH viewer fonts exactly */
   .cd-input {
     width:100%; padding:10px; margin-bottom:15px;
     background:var(--input-bg); border:1px solid var(--card-border);
@@ -188,34 +187,9 @@
   }
   .cd-input:focus { border-color:var(--gold); }
   .cd-input:empty:before { content:attr(data-placeholder); color:var(--text-muted); font-style:italic; pointer-events:none; }
-
-  /* Arabic input — SAMA dengan .arabic-text */
-  .cd-input.arabic-cd {
-    font-family:'Amiri','Traditional Arabic',serif;
-    font-size: clamp(26px, 6vw, 34px);
-    direction: rtl;
-    text-align: right;
-    line-height: 2.5;
-    color: var(--gold);
-    min-height: 120px;
-  }
-
-  /* Latin input — SAMA dengan .latin-text */
-  .cd-input.latin-cd {
-    font-style: italic;
-    color: var(--text-muted);
-    font-size: 16px;
-    line-height: 1.6;
-    border-left: 2px solid var(--gold);
-    padding-left: 15px;
-  }
-
-  /* Translation input — SAMA dengan .translation-text */
-  .cd-input.translation-cd {
-    color: var(--text-main);
-    font-size: 18px;
-    line-height: 1.6;
-  }
+  .cd-input.arabic-cd { font-family:'Amiri','Traditional Arabic',serif; font-size:clamp(26px,6vw,34px); direction:rtl; text-align:right; line-height:2.5; color:var(--gold); min-height:120px; }
+  .cd-input.latin-cd { font-style:italic; color:var(--text-muted); font-size:16px; line-height:1.6; border-left:2px solid var(--gold); padding-left:15px; }
+  .cd-input.translation-cd { color:var(--text-main); font-size:18px; line-height:1.6; }
 
   .modal-actions { display:flex; gap:10px; margin-top:10px; }
   .modal-btn { flex:1; padding:12px; border-radius:8px; border:none; font-weight:bold; font-family:'Cormorant Garamond',serif; font-size:16px; cursor:pointer; }
@@ -275,12 +249,10 @@
     <div class="moon" id="secret-moon" aria-hidden="true"></div>
     <div class="stars" aria-hidden="true"></div>
     <div class="particles" aria-hidden="true"></div>
-
     <div id="cover-edit-hint" class="cover-edit-hint">
       <span class="hint-text">✏️ Ketuk teks untuk edit · blok teks untuk warnai</span>
       <button class="cover-reset-btn" onclick="resetCoverTexts()">↺ Reset</button>
     </div>
-
     <div class="cover-content">
       <p class="bismillah" id="cover-bismillah" oninput="autoSaveCover()">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
       <div class="kicker" id="cover-kicker" oninput="autoSaveCover()">Buku Digital</div>
@@ -289,7 +261,7 @@
       <p class="desc" id="cover-desc" oninput="autoSaveCover()">Panduan doa harian dan muqaddimah pilihan</p>
       <button class="btn-open" onclick="showPage('page-toc')">Buka Daftar Isi</button>
     </div>
-    <div class="cover-footer" id="cover-footer" oninput="autoSaveCover()">buku digital v1.27.26 created by oznet</div>
+    <div class="cover-footer" id="cover-footer" oninput="autoSaveCover()">buku digital v1.28.26 created by oznet</div>
   </div>
 
   <div id="page-toc" class="page">
@@ -305,23 +277,18 @@
             <button class="icon-btn" onclick="toggleSearch()" title="Cari Doa">🔍</button>
           </div>
         </div>
-
         <div class="search-container" id="search-container">
           <span class="search-icon-inside">🔍</span>
           <input type="text" id="search-input" class="search-input" placeholder="Cari doa..." onkeyup="filterTOC()">
         </div>
-
         <div class="toc-sub-header">
           <div class="section-title-inline" id="all-section-title" style="display:block;">Semua Doa</div>
           <button id="btn-sort" class="btn-sort" onclick="toggleSortMode()">🔀 Atur Urutan</button>
         </div>
       </div>
-
       <div class="sort-hint">Tekan & tahan judul, lalu geser ke atas/bawah.</div>
-
       <div id="fav-section-title" class="section-title">⭐ Doa Favorit</div>
       <div id="fav-list" class="toc-list" style="margin-bottom:20px;"></div>
-
       <div id="all-list" class="toc-list"></div>
     </div>
   </div>
@@ -337,7 +304,6 @@
             <button id="fav-btn-page" class="btn-fav-page" onclick="toggleCurrentFavorite()">☆</button>
           </div>
         </div>
-
         <div class="doa-tools">
           <button class="tool-btn" onclick="adjustFont(-0.5)">A-</button>
           <button class="tool-btn" onclick="adjustFont(0.5)">A+</button>
@@ -346,10 +312,8 @@
           <button class="tool-btn" id="btn-wake" onclick="toggleWakeLock()">💡 Layar</button>
           <button class="tool-btn" onclick="copyDoa()">📋 Salin</button>
         </div>
-
         <h2 id="doa-title" class="doa-title">Judul Doa</h2>
       </div>
-
       <div class="doa-card">
         <div id="doa-arabic" class="arabic-text" oninput="autoSave()">Teks Arab...</div>
         <div id="doa-latin" class="latin-text" oninput="autoSave()"></div>
@@ -394,6 +358,7 @@
 </div>
 
 <div class="edit-tools" id="edit-tools">
+  <button class="btn-edit-action secondary" onclick="repairAllDoaFonts()">🔧 Perbaiki Font Doa</button>
   <button class="btn-edit-action secondary" onclick="exportCode()">📤 Ekspor Kode ke GitHub</button>
   <button class="btn-edit-action danger" onclick="enableEditMode()">❌ Selesai Edit</button>
 </div>
@@ -401,20 +366,15 @@
 <div class="modal-overlay" id="add-doa-modal">
   <div class="modal-content">
     <h3>Tambah Doa Baru</h3>
-    <p class="modal-hint">💡 Tampilan huruf di sini sama dengan tampilan di aplikasi. Blok teks lalu warnai dengan palet.</p>
-
+    <p class="modal-hint">💡 Font di sini sama dengan tampilan di aplikasi. Blok teks lalu warnai dengan palet.</p>
     <label class="modal-label">Judul Doa</label>
     <input type="text" id="new-title" class="modal-input" placeholder="Contoh: Doa Sebelum Tidur">
-
     <label class="modal-label">Teks Arab</label>
     <div id="new-arabic" class="cd-input arabic-cd" contenteditable="true" data-placeholder="اللَّهُمَّ ..."></div>
-
     <label class="modal-label">Teks Latin (Opsional)</label>
     <div id="new-latin" class="cd-input latin-cd" contenteditable="true" data-placeholder="Allahumma ..."></div>
-
     <label class="modal-label">Terjemahan / Konten (Opsional)</label>
     <div id="new-translation" class="cd-input translation-cd" contenteditable="true" data-placeholder="Ya Allah ..."></div>
-
     <div class="modal-actions">
       <button class="modal-btn cancel" onclick="closeAddDoaModal()">Batal</button>
       <button class="modal-btn save" onclick="saveNewDoa()">Simpan Doa</button>
@@ -425,17 +385,13 @@
 <div class="modal-overlay" id="rename-doa-modal">
   <div class="modal-content">
     <h3>✏️ Edit Judul & Teks</h3>
-    <p class="modal-hint">💡 Tampilan huruf sama dengan aplikasi. Blok teks lalu warnai dengan palet.</p>
-
+    <p class="modal-hint">💡 Font di sini sama dengan tampilan di aplikasi. Blok teks lalu warnai dengan palet.</p>
     <label class="modal-label">Judul Baru</label>
     <input type="text" id="rename-title" class="modal-input" placeholder="Judul doa...">
-
     <label class="modal-label">Teks Arab</label>
     <div id="rename-arabic-cd" class="cd-input arabic-cd" contenteditable="true" data-placeholder="اللَّهُمَّ ..."></div>
-
     <label class="modal-label">Teks Latin</label>
     <div id="rename-latin-cd" class="cd-input latin-cd" contenteditable="true" data-placeholder="Allahumma ..."></div>
-
     <button id="rename-reset-btn" class="modal-btn alt" onclick="resetDoaTitle()" style="width:100%; margin-bottom:8px; display:none;">↺ Reset ke Judul Asli</button>
     <div class="modal-actions">
       <button class="modal-btn cancel" onclick="closeRenameModal()">Batal</button>
@@ -449,7 +405,7 @@
     <h3>💾 Backup & Restore</h3>
     <div class="backup-info" id="backup-info">Memuat info...</div>
     <p style="color:var(--text-muted); font-size:13px; line-height:1.5; margin-bottom:15px;">
-      Backup berisi semua data: doa, judul, warna teks (inline), favorit, urutan, tema, ukuran font, dan teks cover.
+      Backup berisi semua data: doa, judul, warna teks, favorit, urutan, tema, ukuran font, dan teks cover.
     </p>
     <div class="modal-actions" style="flex-direction:column;">
       <button class="modal-btn save" onclick="exportBackup()" style="width:100%;">📤 Ekspor Backup (.json)</button>
@@ -476,71 +432,80 @@
   ];
 
   dataDoa.forEach((doa, index) => { if (!doa.id) doa.id = 'doa_' + (index + 1); });
-
   const BUILTIN_IDS = new Set(dataDoa.map(d => d.id));
   const isCustomDoa = (id) => !BUILTIN_IDS.has(id);
-
   const ORIGINAL_TITLES = {};
   dataDoa.forEach(d => { ORIGINAL_TITLES[d.id] = d.title; });
 
-  const COVER_DEFAULTS = {
-    bismillah: 'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ',
-    kicker: 'Buku Digital',
-    title: 'Kumpulan Doa<br>&amp; Muqaddimah',
-    desc: 'Panduan doa harian dan muqaddimah pilihan',
-    footer: 'buku digital v1.27.26 created by oznet'
-  };
-
-  let coverTexts = { ...COVER_DEFAULTS };
-  try {
-    const savedCover = JSON.parse(localStorage.getItem('cover_texts'));
-    if (savedCover && typeof savedCover === 'object') {
-      Object.keys(COVER_DEFAULTS).forEach(k => {
-        if (typeof savedCover[k] === 'string') coverTexts[k] = savedCover[k];
-      });
-    }
-  } catch(e) {}
-
-  function sanitizeHTML(html) {
+  // ====================================================
+  // NORMALIZE HTML — kunci utama fix font
+  // ====================================================
+  function normalizeDoaHTML(html) {
+    if (!html || typeof html !== 'string') return '';
     const tmp = document.createElement('div');
     tmp.innerHTML = html;
-    tmp.querySelectorAll('script,iframe,object,embed,link,style,meta').forEach(e => e.remove());
+
+    // 1. Remove dangerous tags
+    tmp.querySelectorAll('script,iframe,object,embed,link,style,meta,base').forEach(e => e.remove());
+
+    // 2. Convert <font color="x"> to <span style="color:x">
+    tmp.querySelectorAll('font').forEach(el => {
+      const color = el.getAttribute('color');
+      const span = document.createElement('span');
+      if (color) span.style.color = color;
+      while (el.firstChild) span.appendChild(el.firstChild);
+      if (el.parentNode) el.parentNode.replaceChild(span, el);
+    });
+
+    // 3. Unwrap formatting tags — biarkan CSS yang atur
+    tmp.querySelectorAll('b, strong, i, em, u, s, strike, sub, sup, small, big, mark, ins, del').forEach(el => {
+      if (!el.parentNode) return;
+      const parent = el.parentNode;
+      while (el.firstChild) parent.insertBefore(el.firstChild, el);
+      parent.removeChild(el);
+    });
+
+    // 4. Convert block elements to <br> so line breaks match
+    tmp.querySelectorAll('div, p, h1, h2, h3, h4, h5, h6, blockquote, pre, li, tr, td, th, section, article, header, footer, main, aside, nav, figure, figcaption').forEach(el => {
+      if (!el.parentNode) return;
+      const parent = el.parentNode;
+      while (el.firstChild) parent.insertBefore(el.firstChild, el);
+      if (el.nextSibling) parent.insertBefore(document.createElement('br'), el.nextSibling);
+      parent.removeChild(el);
+    });
+
+    // 5. Strip all attributes except color
     tmp.querySelectorAll('*').forEach(el => {
       [...el.attributes].forEach(attr => {
-        const name = attr.name.toLowerCase();
-        const value = String(attr.value || '').trim().toLowerCase();
-        if (name.startsWith('on') || (name === 'href' && value.startsWith('javascript:'))) el.removeAttribute(attr.name);
+        if (attr.name.toLowerCase() !== 'style') el.removeAttribute(attr.name);
       });
+      if (el.hasAttribute('style')) {
+        const color = el.style.color;
+        el.removeAttribute('style');
+        if (color) el.style.color = color;
+      }
     });
-    return tmp.innerHTML;
-  }
 
-  function applyCoverTexts() {
-    const map = { 'cover-bismillah': coverTexts.bismillah, 'cover-kicker': coverTexts.kicker, 'cover-title': coverTexts.title, 'cover-desc': coverTexts.desc, 'cover-footer': coverTexts.footer };
-    Object.keys(map).forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = map[id]; });
-  }
-  applyCoverTexts();
+    let result = tmp.innerHTML;
 
-  function autoSaveCover() {
-    ['bismillah', 'kicker', 'title', 'desc', 'footer'].forEach(key => {
-      const el = document.getElementById('cover-' + key);
-      if (el) coverTexts[key] = sanitizeHTML(el.innerHTML);
-    });
-    try { localStorage.setItem('cover_texts', JSON.stringify(coverTexts)); } catch(e) {}
-  }
+    // 6. Cleanup
+    result = result.replace(/&nbsp;/gi, ' ');
+    result = result.replace(/^(\s*<br\s*\/?>\s*)+/i, '');
+    result = result.replace(/(\s*<br\s*\/?>\s*)+$/i, '');
+    result = result.replace(/<span>(\s*)<\/span>/gi, '$1');
+    result = result.replace(/(<br\s*\/?>\s*){3,}/gi, '<br><br>');
 
-  function resetCoverTexts() {
-    const allDefault = Object.keys(COVER_DEFAULTS).every(k => coverTexts[k] === COVER_DEFAULTS[k]);
-    if (allDefault) { alert('Teks cover sudah dalam kondisi default.'); return; }
-    if (!confirm('↺ Reset semua teks cover ke default?')) return;
-    coverTexts = { ...COVER_DEFAULTS };
-    try { localStorage.removeItem('cover_texts'); } catch(e) {}
-    applyCoverTexts(); playSound();
-    alert('✅ Teks cover berhasil direset ke default.');
+    // 7. Empty check
+    const check = document.createElement('div');
+    check.innerHTML = result;
+    if (!check.textContent.trim() && !check.querySelector('span[style*="color"]')) {
+      return '';
+    }
+    return result;
   }
 
   // ====================================================
-  // LOAD DATA — dengan logging
+  // LOAD DATA — normalize otomatis termasuk data lama
   // ====================================================
   try {
     const customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {};
@@ -554,23 +519,26 @@
       if (cd.arabic && cd.arabic.trim().startsWith('<div') && !cd.translation) {
         cd.translation = cd.arabic; cd.arabic = ''; mutated = true;
       }
-      doa.arabic      = cd.arabic      ?? doa.arabic;
-      doa.latin       = cd.latin       ?? doa.latin;
-      doa.translation = cd.translation ?? doa.translation;
+      const newArabic = normalizeDoaHTML(cd.arabic ?? doa.arabic);
+      const newLatin = normalizeDoaHTML(cd.latin ?? doa.latin);
+      const newTrans = normalizeDoaHTML(cd.translation ?? doa.translation);
+      if (newArabic !== doa.arabic || newLatin !== doa.latin || newTrans !== doa.translation) mutated = true;
+      doa.arabic = newArabic;
+      doa.latin = newLatin;
+      doa.translation = newTrans;
       if (cd.title && cd.title !== ORIGINAL_TITLES[doa.id]) doa.title = cd.title;
     });
 
     Object.keys(customData).forEach(id => {
       if (dataDoa.some(d => d.id === id)) return;
       const cd = customData[id];
-      if (!cd) { console.warn('[BukuDoa] Skip custom entry tanpa data:', id); return; }
-      if (!cd.title) { console.warn('[BukuDoa] Skip custom entry tanpa title:', id); return; }
+      if (!cd || !cd.title) return;
       dataDoa.push({
         id,
         title: cd.title,
-        arabic: cd.arabic || '',
-        latin: cd.latin || '',
-        translation: cd.translation || ''
+        arabic: normalizeDoaHTML(cd.arabic || ''),
+        latin: normalizeDoaHTML(cd.latin || ''),
+        translation: normalizeDoaHTML(cd.translation || '')
       });
       customLoadedCount++;
     });
@@ -581,8 +549,25 @@
       dataDoa.forEach(d => { if (!newOrder.some(n => n.id === d.id)) newOrder.push(d); });
       dataDoa = newOrder;
     }
-    if (mutated) localStorage.setItem('custom_doa_data', JSON.stringify(customData));
-    console.info('[BukuDoa] Custom entries loaded:', customLoadedCount, '· Total doa:', dataDoa.length);
+
+    // Simpan ulang yang sudah dinormalisasi
+    if (mutated) {
+      const rebuilt = {};
+      dataDoa.forEach(d => {
+        if (isCustomDoa(d.id) || customData[d.id]) {
+          rebuilt[d.id] = { title: d.title, arabic: d.arabic, latin: d.latin, translation: d.translation };
+        }
+      });
+      // Preserve any remaining entries
+      Object.keys(customData).forEach(id => {
+        if (!rebuilt[id] && dataDoa.some(d => d.id === id)) {
+          const d = dataDoa.find(x => x.id === id);
+          rebuilt[id] = { title: d.title, arabic: d.arabic, latin: d.latin, translation: d.translation };
+        }
+      });
+      localStorage.setItem('custom_doa_data', JSON.stringify(rebuilt));
+    }
+    console.info('[BukuDoa] Loaded custom entries:', customLoadedCount, '· Total:', dataDoa.length);
   } catch(e) { console.error('[BukuDoa] Load error:', e); }
 
   let favorites = [];
@@ -726,7 +711,7 @@
   })();
 
   // ====================================================
-  // COLOR TOOLBAR (multi-trigger, dukung Latin)
+  // COLOR TOOLBAR
   // ====================================================
   let savedRange = null;
   let selectionDebounceTimer = null;
@@ -837,7 +822,7 @@
       sel.addRange(newRange);
       savedRange = newRange.cloneRange();
       return true;
-    } catch (e2) { console.warn('applyColor failed:', e2); return false; }
+    } catch (e2) { return false; }
   }
 
   function clearColorFromSelection() {
@@ -883,55 +868,42 @@
   function initColorToolbar() {
     const toolbar = document.getElementById('color-toolbar');
     if (!toolbar) return;
-
     toolbar.querySelectorAll('.ct-swatch').forEach(sw => {
       sw.addEventListener('click', (e) => {
         e.preventDefault(); e.stopPropagation();
         if (applyColorToSelection(sw.dataset.color)) { persistAfterColorChange(); playSound(); }
       });
     });
-
     const custom = toolbar.querySelector('.ct-custom');
-    if (custom) {
-      custom.addEventListener('input', (e) => {
-        if (/^#[0-9a-f]{6}$/i.test(e.target.value)) {
-          if (applyColorToSelection(e.target.value)) persistAfterColorChange();
-        }
-      });
-    }
-
+    if (custom) custom.addEventListener('input', (e) => {
+      if (/^#[0-9a-f]{6}$/i.test(e.target.value)) {
+        if (applyColorToSelection(e.target.value)) persistAfterColorChange();
+      }
+    });
     const reset = toolbar.querySelector('.ct-reset');
-    if (reset) {
-      reset.addEventListener('click', (e) => {
-        e.preventDefault(); e.stopPropagation();
-        if (clearColorFromSelection()) { persistAfterColorChange(); playSound(); }
-      });
-    }
-
+    if (reset) reset.addEventListener('click', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      if (clearColorFromSelection()) { persistAfterColorChange(); playSound(); }
+    });
     toolbar.addEventListener('pointerdown', (e) => {
       if (e.target.tagName !== 'INPUT') e.preventDefault();
     });
-
     document.addEventListener('selectionchange', () => scheduleSelectionCheck(150));
     ['pointerup', 'touchend', 'mouseup', 'keyup'].forEach(evt => {
       document.addEventListener(evt, () => scheduleSelectionCheck(100), { passive: true });
     });
-
     window.addEventListener('scroll', () => {
       if (Date.now() - lastToolbarShowTime > 300) hideColorToolbar();
     }, { passive: true });
-
     const appScroll = document.getElementById('app-scroll');
-    if (appScroll) {
-      appScroll.addEventListener('scroll', () => {
-        if (Date.now() - lastToolbarShowTime > 300) hideColorToolbar();
-      }, { passive: true });
-    }
+    if (appScroll) appScroll.addEventListener('scroll', () => {
+      if (Date.now() - lastToolbarShowTime > 300) hideColorToolbar();
+    }, { passive: true });
   }
   initColorToolbar();
 
   // ====================================================
-  // TAMBAH DOA — dengan verifikasi simpan
+  // TAMBAH DOA
   // ====================================================
   function openAddDoaModal() {
     document.getElementById('new-title').value = '';
@@ -947,69 +919,36 @@
     document.getElementById('add-doa-modal').classList.remove('active');
   }
 
-  function cleanEmptyHTML(html) {
-    if (!html) return '';
-    const cleaned = html.replace(/<(br|div)\s*\/?>/gi, '').replace(/&nbsp;/gi, '').trim();
-    return cleaned === '' ? '' : html;
-  }
-
   function saveNewDoa() {
     const title = document.getElementById('new-title').value.trim();
-    const arabicHtml = cleanEmptyHTML(document.getElementById('new-arabic').innerHTML);
-    const latinHtml = cleanEmptyHTML(document.getElementById('new-latin').innerHTML);
-    const transHtml = cleanEmptyHTML(document.getElementById('new-translation').innerHTML);
-    const arabicText = document.getElementById('new-arabic').innerText.trim();
-    const latinText = document.getElementById('new-latin').innerText.trim();
-    const transText = document.getElementById('new-translation').innerText.trim();
+    const arabicHtml = normalizeDoaHTML(document.getElementById('new-arabic').innerHTML);
+    const latinHtml = normalizeDoaHTML(document.getElementById('new-latin').innerHTML);
+    const transHtml = normalizeDoaHTML(document.getElementById('new-translation').innerHTML);
+    const arabicText = (arabicHtml.replace(/<[^>]+>/g, '')).trim();
+    const latinText = (latinHtml.replace(/<[^>]+>/g, '')).trim();
+    const transText = (transHtml.replace(/<[^>]+>/g, '')).trim();
 
-    if (!title) {
-      alert('❌ Judul doa wajib diisi!');
-      return;
-    }
-    if (!arabicText && !latinText && !transText) {
-      alert('❌ Minimal isi salah satu: Teks Arab, Latin, atau Terjemahan!');
-      return;
-    }
+    if (!title) { alert('❌ Judul doa wajib diisi!'); return; }
+    if (!arabicText && !latinText && !transText) { alert('❌ Minimal isi salah satu: Teks Arab, Latin, atau Terjemahan!'); return; }
 
     const newId = 'doa_' + Date.now();
-    const newDoa = { id: newId, title, arabic: arabicHtml, latin: latinHtml, translation: transHtml };
-    dataDoa.push(newDoa);
+    dataDoa.push({ id: newId, title, arabic: arabicHtml, latin: latinHtml, translation: transHtml });
 
     try {
       let customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {};
       customData[newId] = { title, arabic: arabicHtml, latin: latinHtml, translation: transHtml };
       localStorage.setItem('custom_doa_data', JSON.stringify(customData));
       localStorage.setItem('custom_doa_order', JSON.stringify(dataDoa.map(d => d.id)));
-
-      // VERIFIKASI: baca ulang untuk konfirmasi
       const verify = JSON.parse(localStorage.getItem('custom_doa_data'));
-      if (!verify || !verify[newId]) {
-        throw new Error('Data tidak ditemukan setelah disimpan');
-      }
-      console.info('[BukuDoa] Doa tersimpan:', newId, verify[newId].title);
-
+      if (!verify || !verify[newId]) throw new Error('Data tidak ditemukan setelah disimpan');
     } catch(e) {
-      console.error('[BukuDoa] Simpan gagal:', e);
-      // Rollback
       dataDoa = dataDoa.filter(d => d.id !== newId);
-      alert(
-        '❌ GAGAL MENYIMPAN DOA\n\n' +
-        'Error: ' + e.message + '\n\n' +
-        'Kemungkinan penyebab:\n' +
-        '• Mode incognito/private (storage tidak persist)\n' +
-        '• Storage browser penuh\n' +
-        '• Browser memblokir localStorage\n' +
-        '• Membuka file langsung dari file://\n\n' +
-        'Solusi:\n' +
-        '• Gunakan browser normal (bukan incognito)\n' +
-        '• Buka lewat https:// atau localhost, bukan file://\n' +
-        '• Hapus data browser lain, lalu coba lagi'
-      );
+      alert('❌ GAGAL MENYIMPAN DOA\n\nError: ' + e.message + '\n\nPenyebab umum:\n• Mode incognito\n• Storage browser penuh\n• Browser blokir localStorage\n• File dibuka via file://');
       return;
     }
 
     closeAddDoaModal(); renderTOC(); playSound();
-    alert('✅ Doa berhasil ditambahkan!\n\n📝 ' + title + '\n📚 Total: ' + dataDoa.length + ' doa\n💾 Tersimpan di perangkat ini');
+    alert('✅ Doa berhasil ditambahkan!\n\n📝 ' + title + '\n📚 Total: ' + dataDoa.length + ' doa');
   }
 
   // ====================================================
@@ -1022,7 +961,6 @@
     document.getElementById('rename-title').value = doa.title;
     document.getElementById('rename-arabic-cd').innerHTML = doa.arabic || '';
     document.getElementById('rename-latin-cd').innerHTML = doa.latin || '';
-
     const resetBtn = document.getElementById('rename-reset-btn');
     if (resetBtn) {
       const isBuiltin = BUILTIN_IDS.has(currentDoaId);
@@ -1045,8 +983,8 @@
     const doa = dataDoa.find(d => d.id === currentDoaId);
     if (!doa) return;
 
-    const newArabicHtml = cleanEmptyHTML(document.getElementById('rename-arabic-cd').innerHTML);
-    const newLatinHtml = cleanEmptyHTML(document.getElementById('rename-latin-cd').innerHTML);
+    const newArabicHtml = normalizeDoaHTML(document.getElementById('rename-arabic-cd').innerHTML);
+    const newLatinHtml = normalizeDoaHTML(document.getElementById('rename-latin-cd').innerHTML);
 
     doa.title = newTitle;
     doa.arabic = newArabicHtml;
@@ -1068,7 +1006,6 @@
     const latinEl = document.getElementById('doa-latin');
     if (arabicEl) arabicEl.innerHTML = newArabicHtml || '';
     if (latinEl) latinEl.innerHTML = newLatinHtml || '';
-
     renderTOC(); closeRenameModal(); playSound();
   }
 
@@ -1084,11 +1021,9 @@
     const doa = dataDoa.find(d => d.id === currentDoaId);
     if (!doa) return;
     if (!confirm(`Hapus doa "${doa.title}"?\n\nTindakan ini tidak bisa dibatalkan.`)) return;
-
     const deletedId = currentDoaId;
     dataDoa = dataDoa.filter(d => d.id !== deletedId);
     favorites = favorites.filter(f => f !== deletedId);
-
     try {
       let customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {};
       delete customData[deletedId];
@@ -1096,12 +1031,52 @@
       localStorage.setItem('custom_doa_order', JSON.stringify(dataDoa.map(d => d.id)));
       localStorage.setItem('doa_favorites', JSON.stringify(favorites));
     } catch(e) {}
-
     currentDoaId = null;
     renderTOC(); goBack();
     alert('Doa berhasil dihapus.');
   }
 
+  // ====================================================
+  // PERBAIKI SEMUA FONT DOA (tombol manual)
+  // ====================================================
+  function repairAllDoaFonts() {
+    if (!confirm('🔧 Perbaiki font semua doa?\n\nIni akan membersihkan inline style (font-family, font-size, dll.) dari semua doa agar font menyesuaikan dengan aplikasi. Warna teks yang sudah diatur tetap dipertahankan.')) return;
+    let repaired = 0;
+    dataDoa.forEach(doa => {
+      const oldA = doa.arabic, oldL = doa.latin, oldT = doa.translation;
+      doa.arabic = normalizeDoaHTML(doa.arabic);
+      doa.latin = normalizeDoaHTML(doa.latin);
+      doa.translation = normalizeDoaHTML(doa.translation);
+      if (doa.arabic !== oldA || doa.latin !== oldL || doa.translation !== oldT) repaired++;
+    });
+    try {
+      let customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {};
+      dataDoa.forEach(doa => {
+        if (customData[doa.id] || isCustomDoa(doa.id)) {
+          if (!customData[doa.id]) customData[doa.id] = { title: doa.title };
+          customData[doa.id].arabic = doa.arabic;
+          customData[doa.id].latin = doa.latin;
+          customData[doa.id].translation = doa.translation;
+          customData[doa.id].title = doa.title;
+        }
+      });
+      localStorage.setItem('custom_doa_data', JSON.stringify(customData));
+    } catch(e) { alert('Gagal simpan: ' + e.message); return; }
+    if (currentDoaId) {
+      const doa = dataDoa.find(d => d.id === currentDoaId);
+      if (doa) {
+        document.getElementById('doa-arabic').innerHTML = doa.arabic || '';
+        document.getElementById('doa-latin').innerHTML = doa.latin || '';
+        document.getElementById('doa-translation').innerHTML = doa.translation || '';
+      }
+    }
+    playSound();
+    alert('✅ Perbaikan selesai!\n\n' + repaired + ' doa diperbaiki.\nTotal: ' + dataDoa.length + ' doa');
+  }
+
+  // ====================================================
+  // BACKUP / RESTORE
+  // ====================================================
   function openBackupModal() {
     try {
       const customData = JSON.parse(localStorage.getItem('custom_doa_data') || '{}');
@@ -1115,11 +1090,11 @@
       if (info) {
         info.innerHTML =
           `📊 Doa buatan sendiri: <strong>${customCount}</strong><br>` +
-          `✏️ Judul doa diubah: <strong>${renamedCount}</strong><br>` +
-          `🎭 Cover dikustomisasi: <strong>${coverCustomized}/${coverTotal} bagian</strong><br>` +
+          `✏️ Judul diubah: <strong>${renamedCount}</strong><br>` +
+          `🎭 Cover dikustomisasi: <strong>${coverCustomized}/${coverTotal}</strong><br>` +
           `⭐ Favorit: <strong>${favorites.length}</strong><br>` +
           `📚 Total doa: <strong>${dataDoa.length}</strong><br>` +
-          `💾 Ukuran data: <strong>~${sizeKB} KB</strong>`;
+          `💾 Ukuran: <strong>~${sizeKB} KB</strong>`;
       }
     } catch(e) {}
     document.getElementById('backup-modal').classList.add('active');
@@ -1147,9 +1122,7 @@
       a.href = url;
       const date = new Date().toISOString().slice(0, 10);
       a.download = `buku-doa-backup-${date}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
       URL.revokeObjectURL(url);
       playSound();
     } catch(e) { alert('Gagal membuat backup: ' + e.message); }
@@ -1180,23 +1153,26 @@
   }
 
   async function clearAppCache() {
-    const offlineWarning = !navigator.onLine ? '\n\n⚠️ PERINGATAN: Anda sedang OFFLINE.\nMenghapus cache saat offline akan membuat aplikasi TIDAK BISA DIBUKA sampai ada koneksi internet.' : '';
-    const ok = confirm('🧹 Hapus cache aplikasi?\n\n• File aplikasi akan diunduh ulang dari server (versi terbaru).\n• Data doa, favorit, pengaturan, dan teks cover Anda TIDAK akan terhapus.' + offlineWarning + '\n\nLanjutkan?');
+    const offlineWarning = !navigator.onLine ? '\n\n⚠️ OFFLINE: Menghapus cache saat offline akan membuat aplikasi TIDAK BISA DIBUKA sampai ada internet.' : '';
+    const ok = confirm('🧹 Hapus cache aplikasi?\n\n• File aplikasi akan diunduh ulang dari server.\n• Data doa, favorit, pengaturan, dan teks cover TIDAK terhapus.' + offlineWarning + '\n\nLanjutkan?');
     if (!ok) return;
     try {
       let cleared = 0;
       if ('caches' in window) { const keys = await caches.keys(); cleared = keys.length; await Promise.all(keys.map(k => caches.delete(k))); }
       if ('serviceWorker' in navigator) { const regs = await navigator.serviceWorker.getRegistrations(); await Promise.all(regs.map(r => r.unregister())); }
-      alert('✅ Cache berhasil dihapus (' + cleared + ' entri).\nAplikasi akan dimuat ulang dengan file terbaru.');
+      alert('✅ Cache dihapus (' + cleared + ' entri).\nAplikasi akan dimuat ulang.');
       const url = new URL(window.location.href);
       url.searchParams.set('_cb', Date.now());
       window.location.replace(url.toString());
     } catch(e) {
-      alert('❌ Gagal menghapus cache: ' + e.message + '\n\nMencoba memuat ulang halaman...');
+      alert('❌ Gagal menghapus cache: ' + e.message);
       window.location.reload();
     }
   }
 
+  // ====================================================
+  // UTIL
+  // ====================================================
   function playSound() {
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext; if (!AudioContext) return;
@@ -1272,50 +1248,38 @@
     if (document.body.classList.contains('sort-mode-active')) return;
     const doa = dataDoa.find(d => d.id === id);
     if (!doa) return;
-
     if (isScrolling) toggleAutoScroll();
     if (isSpeaking) toggleTTS();
     hideColorToolbar();
-
     pencilCount = 0;
     if (pencilTimer) { clearTimeout(pencilTimer); pencilTimer = null; }
-
     currentDoaId = id;
     document.getElementById('doa-title').innerText = doa.title;
-
     const arabicEl = document.getElementById('doa-arabic');
     const latinEl = document.getElementById('doa-latin');
     const transEl = document.getElementById('doa-translation');
-
     const arabicContent = (doa.arabic || '').trim();
     const latinContent = (doa.latin || '').trim();
     const transContent = (doa.translation || '').trim();
-
     arabicEl.innerHTML = arabicContent || '';
     latinEl.innerHTML = latinContent || '';
     transEl.innerHTML = transContent || '';
-
     if (!isEditMode) {
       arabicEl.style.display = arabicContent ? 'block' : 'none';
       latinEl.style.display = latinContent ? 'block' : 'none';
       transEl.style.display = transContent ? 'block' : 'none';
     }
-
     const custom = isCustomDoa(id);
     const renameBtn = document.getElementById('rename-custom-btn');
     const deleteBtn = document.getElementById('delete-custom-btn');
     if (renameBtn) renameBtn.style.display = 'flex';
     if (deleteBtn) deleteBtn.style.display = custom ? 'flex' : 'none';
-
     updateStarIcon();
-
     let savedScale = 1;
     try { savedScale = parseFloat(localStorage.getItem('doa_font_scale')) || 1; } catch(e) {}
     applyFontScale(savedScale);
-
     updateEditability();
     showPage('page-doa', false);
-
     if (pushHistory) {
       try { history.pushState({page: 'doa', id: id}, '', '#doa-' + id); } catch(e) {}
     }
@@ -1377,9 +1341,8 @@
     if (latin) parts.push(latin);
     if (trans) parts.push(arabic ? `Artinya:\n${trans}` : trans);
     parts.push('(Dikutip dari Aplikasi Kumpulan Doa & Muqaddimah)');
-    const textToCopy = parts.join('\n\n');
     try {
-      navigator.clipboard.writeText(textToCopy)
+      navigator.clipboard.writeText(parts.join('\n\n'))
         .then(() => alert('Teks doa berhasil disalin ke clipboard!'))
         .catch(() => alert('Gagal menyalin teks.'));
     } catch(e) { alert('Browser tidak mendukung fitur salin.'); }
@@ -1485,6 +1448,58 @@
   animateStars();
 
   // ====================================================
+  // COVER TEXTS
+  // ====================================================
+  const COVER_DEFAULTS = {
+    bismillah: 'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ',
+    kicker: 'Buku Digital',
+    title: 'Kumpulan Doa<br>&amp; Muqaddimah',
+    desc: 'Panduan doa harian dan muqaddimah pilihan',
+    footer: 'buku digital v1.28.26 created by oznet'
+  };
+  let coverTexts = { ...COVER_DEFAULTS };
+  try {
+    const savedCover = JSON.parse(localStorage.getItem('cover_texts'));
+    if (savedCover && typeof savedCover === 'object') {
+      Object.keys(COVER_DEFAULTS).forEach(k => { if (typeof savedCover[k] === 'string') coverTexts[k] = savedCover[k]; });
+    }
+  } catch(e) {}
+  function sanitizeHTML(html) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    tmp.querySelectorAll('script,iframe,object,embed,link,style,meta').forEach(e => e.remove());
+    tmp.querySelectorAll('*').forEach(el => {
+      [...el.attributes].forEach(attr => {
+        const name = attr.name.toLowerCase();
+        const value = String(attr.value || '').trim().toLowerCase();
+        if (name.startsWith('on') || (name === 'href' && value.startsWith('javascript:'))) el.removeAttribute(attr.name);
+      });
+    });
+    return tmp.innerHTML;
+  }
+  function applyCoverTexts() {
+    const map = { 'cover-bismillah': coverTexts.bismillah, 'cover-kicker': coverTexts.kicker, 'cover-title': coverTexts.title, 'cover-desc': coverTexts.desc, 'cover-footer': coverTexts.footer };
+    Object.keys(map).forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = map[id]; });
+  }
+  applyCoverTexts();
+  function autoSaveCover() {
+    ['bismillah', 'kicker', 'title', 'desc', 'footer'].forEach(key => {
+      const el = document.getElementById('cover-' + key);
+      if (el) coverTexts[key] = sanitizeHTML(el.innerHTML);
+    });
+    try { localStorage.setItem('cover_texts', JSON.stringify(coverTexts)); } catch(e) {}
+  }
+  function resetCoverTexts() {
+    const allDefault = Object.keys(COVER_DEFAULTS).every(k => coverTexts[k] === COVER_DEFAULTS[k]);
+    if (allDefault) { alert('Teks cover sudah default.'); return; }
+    if (!confirm('↺ Reset semua teks cover ke default?')) return;
+    coverTexts = { ...COVER_DEFAULTS };
+    try { localStorage.removeItem('cover_texts'); } catch(e) {}
+    applyCoverTexts(); playSound();
+    alert('✅ Teks cover direset ke default.');
+  }
+
+  // ====================================================
   // EDIT MODE
   // ====================================================
   let isEditMode = false; let moonTapCount = 0; let moonTapTimer;
@@ -1496,21 +1511,15 @@
       if (moonTapCount === 3) { clearTimeout(moonTapTimer); moonTapCount = 0; enableEditMode(); }
     });
   }
-
   function enableEditMode() {
     isEditMode = !isEditMode;
     if (isEditMode) {
       document.body.classList.add('edit-mode');
-      // Bersihkan inline display:none sisa dari mode non-edit
       ['doa-arabic','doa-latin','doa-translation'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = '';
       });
-      alert("✅ MODE EDIT AKTIF.\n\n" +
-            "• Halaman COVER: ketuk teks untuk mengedit.\n" +
-            "• Halaman DOA: ketuk teks Arab / Latin / Terjemahan untuk mengedit.\n\n" +
-            "🎨 PALET WARNA:\nBlok/tandai sebagian teks → palet warna muncul otomatis → pilih warna.\n\n" +
-            "Semua perubahan otomatis tersimpan di HP ini.");
+      alert("✅ MODE EDIT AKTIF.\n\n• Halaman COVER: ketuk teks untuk mengedit.\n• Halaman DOA: ketuk teks Arab / Latin / Terjemahan untuk mengedit.\n\n🎨 PALET WARNA:\nBlok/tandai sebagian teks → palet warna muncul otomatis → pilih warna.\n\nSemua perubahan otomatis tersimpan di HP ini.");
     } else {
       document.body.classList.remove('edit-mode');
       hideColorToolbar();
@@ -1518,7 +1527,6 @@
     }
     updateEditability(); playSound();
   }
-
   function updateEditability() {
     ['doa-arabic','doa-latin','doa-translation'].forEach(id => {
       const el = document.getElementById(id);
@@ -1540,30 +1548,27 @@
       }
     }
   }
-
   function autoSave() {
     if (!isEditMode || !currentDoaId) return;
-    const updatedArabic = document.getElementById('doa-arabic').innerHTML;
-    const updatedLatin = document.getElementById('doa-latin').innerHTML;
-    const updatedTranslation = document.getElementById('doa-translation').innerHTML;
-
+    const updatedArabic = normalizeDoaHTML(document.getElementById('doa-arabic').innerHTML);
+    const updatedLatin = normalizeDoaHTML(document.getElementById('doa-latin').innerHTML);
+    const updatedTranslation = normalizeDoaHTML(document.getElementById('doa-translation').innerHTML);
     const doa = dataDoa.find(d => d.id === currentDoaId);
     if (doa) { doa.arabic = updatedArabic; doa.latin = updatedLatin; doa.translation = updatedTranslation; }
-
     let customData = {};
     try { customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {}; } catch(e) {}
-
     const entry = { ...(customData[currentDoaId] || {}), arabic: updatedArabic, latin: updatedLatin, translation: updatedTranslation };
-
     if (doa && doa.title) {
       if (BUILTIN_IDS.has(currentDoaId)) { if (doa.title !== ORIGINAL_TITLES[currentDoaId]) entry.title = doa.title; else delete entry.title; }
       else entry.title = doa.title;
     }
-
     customData[currentDoaId] = entry;
     try { localStorage.setItem('custom_doa_data', JSON.stringify(customData)); } catch(e) {}
   }
 
+  // ====================================================
+  // EXPORT KODE
+  // ====================================================
   function exportCode() {
     let newDataStr = "  let dataDoa = [\n";
     dataDoa.forEach((doa, index) => {
@@ -1574,14 +1579,12 @@
       newDataStr += `    { \n      id: "${doa.id}",\n      title: "${doa.title.replace(/"/g, '\\"')}", \n      arabic: \`${safeArabic}\`, \n      latin: \`${safeLatin}\`, \n      translation: \`${safeTrans}\` \n    },\n\n`;
     });
     newDataStr += "  ];";
-
     let coverStr = "\n\n  const COVER_DEFAULTS = {\n";
     Object.keys(coverTexts).forEach(k => {
       const safe = String(coverTexts[k]).replace(/`/g, '\\`');
       coverStr += `    ${k}: \`${safe}\`,\n`;
     });
     coverStr += "  };";
-
     const modal = document.createElement('div');
     modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:99999;display:flex;flex-direction:column;padding:20px;box-sizing:border-box;';
     modal.innerHTML = `
@@ -1603,29 +1606,24 @@
     const installBanner = document.getElementById('pwa-install-banner');
     const installBtn = document.getElementById('pwa-install-btn');
     const closeBtn = document.getElementById('pwa-close-btn');
-
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault(); deferredPrompt = e;
       if (installBanner) installBanner.classList.add('show');
     });
-
-    if (installBtn) {
-      installBtn.addEventListener('click', async () => {
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          const { outcome } = await deferredPrompt.userChoice;
-          if (installBanner) installBanner.classList.remove('show');
-          deferredPrompt = null;
-        }
-      });
-    }
+    if (installBtn) installBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        if (installBanner) installBanner.classList.remove('show');
+        deferredPrompt = null;
+      }
+    });
     if (closeBtn) closeBtn.addEventListener('click', () => { if (installBanner) installBanner.classList.remove('show'); });
     window.addEventListener('appinstalled', () => { if (installBanner) installBanner.classList.remove('show'); });
 
     let newWorker;
     const updateBanner = document.getElementById('update-banner');
     const btnUpdate = document.getElementById('btn-update');
-
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').then(reg => {
         reg.addEventListener('updatefound', () => {
@@ -1637,9 +1635,7 @@
           });
         });
       }).catch(err => console.log('SW gagal:', err));
-
       if (btnUpdate) btnUpdate.addEventListener('click', () => { if (newWorker) newWorker.postMessage({ action: 'skipWaiting' }); });
-
       let refreshing;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (refreshing) return;
