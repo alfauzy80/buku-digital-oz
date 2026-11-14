@@ -29,7 +29,6 @@
   .app-container { position:relative; width:100%; height:100dvh; overflow-y:auto; overflow-x:hidden; scroll-behavior:smooth; }
   .page { display:none; min-height:100%; width:100%; }
   .page.active { display:flex; flex-direction:column; align-items:center; }
-
   .sticky-wrapper { position:sticky; top:0; z-index:100; background:var(--bg-main); width:100%; margin:-30px -20px 15px -20px; padding:15px 15px 10px 15px; box-shadow:0 10px 15px -10px rgba(0,0,0,.5); border-bottom:1px solid var(--card-border); }
   body.light-mode .sticky-wrapper { box-shadow:0 10px 15px -10px rgba(0,0,0,.1); }
 
@@ -177,11 +176,46 @@
   .modal-hint { font-size:12px; color:var(--text-muted); font-style:italic; margin-bottom:12px; line-height:1.5; }
   .modal-input { width:100%; padding:10px; margin-bottom:15px; background:var(--input-bg); border:1px solid var(--card-border); border-radius:8px; color:var(--text-main); font-family:'Cormorant Garamond',serif; font-size:16px; outline:none; }
 
-  /* contenteditable "textarea" untuk modal */
-  .cd-input { width:100%; padding:10px; margin-bottom:15px; background:var(--input-bg); border:1px solid var(--card-border); border-radius:8px; color:var(--text-main); font-family:'Cormorant Garamond',serif; font-size:16px; outline:none; min-height:80px; max-height:200px; overflow-y:auto; white-space:pre-wrap; word-wrap:break-word; line-height:1.5; }
+  /* Contenteditable inputs — MATCH viewer fonts exactly */
+  .cd-input {
+    width:100%; padding:10px; margin-bottom:15px;
+    background:var(--input-bg); border:1px solid var(--card-border);
+    border-radius:8px; color:var(--text-main);
+    font-family:'Cormorant Garamond',serif; font-size:18px;
+    outline:none; min-height:80px; max-height:220px;
+    overflow-y:auto; white-space:pre-wrap; word-wrap:break-word;
+    line-height:1.6;
+  }
   .cd-input:focus { border-color:var(--gold); }
   .cd-input:empty:before { content:attr(data-placeholder); color:var(--text-muted); font-style:italic; pointer-events:none; }
-  .cd-input.arabic-cd { font-family:'Amiri',serif; font-size:20px; direction:rtl; text-align:right; line-height:1.8; min-height:100px; }
+
+  /* Arabic input — SAMA dengan .arabic-text */
+  .cd-input.arabic-cd {
+    font-family:'Amiri','Traditional Arabic',serif;
+    font-size: clamp(26px, 6vw, 34px);
+    direction: rtl;
+    text-align: right;
+    line-height: 2.5;
+    color: var(--gold);
+    min-height: 120px;
+  }
+
+  /* Latin input — SAMA dengan .latin-text */
+  .cd-input.latin-cd {
+    font-style: italic;
+    color: var(--text-muted);
+    font-size: 16px;
+    line-height: 1.6;
+    border-left: 2px solid var(--gold);
+    padding-left: 15px;
+  }
+
+  /* Translation input — SAMA dengan .translation-text */
+  .cd-input.translation-cd {
+    color: var(--text-main);
+    font-size: 18px;
+    line-height: 1.6;
+  }
 
   .modal-actions { display:flex; gap:10px; margin-top:10px; }
   .modal-btn { flex:1; padding:12px; border-radius:8px; border:none; font-weight:bold; font-family:'Cormorant Garamond',serif; font-size:16px; cursor:pointer; }
@@ -189,7 +223,6 @@
   .modal-btn.cancel { background:#333; color:#fff; }
   .modal-btn.alt { background:var(--card-bg); color:var(--gold); border:1px solid var(--gold); }
 
-  /* FLOATING COLOR TOOLBAR */
   .color-toolbar { position:fixed; z-index:30000; background:var(--bg-main); border:1px solid var(--gold); border-radius:12px; padding:6px; box-shadow:0 8px 24px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.05); display:none; align-items:center; gap:4px; flex-wrap:wrap; max-width:calc(100vw - 20px); }
   .color-toolbar.show { display:flex; }
   body.light-mode .color-toolbar { box-shadow:0 8px 24px rgba(0,0,0,.15), 0 0 0 1px rgba(0,0,0,.05); }
@@ -256,7 +289,7 @@
       <p class="desc" id="cover-desc" oninput="autoSaveCover()">Panduan doa harian dan muqaddimah pilihan</p>
       <button class="btn-open" onclick="showPage('page-toc')">Buka Daftar Isi</button>
     </div>
-    <div class="cover-footer" id="cover-footer" oninput="autoSaveCover()">buku digital v1.25.26 created by oznet</div>
+    <div class="cover-footer" id="cover-footer" oninput="autoSaveCover()">buku digital v1.27.26 created by oznet</div>
   </div>
 
   <div id="page-toc" class="page">
@@ -344,7 +377,6 @@
 
 <button id="btn-clear-cache" class="btn-clear-cache" onclick="clearAppCache()" title="Hapus Cache Aplikasi" aria-label="Hapus Cache Aplikasi">🧹</button>
 
-<!-- FLOATING COLOR TOOLBAR -->
 <div id="color-toolbar" class="color-toolbar">
   <button class="ct-swatch" data-color="#d4af37" style="background:#d4af37" title="Gold"></button>
   <button class="ct-swatch" data-color="#f6e7a8" style="background:#f6e7a8" title="Ivory"></button>
@@ -366,11 +398,10 @@
   <button class="btn-edit-action danger" onclick="enableEditMode()">❌ Selesai Edit</button>
 </div>
 
-<!-- MODAL: TAMBAH DOA -->
 <div class="modal-overlay" id="add-doa-modal">
   <div class="modal-content">
     <h3>Tambah Doa Baru</h3>
-    <p class="modal-hint">💡 Blok teks Arab/Latin lalu warnai dengan palet yang muncul.</p>
+    <p class="modal-hint">💡 Tampilan huruf di sini sama dengan tampilan di aplikasi. Blok teks lalu warnai dengan palet.</p>
 
     <label class="modal-label">Judul Doa</label>
     <input type="text" id="new-title" class="modal-input" placeholder="Contoh: Doa Sebelum Tidur">
@@ -379,10 +410,10 @@
     <div id="new-arabic" class="cd-input arabic-cd" contenteditable="true" data-placeholder="اللَّهُمَّ ..."></div>
 
     <label class="modal-label">Teks Latin (Opsional)</label>
-    <div id="new-latin" class="cd-input" contenteditable="true" data-placeholder="Allahumma ..."></div>
+    <div id="new-latin" class="cd-input latin-cd" contenteditable="true" data-placeholder="Allahumma ..."></div>
 
     <label class="modal-label">Terjemahan / Konten (Opsional)</label>
-    <div id="new-translation" class="cd-input" contenteditable="true" data-placeholder="Ya Allah ..."></div>
+    <div id="new-translation" class="cd-input translation-cd" contenteditable="true" data-placeholder="Ya Allah ..."></div>
 
     <div class="modal-actions">
       <button class="modal-btn cancel" onclick="closeAddDoaModal()">Batal</button>
@@ -391,11 +422,10 @@
   </div>
 </div>
 
-<!-- MODAL: EDIT JUDUL + TEKS -->
 <div class="modal-overlay" id="rename-doa-modal">
   <div class="modal-content">
     <h3>✏️ Edit Judul & Teks</h3>
-    <p class="modal-hint">💡 Blok teks Arab/Latin lalu warnai dengan palet yang muncul.</p>
+    <p class="modal-hint">💡 Tampilan huruf sama dengan aplikasi. Blok teks lalu warnai dengan palet.</p>
 
     <label class="modal-label">Judul Baru</label>
     <input type="text" id="rename-title" class="modal-input" placeholder="Judul doa...">
@@ -404,7 +434,7 @@
     <div id="rename-arabic-cd" class="cd-input arabic-cd" contenteditable="true" data-placeholder="اللَّهُمَّ ..."></div>
 
     <label class="modal-label">Teks Latin</label>
-    <div id="rename-latin-cd" class="cd-input" contenteditable="true" data-placeholder="Allahumma ..."></div>
+    <div id="rename-latin-cd" class="cd-input latin-cd" contenteditable="true" data-placeholder="Allahumma ..."></div>
 
     <button id="rename-reset-btn" class="modal-btn alt" onclick="resetDoaTitle()" style="width:100%; margin-bottom:8px; display:none;">↺ Reset ke Judul Asli</button>
     <div class="modal-actions">
@@ -414,7 +444,6 @@
   </div>
 </div>
 
-<!-- MODAL: BACKUP -->
 <div class="modal-overlay" id="backup-modal">
   <div class="modal-content">
     <h3>💾 Backup & Restore</h3>
@@ -432,9 +461,6 @@
 </div>
 
 <script>
-  // ====================================================
-  // DATA DOA (BUILT-IN)
-  // ====================================================
   let dataDoa = [
     { id: "doa_1", title: "Doa Setelah Sholat Tahajud", arabic: `اللَّهُمَّ لَكَ الْحَمْدُ أَنْتَ قَيِّمُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ، وَلَكَ الْحَمْدُ لَكَ مُلْكُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ، وَلَكَ الْحَمْدُ نُورُ السَّمَوَاتِ وَالْأَرْضِ، وَلَكَ الْحَمْدُ أَنْتَ الْحَقُّ وَوَعْدُكَ الْحَقُّ وَلِقَاءُكَ حَقٌّ وَقَوْلُكَ حَقٌّ وَالْجَنَّةُ حَقٌّ وَالنَّارُ حَقٌّ، وَالنَّبِيُّونَ حَقٌّ، وَمُحَمَّدٌ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ حَقٌّ، وَالسَّاعَةُ حَقٌّ. اللَّهُمَّ لَكَ أَسْلَمْتُ، وَبِكَ آمَنْتُ، وَعَلَيْكَ تَوَكَّلْتُ وَإِلَيْكَ أَنَبْتُ وَبِكَ خَاصَمْتُ، وَإِلَيْكَ حَاكَمْتُ، فَاغْفِرْلِي مَا قَدَّمْتُ، وَمَا أَخَّرْتُ وَمَا أَسْرَرْتُ وَمَا أَعْلَنْتُ، أَنْتَ الْمُقَدِّمُ وَأَنْتَ الْمُؤَخِّرُ، لَا إِلَهَ إِلَّا أَنْتَ أَوْ لَا إِلَهَ غَيْرُكَ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ.`, latin: "", translation: "" },
     { id: "doa_2", title: "Doa Setelah Sholat Dhuha", arabic: `اَللَّهُمَّ إِنَّ الضُّحَاءَ ضُحَاؤُكَ وَالْبَهَاءَ بَهَاؤُكَ وَالْجَمَالَ جَمَالُكَ وَالْقُوَّةَ قُوَّتُكَ وَالْقُدْرَةَ قُدْرَتُكَ وَالْعِصْمَةَ عِصْمَتُكَ. اَللَّهُمَّ إِنْ كَانَ رِزْقِي فِي السَّمَاءِ فَأَنْزِلْهُ وَإِنْ كَانَ فِي الْأَرْضِ فَأَخْرِجْهُ وَإِنْ كَانَ مُعَسَّرًا فَيَسِّرْهُ وَإِنْ كَانَ حَرَامًا فَطَهِّرْهُ وَإِنْ كَانَ بَعِيدًا فَقَرِّبْهُ بِحَقِّ ضُحَائِكَ وَبَهَائِكَ وَجَمَالِكَ وَقُوَّتِكَ وَقُدْرَتِكَ آتِنِي مَا آتَيْتَ عِبَادَكَ الصَّالِحِينَ.`, latin: "", translation: "" },
@@ -445,8 +471,8 @@
     { id: "doa_7", title: "Doa Talqin Mayit", arabic: `لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيْكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ يُحْيِى وَيُمِيْتُ، وَهُوَ حَيٌّ دَائِمٌ لَا يَمُوْتُ، بِيَدِهِ الخَيْرُ يَفْعَلُ مَا يَشَاءُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيْرٌ، كُلُّ نَفْسٍ ذَائِقَةُ المَوْتِ وَإِنَّمَا تُوَفَّوْنَ أُجُوْرَكُمْ يَوْمَ القِيَامَةِ، فَمَنْ زُحْزِحَ عَنِ النَّارِ وَأُدْخِلَ الجَنَّةَ فَقَدْ فَازَ، وَمَا الحَيَاةُ الدُّنْيَا إِلَّا مَتَاعُ الغُرُوْرِ يَا عَبْدَ اللهِ، ابْنَ عَبْدَيِ اللهِ (يَا أَمَةَ اللهِ، بِنْتَ عَبْدَيِ اللهِ) يَا عَبْدَ اللهِ، ابْنَ حَوَاء (يَا أَمَةَ اللهِ، بِنْتَ حَوَاء) اذْكُرِ (اذْكُرِي) العَهْدَ الَّذِيْ خَرَجْتَ (خَرَجْتِ) عَلَيْهِ مِنْ دَارِ الدُّنْيَا، وَهُوَ شَهَادَةُ أَنْ لَّا إِلَهَ إِلَّا اللهُ وَأَنَّ مُحَمَّدًا رَّسُوْلُ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، وَأَنَّ المَوْتَ حَقٌّ، وَأَنَّ القَبْرَ حَقٌّ، وَأَنَّ نَعِيْمَهُ حَقٌّ، وَأَنَّ عَذَابَهُ حَقٌّ، وَأَنَّ سُؤَالَ مُنْكَرٍ وَنَكِيْرٍ فِيْهِ حَقٌّ، وَأَنَّ البَعْثَ حَقٌّ، وَأَنَّ الحِسَابَ حَقٌّ، وَأَنَّ المِيْزَانَ حَقٌّ، وَأَنَّ الصِّرَاطَ حَقٌّ، وَأَنَّ شَفَاعَةَ سَيِّدِنَا مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ حَقٌّ، وَأَنَّ الجَنَّةَ حَقٌّ، وَأَنَّ النَّارَ حَقٌّ، وَأَنَّ لِقَاءَ اللهِ تَعَالَى لِأَهْلِ الحَقِّ حَقٌّ، وَأَنَّ السَّاعَةَ آتِيَةٌ لَا رَيْبَ فِيْهَا، وَأَنَّ اللهَ يَبْعَثُ مَنْ فِي القُبُوْرِ، . الآنَ قَدْ صِرْتَ (صِرْتِ) فِي أَطْبَاقِ الثَّرَى وَبَيْنَ عَسَاكِرِ المَوْتَى، فَإِذَا جَاءَكَ (جَاءَكِ) المَلَكَانِ المُوَكَّلَانِ بِكَ (بِكِ)، وَهُمَا مُنْكَرٌ وَنَكِيْرٌ فَلَا يُفْزِعَاكَ (يُفْزِعَاكِ) وَلَا يُرْهِبَاكَ (يُرْهِبَاكِ)، فَإِنَّهُمَا خَلْقٌ مِنْ خَلْقِ اللهِ تَعَالَى عَزَّ وَجَلَّ، وَإِذَا سَأَلَاكَ (سَأَلَاكِ) "مَنْ رَبُّكَ (رَبُّكِ) ومَنْ نَبِيُّكَ (نَبِيُّكِ) وَمَا دِيْنُكَ (دِيْنُكِ) وَمَا قِبْلَتُكَ (قِبْلَتُكِ) وَمَا إِمَامُكَ (إِمَامُكِ) وَمَنْ إِخْوَانُكَ (إِخْوَانُكِ)" فَقُلْ (فَقُوْلِيْ) لَهُمَا بِلِسَانٍ فَصِيْحٍ وَاعْتِقَادٍ صَحِيْحٍ "اللهُ رَبِّي ومُحَمَّدٌ نَبِيِّى وَالإِسْلَامُ دِيْنِي وَالكَعْبَةُ قِبْلَتِي وَالقُرْآنُ إِمَامِي وَالمُسْلِمُوْنَ وَالمُؤْمِنُوْنَ إِخْوَانِي،" وَقُلْ (وَقُوْلِيْ) "رَضِيْتُ بِاللهِ رَبًّا وَبِالإِسْلَامِ دِيْنًا وَبِمُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا وَرَسُوْلًا" عَلَى ذَلِكَ حُيِّيْتَ (حُيِّيْتِ) وَعَلَى ذَلِكَ مِتَّ (مِتِّ) وَبِذَلِكَ تُبْعَثُ (تُبْعَثِيْنَ) إِنْ شَاءَ اللهُ تَعَالَى مِنَ الآمِنِيْنَ ثَبَّتَكِ اللهُ بِالقَوْلِ الثَّابِتِ ٣ ثَبَّتَكَ اللهُ بِالقَوْلِ الثَّابِتِ ٣ يُثَبِّتُ اللهُ الَّذِيْنَ آمَنُوْا بِالقَوْلِ الثَّابِتِ فِي الحَيَاةِ الدُّنْيَا وَفِي الآخِرَةِ، يَا أَيَّتُهَا النَّفْسُ المُطْمَئِنَّةُ، ارْجِعِي إِلَى رَبِّكِ رَاضِيَةً مَرْضِيَّةً، فَادْخُلِى فِي عِبَادِي وَادْخُلِي جَنَّتِي`, latin: "", translation: "" },
     { id: "doa_8", title: "Doa Menghindari Fitnah Dajjal", arabic: `اللّٰهُمَّ اِنِّى اَعُوْذُ بِكَ مِنْ عَذَابِ جَهَنَّمَ، وَمِنْ عَذَابِ الْقَبْرِ وَمِنْ فِتْنَةِ الْمَحْيَا وَالْمَمَاتِ وَمِنْ شَرِّ فِتْنَةِ الْمَسِيْحِ الدَّجَّالِ`, latin: "", translation: "" },
     { id: "doa_9", title: "Doa Setelah Sholat Fardu", arabic: `اَلْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِيْنَ. حَمْدًا يُوَافِيْ نِعَمَهُ وَيُكَافِئُ مَزِيْدَهُ. يَا رَبَّنَا لَكَ الْحَمْدُ كَمَا يَنْبَغِيْ لِجَلاَلِ وَجْهِكَ الْكَرِيْمِ وَعَظِيْمِ سُلْطَانِكَ اَللَّهُمَّ صَلِّ عَلىَ سَيِّدِنَا مُحَمَّدٍ وَعَلىَ آلِ سَيِّدِنَا مُحَمَّدٍ اَللَّهُمَّ رَبَّنَا تَـقَـبَّلْ مِنَّا صَلاَتَنَا وَصِيَا مَنَا وَرُكُوْ عَنَا وَسُجُوْدَنَا وَقُعُوْدَنَا وَتَضَرُّ عَنَا وَتَخَشُّوْعَنَا وَتَعَبُّدَنَا وَتَمِّمْ تَقْصِيْرَنَا يَا اَلله يَا رَبَّ الْعَالَمِيْنَ`, latin: "", translation: "" },
-    { id: "doa_10", title: "Contoh Muqoddimah Tahlil", arabic: ``, latin: "", translation: `<div style="direction: ltr; text-align: left; font-family: 'Cormorant Garamond', Georgia, serif; white-space: normal; line-height: 1.6;"><h3 style="color: var(--gold); font-size: 1.15em; margin-bottom: 15px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px;">• Versi Indonesia</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin rahimakumullah.</p><p style="margin-bottom: 15px;">Marilah kita panjatkan puji dan syukur ke hadirat Allah SWT, yang telah memberikan nikmat iman, Islam, kesehatan, serta kesempatan kepada kita untuk berkumpul di tempat ini.</p><p style="margin-bottom: 15px;">Hadirin yang dimuliakan Allah.</p><p style="margin-bottom: 15px;">Kita semua menyadari bahwa kehidupan di dunia ini hanyalah sementara. Sebagaimana firman Allah SWT dalam Surah Al-Ankabut ayat 57:</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">كُلُّ نَفْسٍ ذَائِقَةُ الْمَوْتِ ۖ ثُمَّ إِلَيْنَا تُرْجَعُونَ</div><p style="margin-bottom: 15px; font-style: italic; color: var(--text-muted);">"Setiap yang bernyawa akan merasakan mati. Kemudian hanya kepada Kamilah kamu dikembalikan."</p><p style="margin-bottom: 15px;">Dan ketika kita menghadapi musibah, Allah mengajarkan kita untuk senantiasa bersabar, sebagaimana firman-Nya dalam Surah Al-Baqarah ayat 156:</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ</div><p style="margin-bottom: 15px; font-style: italic; color: var(--text-muted);">"Sesungguhnya kami milik Allah dan kepada-Nyalah kami kembali."</p><p style="margin-bottom: 15px;">Hadirin sekalian.</p><p style="margin-bottom: 15px;">Maka pada kesempatan ini, marilah kita bersama-sama mendoakan almarhum/almarhumah. Semoga Allah SWT mengampuni segala dosa-dosanya, menerima amal ibadahnya, melapangkan alam kuburnya, serta menempatkannya di tempat terbaik di sisi-Nya.</p><p style="margin-bottom: 15px;">Atas nama keluarga, kami mengucapkan terima kasih atas kehadiran Bapak, Ibu, dan seluruh hadirin. Kami juga memohon maaf apabila semasa hidup almarhum/almarhumah terdapat kesalahan dan kekhilafan, baik disengaja maupun tidak disengaja.</p><p style="margin-bottom: 15px;">Akhir kata, marilah kita ikuti pembacaan tahlil dan doa ini dengan penuh kekhusyukan. Semoga Allah SWT mengabulkan doa-doa kita.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 25px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p><h3 style="color: var(--gold); font-size: 1.15em; margin-top: 30px; margin-bottom: 15px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px;">• Versi Sunda</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin anu ku simkuring dipihormat, para sesepuh, alim ulama, Bapa-bapa, Ibu-ibu, sareng sadaya jamaah anu dirahmati ku Allah SWT.</p><p style="margin-bottom: 15px;">Mimiti, hayu urang sami-sami muji sareng ngucapkeun sukur ka Allah SWT, anu parantos maparin rahmat, nikmat, sareng karunia-Na, dugi ka dina wengi ieu urang sadaya tiasa kempel ngariung dina kaayaan séhat wal'afiat.</p><p style="margin-bottom: 15px;">Hadirin rahimakumullah.</p><p style="margin-bottom: 15px;">Urang sadaya tangtos parantos uninga, yén kahirupan di dunya ieu mung sakedap sareng sadaya mahluk anu hirup pasti bakal ngaraoskeun maot. Sakumaha dawuhan Allah SWT dina Al-Qur'an Surah Al-Ankabut ayat 57:</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">كُلُّ نَفْسٍ ذَائِقَةُ الْمَوْتِ ۖ ثُمَّ إِلَيْنَا تُرْجَعُونَ</div><p style="margin-bottom: 15px; font-style: italic; color: var(--text-muted);">Anu hartosna: "Satiap anu gaduh nyawa pasti bakal ngaraoskeun maot, teras ka Kami aranjeun sadayana bakal dipulangkeun."</p><p style="margin-bottom: 15px;">Sareng dina waktos urang ditimpa musibah, Allah SWT ngajarkeun urang sangkan tetep sabar sareng ikhlas, sakumaha dina Surah Al-Baqarah ayat 156:</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ</div><p style="margin-bottom: 15px; font-style: italic; color: var(--text-muted);">Anu hartosna: "Saéstuna urang sadaya kagungan Allah, sareng ka Mantenna urang sadaya bakal mulang."</p><p style="margin-bottom: 15px;">Ku kituna, dina ieu kasempetan, hayu urang sami-sami ngado'akeun almarhum/almarhumah, mugia Allah SWT ngahampura sagala kalepatanana, nampi amal ibadahna, ngalapangan alam kuburna, sareng maparin tempat anu mulya di sisi-Na.</p><p style="margin-bottom: 15px;">Salajengna, simkuring salaku wawakil ti pihak kulawarga ngahaturkeun nuhun anu teu kaétang kana kasumpingan Bapa, Ibu, sareng sadaya jamaah. Simkuring ogé nyuhunkeun dihapunten bilih salami almarhum/almarhumah hirup aya kalepatan, boh dina ucap boh dina lampah, dihaja atanapi teu dihaja.</p><p style="margin-bottom: 15px;">Pamungkas, hayu urang sami-sami ngalaksanakeun tahlil sareng ngadu'a kalayan khusyuk. Mugia sadaya amal sareng do'a urang ditampi ku Allah SWT.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 15px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p></div>` },
-    { id: "doa_11", title: "Contoh Muqoddimah Aqiqah", arabic: ``, latin: "", translation: `<div style="direction: ltr; text-align: left; font-family: 'Cormorant Garamond', Georgia, serif; white-space: normal; line-height: 1.6;"><h3 style="color: var(--gold); font-size: 1.15em; margin-bottom: 15px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px;">• Versi Bahasa Sunda</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin rahimakumullah.</p><p style="margin-bottom: 15px;">Mimiti, hayu urang sami-sami muji sareng ngucapkeun sukur ka Allah SWT, anu parantos maparin rahmat, nikmat, sareng karunia-Na, dugi ka dina ieu kasempetan urang tiasa kempel ngariung dina kaayaan séhat wal'afiat.</p><p style="margin-bottom: 15px;">Dina ieu kasempetan, urang sadaya ngariung dina raraga ngalaksanakeun syukuran aqiqah, minangka wujud rasa syukur kulawarga ka Allah SWT, anu parantos maparin amanah sareng karunia berupa lahirna putra/putri.</p><p style="margin-bottom: 15px;">Mugia ku dilaksanakeunana ieu aqiqah, janten jalan kahadéan, sareng mugia murangkalihna janten anak anu soleh/solehah, séhat, panjang yuswa, barokah umurna, taat ka Allah SWT, sareng janten kabagjaan kanggo sepuhna.</p><p style="margin-bottom: 15px;">Teu hilap, simkuring salaku wawakil kulawarga ngahaturkeun nuhun kana kasumpingan Bapa, Ibu, sareng sadaya tamu uleman. Hapunten bilih aya kakirangan dina panyambutan atanapi dina sagala rupi hidangan.</p><p style="margin-bottom: 15px;">Pamungkas, hayu urang sami-sami ngiringan ieu acara kalayan pinuh ku rasa syukur sareng ngadu'a, mugia sadayana dipaparin kalancaran sareng kaberkahan ku Allah SWT.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 25px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p><h3 style="color: var(--gold); font-size: 1.15em; margin-top: 30px; margin-bottom: 15px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px;">• Versi Bahasa Indonesia</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div style="direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: clamp(22px, 5vw, 28px); color: var(--gold); margin: 20px 0;">الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِهِ وَصَحْبِهِ أَجْمَعِينَ. أَمَّا بَعْدُ.</div><p style="margin-bottom: 15px;">Hadirin yang dirahmati Allah SWT.</p><p style="margin-bottom: 15px;">Pertama-tama, marilah kita panjatkan puji dan syukur ke hadirat Allah SWT, karena atas segala rahmat dan karunia-Nya, kita dapat berkumpul di tempat ini dalam keadaan sehat walafiat.</p><p style="margin-bottom: 15px;">Pada kesempatan yang penuh kebahagiaan ini, kita berkumpul dalam rangka melaksanakan syukuran aqiqah sebagai bentuk rasa syukur keluarga kepada Allah SWT atas anugerah dan amanah berupa kelahiran seorang putra/putri.</p><p style="margin-bottom: 15px;">Semoga melalui acara aqiqah ini, anak yang telah dianugerahkan menjadi anak yang saleh/salehah, berbakti kepada kedua orang tua, sehat, panjang umur, penuh keberkahan, serta kelak menjadi kebanggaan keluarga dan bermanfaat bagi agama, bangsa, dan sesama.</p><p style="margin-bottom: 15px;">Selanjutnya, kami mewakili keluarga mengucapkan terima kasih atas kehadiran Bapak, Ibu, serta seluruh tamu undangan. Kami juga memohon maaf apabila terdapat kekurangan dalam penyambutan maupun hidangan yang kami sajikan.</p><p style="margin-bottom: 15px;">Akhir kata, marilah kita ikuti rangkaian acara ini dengan penuh rasa syukur dan doa. Semoga Allah SWT senantiasa melimpahkan keberkahan kepada kita semua.</p><p style="margin-bottom: 15px; font-weight: bold;">Aamiin ya Rabbal 'alamin.</p><p style="margin-bottom: 15px;">Wassalamu'alaikum warahmatullahi wabarakatuh.</p></div>` }
+    { id: "doa_10", title: "Contoh Muqoddimah Tahlil", arabic: ``, latin: "", translation: `<div style="direction: ltr; text-align: left; font-family: 'Cormorant Garamond', Georgia, serif; white-space: normal; line-height: 1.6;"><h3 style="color: var(--gold); font-size: 1.15em; margin-bottom: 15px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px;">• Versi Indonesia</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh.</p><p style="margin-bottom: 15px;">Hadirin rahimakumullah. Marilah kita panjatkan puji dan syukur ke hadirat Allah SWT. Aamiin ya Rabbal 'alamin.</p></div>` },
+    { id: "doa_11", title: "Contoh Muqoddimah Aqiqah", arabic: ``, latin: "", translation: `<div style="direction: ltr; text-align: left; font-family: 'Cormorant Garamond', Georgia, serif; white-space: normal; line-height: 1.6;"><h3 style="color: var(--gold); font-size: 1.15em; margin-bottom: 15px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px;">• Versi Bahasa Indonesia</h3><p style="margin-bottom: 15px;">Assalamu'alaikum warahmatullahi wabarakatuh. Hadirin yang dirahmati Allah SWT, marilah kita panjatkan puji syukur atas anugerah kelahiran putra/putri. Aamiin.</p></div>` }
   ];
 
   dataDoa.forEach((doa, index) => { if (!doa.id) doa.id = 'doa_' + (index + 1); });
@@ -462,7 +488,7 @@
     kicker: 'Buku Digital',
     title: 'Kumpulan Doa<br>&amp; Muqaddimah',
     desc: 'Panduan doa harian dan muqaddimah pilihan',
-    footer: 'buku digital v1.25.26 created by oznet'
+    footer: 'buku digital v1.27.26 created by oznet'
   };
 
   let coverTexts = { ...COVER_DEFAULTS };
@@ -506,7 +532,7 @@
   function resetCoverTexts() {
     const allDefault = Object.keys(COVER_DEFAULTS).every(k => coverTexts[k] === COVER_DEFAULTS[k]);
     if (allDefault) { alert('Teks cover sudah dalam kondisi default.'); return; }
-    if (!confirm('↺ Reset semua teks cover ke default?\n\nJudul, deskripsi, kicker, bismillah, dan footer akan dikembalikan ke pengaturan awal.')) return;
+    if (!confirm('↺ Reset semua teks cover ke default?')) return;
     coverTexts = { ...COVER_DEFAULTS };
     try { localStorage.removeItem('cover_texts'); } catch(e) {}
     applyCoverTexts(); playSound();
@@ -514,12 +540,13 @@
   }
 
   // ====================================================
-  // LOAD DATA
+  // LOAD DATA — dengan logging
   // ====================================================
   try {
     const customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {};
     const savedOrder = JSON.parse(localStorage.getItem('custom_doa_order')) || [];
     let mutated = false;
+    let customLoadedCount = 0;
 
     dataDoa.forEach(doa => {
       const cd = customData[doa.id];
@@ -536,8 +563,16 @@
     Object.keys(customData).forEach(id => {
       if (dataDoa.some(d => d.id === id)) return;
       const cd = customData[id];
-      if (!cd || !cd.title) return;
-      dataDoa.push({ id, title: cd.title, arabic: cd.arabic || '', latin: cd.latin || '', translation: cd.translation || '' });
+      if (!cd) { console.warn('[BukuDoa] Skip custom entry tanpa data:', id); return; }
+      if (!cd.title) { console.warn('[BukuDoa] Skip custom entry tanpa title:', id); return; }
+      dataDoa.push({
+        id,
+        title: cd.title,
+        arabic: cd.arabic || '',
+        latin: cd.latin || '',
+        translation: cd.translation || ''
+      });
+      customLoadedCount++;
     });
 
     if (Array.isArray(savedOrder) && savedOrder.length) {
@@ -547,15 +582,13 @@
       dataDoa = newOrder;
     }
     if (mutated) localStorage.setItem('custom_doa_data', JSON.stringify(customData));
-  } catch(e) { console.warn("Gagal load data:", e); }
+    console.info('[BukuDoa] Custom entries loaded:', customLoadedCount, '· Total doa:', dataDoa.length);
+  } catch(e) { console.error('[BukuDoa] Load error:', e); }
 
   let favorites = [];
   let currentDoaId = null;
   let sortableInstance = null;
 
-  // ====================================================
-  // RENDER TOC
-  // ====================================================
   function renderTOC() {
     try {
       const favList = document.getElementById('fav-list');
@@ -647,7 +680,7 @@
   renderTOC();
 
   // ====================================================
-  // TRIPLE-TAP SYSTEM (tanpa notif)
+  // TRIPLE-TAP
   // ====================================================
   const TRIPLE_TAP_WINDOW = 1000;
   let addBtnCount = 0, addBtnTimer = null;
@@ -693,7 +726,7 @@
   })();
 
   // ====================================================
-  // COLOR TOOLBAR (seleksi teks)
+  // COLOR TOOLBAR (multi-trigger, dukung Latin)
   // ====================================================
   let savedRange = null;
   let selectionDebounceTimer = null;
@@ -702,26 +735,43 @@
   function getEditableParent(node) {
     if (!node) return null;
     const el = node.nodeType === 1 ? node : node.parentElement;
-    return el ? el.closest('[contenteditable="true"]') : null;
+    if (!el || !el.closest) return null;
+    return el.closest('[contenteditable="true"]');
+  }
+
+  function getRangeRect(range) {
+    let rect = null;
+    try { rect = range.getBoundingClientRect(); } catch(e) {}
+    if (rect && (rect.width > 0 || rect.height > 0)) return rect;
+    try {
+      const rects = range.getClientRects();
+      for (let i = 0; i < rects.length; i++) {
+        if (rects[i].width > 0 || rects[i].height > 0) return rects[i];
+      }
+    } catch(e) {}
+    try {
+      const editableEl = getEditableParent(range.commonAncestorContainer);
+      if (editableEl) {
+        const elRect = editableEl.getBoundingClientRect();
+        if (elRect.width > 0 || elRect.height > 0) return elRect;
+      }
+    } catch(e) {}
+    return rect;
   }
 
   function showColorToolbar(range) {
     const toolbar = document.getElementById('color-toolbar');
     if (!toolbar) return;
-    const rect = range.getBoundingClientRect();
+    const rect = getRangeRect(range);
     if (!rect || (rect.width === 0 && rect.height === 0)) return;
-
     toolbar.classList.add('show');
     const tRect = toolbar.getBoundingClientRect();
-
     let top = rect.top - tRect.height - 8;
     let left = rect.left + rect.width / 2 - tRect.width / 2;
-
     if (top < 10) top = rect.bottom + 8;
     if (left < 10) left = 10;
     if (left + tRect.width > window.innerWidth - 10) left = window.innerWidth - tRect.width - 10;
     if (top + tRect.height > window.innerHeight - 10) top = window.innerHeight - tRect.height - 10;
-
     toolbar.style.top = top + 'px';
     toolbar.style.left = left + 'px';
     lastToolbarShowTime = Date.now();
@@ -735,7 +785,6 @@
   function handleSelectionChange() {
     const sel = window.getSelection();
     if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
-      // Beri waktu sebentar sebelum hide (antisipasi tap pada toolbar)
       if (Date.now() - lastToolbarShowTime < 500) return;
       hideColorToolbar();
       return;
@@ -747,12 +796,16 @@
     showColorToolbar(range);
   }
 
+  function scheduleSelectionCheck(delay) {
+    clearTimeout(selectionDebounceTimer);
+    selectionDebounceTimer = setTimeout(handleSelectionChange, delay || 150);
+  }
+
   function restoreSelectionIfLost() {
     const sel = window.getSelection();
     if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
       if (!savedRange) return false;
-      sel.removeAllRanges();
-      sel.addRange(savedRange);
+      try { sel.removeAllRanges(); sel.addRange(savedRange); } catch(e) { return false; }
     }
     return true;
   }
@@ -764,38 +817,27 @@
     const range = sel.getRangeAt(0);
     const editableEl = getEditableParent(range.commonAncestorContainer);
     if (!editableEl) return false;
-
-    // Fokus ke editable agar execCommand bekerja
     if (document.activeElement !== editableEl) {
-      try { editableEl.focus({ preventScroll: true }); } catch(e) { editableEl.focus(); }
-      // Restore selection setelah focus
-      sel.removeAllRanges();
-      sel.addRange(range);
+      try { editableEl.focus({ preventScroll: true }); } catch(e) { try { editableEl.focus(); } catch(e2) {} }
+      try { sel.removeAllRanges(); sel.addRange(range); } catch(e) {}
     }
-
     try {
-      document.execCommand('foreColor', false, color);
-      savedRange = sel.rangeCount > 0 ? sel.getRangeAt(0).cloneRange() : null;
+      const ok = document.execCommand('foreColor', false, color);
+      if (ok) { savedRange = sel.rangeCount > 0 ? sel.getRangeAt(0).cloneRange() : null; return true; }
+    } catch (e) {}
+    try {
+      const contents = range.extractContents();
+      const span = document.createElement('span');
+      span.style.color = color;
+      span.appendChild(contents);
+      range.insertNode(span);
+      try { sel.removeAllRanges(); } catch(e) {}
+      const newRange = document.createRange();
+      newRange.selectNodeContents(span);
+      sel.addRange(newRange);
+      savedRange = newRange.cloneRange();
       return true;
-    } catch (e) {
-      // Fallback: manual span wrapping
-      try {
-        const contents = range.extractContents();
-        const span = document.createElement('span');
-        span.style.color = color;
-        span.appendChild(contents);
-        range.insertNode(span);
-        sel.removeAllRanges();
-        const newRange = document.createRange();
-        newRange.selectNodeContents(span);
-        sel.addRange(newRange);
-        savedRange = newRange.cloneRange();
-        return true;
-      } catch (e2) {
-        console.warn('applyColor failed:', e2);
-        return false;
-      }
-    }
+    } catch (e2) { console.warn('applyColor failed:', e2); return false; }
   }
 
   function clearColorFromSelection() {
@@ -805,23 +847,18 @@
     const range = sel.getRangeAt(0);
     const editableEl = getEditableParent(range.commonAncestorContainer);
     if (!editableEl) return false;
-
     if (document.activeElement !== editableEl) {
-      try { editableEl.focus({ preventScroll: true }); } catch(e) { editableEl.focus(); }
-      sel.removeAllRanges();
-      sel.addRange(range);
+      try { editableEl.focus({ preventScroll: true }); } catch(e) { try { editableEl.focus(); } catch(e2) {} }
+      try { sel.removeAllRanges(); sel.addRange(range); } catch(e) {}
     }
-
-    // Coba execCommand foreColor inherit
     try {
-      document.execCommand('foreColor', false, 'inherit');
-      return true;
+      const ok = document.execCommand('foreColor', false, 'inherit');
+      if (ok) { savedRange = sel.rangeCount > 0 ? sel.getRangeAt(0).cloneRange() : null; return true; }
     } catch (e) {}
-
-    // Fallback: unwrap color spans
     try {
       const root = range.commonAncestorContainer;
       const rootEl = root.nodeType === 1 ? root : root.parentElement;
+      if (!rootEl) return false;
       const colorSpans = rootEl.querySelectorAll('span[style*="color"]');
       let changed = false;
       colorSpans.forEach(span => {
@@ -839,16 +876,8 @@
   }
 
   function persistAfterColorChange() {
-    // Kalau di doa viewer + edit mode → autoSave
-    if (isEditMode && currentDoaId) {
-      autoSave();
-    }
-    // Kalau di cover edit mode → autoSaveCover
-    // (dipanggil lewat oninput yang sudah terpasang, execCommand biasanya men-trigger input)
-    // Safety: panggil sekali lagi
-    if (isEditMode) {
-      try { autoSaveCover(); } catch(e) {}
-    }
+    if (isEditMode && currentDoaId) { try { autoSave(); } catch(e) {} }
+    if (isEditMode) { try { autoSaveCover(); } catch(e) {} }
   }
 
   function initColorToolbar() {
@@ -857,22 +886,16 @@
 
     toolbar.querySelectorAll('.ct-swatch').forEach(sw => {
       sw.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const color = sw.dataset.color;
-        if (applyColorToSelection(color)) {
-          persistAfterColorChange();
-          playSound();
-        }
+        e.preventDefault(); e.stopPropagation();
+        if (applyColorToSelection(sw.dataset.color)) { persistAfterColorChange(); playSound(); }
       });
     });
 
     const custom = toolbar.querySelector('.ct-custom');
     if (custom) {
       custom.addEventListener('input', (e) => {
-        const color = e.target.value;
-        if (/^#[0-9a-f]{6}$/i.test(color)) {
-          if (applyColorToSelection(color)) persistAfterColorChange();
+        if (/^#[0-9a-f]{6}$/i.test(e.target.value)) {
+          if (applyColorToSelection(e.target.value)) persistAfterColorChange();
         }
       });
     }
@@ -880,36 +903,35 @@
     const reset = toolbar.querySelector('.ct-reset');
     if (reset) {
       reset.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (clearColorFromSelection()) {
-          persistAfterColorChange();
-          playSound();
-        }
+        e.preventDefault(); e.stopPropagation();
+        if (clearColorFromSelection()) { persistAfterColorChange(); playSound(); }
       });
     }
 
-    // Pointer down preventDefault agar selection tidak hilang saat tap toolbar
     toolbar.addEventListener('pointerdown', (e) => {
       if (e.target.tagName !== 'INPUT') e.preventDefault();
     });
 
-    // Debounced selectionchange
-    document.addEventListener('selectionchange', () => {
-      clearTimeout(selectionDebounceTimer);
-      selectionDebounceTimer = setTimeout(handleSelectionChange, 150);
+    document.addEventListener('selectionchange', () => scheduleSelectionCheck(150));
+    ['pointerup', 'touchend', 'mouseup', 'keyup'].forEach(evt => {
+      document.addEventListener(evt, () => scheduleSelectionCheck(100), { passive: true });
     });
 
-    // Hide on scroll
-    window.addEventListener('scroll', hideColorToolbar, { passive: true });
-    document.getElementById('app-scroll').addEventListener('scroll', () => {
+    window.addEventListener('scroll', () => {
       if (Date.now() - lastToolbarShowTime > 300) hideColorToolbar();
     }, { passive: true });
+
+    const appScroll = document.getElementById('app-scroll');
+    if (appScroll) {
+      appScroll.addEventListener('scroll', () => {
+        if (Date.now() - lastToolbarShowTime > 300) hideColorToolbar();
+      }, { passive: true });
+    }
   }
   initColorToolbar();
 
   // ====================================================
-  // TAMBAH DOA
+  // TAMBAH DOA — dengan verifikasi simpan
   // ====================================================
   function openAddDoaModal() {
     document.getElementById('new-title').value = '';
@@ -925,31 +947,69 @@
     document.getElementById('add-doa-modal').classList.remove('active');
   }
 
+  function cleanEmptyHTML(html) {
+    if (!html) return '';
+    const cleaned = html.replace(/<(br|div)\s*\/?>/gi, '').replace(/&nbsp;/gi, '').trim();
+    return cleaned === '' ? '' : html;
+  }
+
   function saveNewDoa() {
     const title = document.getElementById('new-title').value.trim();
-    const arabicHtml = document.getElementById('new-arabic').innerHTML.trim();
-    const latinHtml = document.getElementById('new-latin').innerHTML.trim();
-    const transHtml = document.getElementById('new-translation').innerHTML.trim();
+    const arabicHtml = cleanEmptyHTML(document.getElementById('new-arabic').innerHTML);
+    const latinHtml = cleanEmptyHTML(document.getElementById('new-latin').innerHTML);
+    const transHtml = cleanEmptyHTML(document.getElementById('new-translation').innerHTML);
     const arabicText = document.getElementById('new-arabic').innerText.trim();
+    const latinText = document.getElementById('new-latin').innerText.trim();
     const transText = document.getElementById('new-translation').innerText.trim();
 
-    if (!title || (!arabicText && !transText)) {
-      alert('Judul dan minimal salah satu teks (Arab / Terjemahan) wajib diisi!');
+    if (!title) {
+      alert('❌ Judul doa wajib diisi!');
+      return;
+    }
+    if (!arabicText && !latinText && !transText) {
+      alert('❌ Minimal isi salah satu: Teks Arab, Latin, atau Terjemahan!');
       return;
     }
 
     const newId = 'doa_' + Date.now();
-    dataDoa.push({ id: newId, title, arabic: arabicHtml, latin: latinHtml, translation: transHtml });
+    const newDoa = { id: newId, title, arabic: arabicHtml, latin: latinHtml, translation: transHtml };
+    dataDoa.push(newDoa);
 
     try {
       let customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {};
       customData[newId] = { title, arabic: arabicHtml, latin: latinHtml, translation: transHtml };
       localStorage.setItem('custom_doa_data', JSON.stringify(customData));
       localStorage.setItem('custom_doa_order', JSON.stringify(dataDoa.map(d => d.id)));
-    } catch(e) {}
+
+      // VERIFIKASI: baca ulang untuk konfirmasi
+      const verify = JSON.parse(localStorage.getItem('custom_doa_data'));
+      if (!verify || !verify[newId]) {
+        throw new Error('Data tidak ditemukan setelah disimpan');
+      }
+      console.info('[BukuDoa] Doa tersimpan:', newId, verify[newId].title);
+
+    } catch(e) {
+      console.error('[BukuDoa] Simpan gagal:', e);
+      // Rollback
+      dataDoa = dataDoa.filter(d => d.id !== newId);
+      alert(
+        '❌ GAGAL MENYIMPAN DOA\n\n' +
+        'Error: ' + e.message + '\n\n' +
+        'Kemungkinan penyebab:\n' +
+        '• Mode incognito/private (storage tidak persist)\n' +
+        '• Storage browser penuh\n' +
+        '• Browser memblokir localStorage\n' +
+        '• Membuka file langsung dari file://\n\n' +
+        'Solusi:\n' +
+        '• Gunakan browser normal (bukan incognito)\n' +
+        '• Buka lewat https:// atau localhost, bukan file://\n' +
+        '• Hapus data browser lain, lalu coba lagi'
+      );
+      return;
+    }
 
     closeAddDoaModal(); renderTOC(); playSound();
-    alert('✅ Doa baru berhasil ditambahkan!');
+    alert('✅ Doa berhasil ditambahkan!\n\n📝 ' + title + '\n📚 Total: ' + dataDoa.length + ' doa\n💾 Tersimpan di perangkat ini');
   }
 
   // ====================================================
@@ -985,8 +1045,8 @@
     const doa = dataDoa.find(d => d.id === currentDoaId);
     if (!doa) return;
 
-    const newArabicHtml = document.getElementById('rename-arabic-cd').innerHTML.trim();
-    const newLatinHtml = document.getElementById('rename-latin-cd').innerHTML.trim();
+    const newArabicHtml = cleanEmptyHTML(document.getElementById('rename-arabic-cd').innerHTML);
+    const newLatinHtml = cleanEmptyHTML(document.getElementById('rename-latin-cd').innerHTML);
 
     doa.title = newTitle;
     doa.arabic = newArabicHtml;
@@ -1001,7 +1061,7 @@
       if (BUILTIN_IDS.has(currentDoaId) && newTitle === ORIGINAL_TITLES[currentDoaId]) delete customData[currentDoaId].title;
       else customData[currentDoaId].title = newTitle;
       localStorage.setItem('custom_doa_data', JSON.stringify(customData));
-    } catch(e) {}
+    } catch(e) { alert('❌ Gagal menyimpan: ' + e.message); return; }
 
     document.getElementById('doa-title').innerText = newTitle;
     const arabicEl = document.getElementById('doa-arabic');
@@ -1019,9 +1079,6 @@
     document.getElementById('rename-title').value = original;
   }
 
-  // ====================================================
-  // HAPUS DOA
-  // ====================================================
   function deleteCurrentDoa() {
     if (!currentDoaId || !isCustomDoa(currentDoaId)) return;
     const doa = dataDoa.find(d => d.id === currentDoaId);
@@ -1045,9 +1102,6 @@
     alert('Doa berhasil dihapus.');
   }
 
-  // ====================================================
-  // BACKUP / RESTORE
-  // ====================================================
   function openBackupModal() {
     try {
       const customData = JSON.parse(localStorage.getItem('custom_doa_data') || '{}');
@@ -1143,9 +1197,6 @@
     }
   }
 
-  // ====================================================
-  // UTIL
-  // ====================================================
   function playSound() {
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext; if (!AudioContext) return;
@@ -1190,8 +1241,7 @@
   }
 
   function showPage(pageId, pushHistory = true) {
-    playSound();
-    hideColorToolbar();
+    playSound(); hideColorToolbar();
     if (pageId === 'page-toc') {
       document.getElementById('search-container').classList.remove('active');
       document.getElementById('search-input').value = ''; filterTOC();
@@ -1451,6 +1501,11 @@
     isEditMode = !isEditMode;
     if (isEditMode) {
       document.body.classList.add('edit-mode');
+      // Bersihkan inline display:none sisa dari mode non-edit
+      ['doa-arabic','doa-latin','doa-translation'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = '';
+      });
       alert("✅ MODE EDIT AKTIF.\n\n" +
             "• Halaman COVER: ketuk teks untuk mengedit.\n" +
             "• Halaman DOA: ketuk teks Arab / Latin / Terjemahan untuk mengedit.\n\n" +
