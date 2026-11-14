@@ -24,299 +24,198 @@
     --card-border: rgba(139,101,8,0.3); --gold: #9b7605;
     --input-bg: rgba(0,0,0,0.05);
   }
-
   *{box-sizing:border-box;-webkit-text-size-adjust:100%}
-  html, body {
-    margin: 0; padding: 0; height: 100%; width: 100%;
-    overflow: hidden; background: var(--bg-main);
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    color: var(--text-main); transition: background 0.3s, color 0.3s;
-  }
+  html, body { margin:0; padding:0; height:100%; width:100%; overflow:hidden; background:var(--bg-main); font-family:'Cormorant Garamond', Georgia, serif; color:var(--text-main); transition:background .3s, color .3s; }
+  .app-container { position:relative; width:100%; height:100dvh; overflow-y:auto; overflow-x:hidden; scroll-behavior:smooth; }
+  .page { display:none; min-height:100%; width:100%; }
+  .page.active { display:flex; flex-direction:column; align-items:center; }
 
-  .app-container { position: relative; width: 100%; height: 100dvh; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; }
-  .page { display: none; min-height: 100%; width: 100%; }
-  .page.active { display: flex; flex-direction: column; align-items: center; }
+  .sticky-wrapper { position:sticky; top:0; z-index:100; background:var(--bg-main); width:100%; margin:-30px -20px 15px -20px; padding:15px 15px 10px 15px; box-shadow:0 10px 15px -10px rgba(0,0,0,.5); border-bottom:1px solid var(--card-border); }
+  body.light-mode .sticky-wrapper { box-shadow:0 10px 15px -10px rgba(0,0,0,.1); }
 
-  .sticky-wrapper {
-    position: sticky; top: 0; z-index: 100; background: var(--bg-main);
-    width: 100%; margin: -30px -20px 15px -20px; padding: 15px 15px 10px 15px;
-    box-shadow: 0 10px 15px -10px rgba(0,0,0,0.5);
-    border-bottom: 1px solid var(--card-border);
-  }
-  body.light-mode .sticky-wrapper { box-shadow: 0 10px 15px -10px rgba(0,0,0,0.1); }
+  #update-banner { position:fixed; bottom:20px; left:20px; right:20px; background:linear-gradient(135deg,#1e5631 0%,#14543d 100%); color:#fff; padding:15px 20px; display:flex; align-items:center; justify-content:space-between; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.6); border:1px solid var(--gold); z-index:9999; transform:translateY(200%); transition:transform .4s; }
+  #update-banner.show { transform:translateY(0); }
+  .update-text { flex-grow:1; margin-right:15px; font-weight:bold; font-size:15px; }
+  .btn-update-now { background:var(--gold); color:#050807; border:none; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:14px; cursor:pointer; }
 
-  #update-banner {
-    position: fixed; bottom: 20px; left: 20px; right: 20px;
-    background: linear-gradient(135deg, #1e5631 0%, #14543d 100%);
-    color: #fff; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
-    border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    border: 1px solid var(--gold); z-index: 9999; transform: translateY(200%); transition: transform 0.4s;
-  }
-  #update-banner.show { transform: translateY(0); }
-  .update-text { flex-grow: 1; margin-right: 15px; font-weight: bold; font-size: 15px; }
-  .btn-update-now { background: var(--gold); color: #050807; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; cursor: pointer; }
+  #pwa-install-banner { position:fixed; top:0; left:0; right:0; background:linear-gradient(180deg,#14543d 0%,#0f3d2e 100%); color:#f8f1dc; padding:15px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 4px 15px rgba(0,0,0,.5); z-index:9998; transform:translateY(-100%); transition:transform .4s; border-bottom:1px solid var(--gold); }
+  #pwa-install-banner.show { transform:translateY(0); }
+  .banner-text { flex-grow:1; margin-right:15px; }
+  .banner-text h4 { margin:0 0 4px 0; color:var(--gold); font-size:16px; font-weight:700; }
+  .banner-text p { margin:0; font-size:12px; color:#cdbf8f; }
+  .banner-actions { display:flex; align-items:center; gap:10px; }
+  .btn-install { background:var(--gold); color:#050807; border:none; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:14px; cursor:pointer; }
+  .btn-close-banner { background:none; border:none; color:#cdbf8f; font-size:20px; cursor:pointer; padding:0 5px; }
 
-  #pwa-install-banner {
-    position: fixed; top: 0; left: 0; right: 0; background: linear-gradient(180deg, #14543d 0%, #0f3d2e 100%);
-    color: #f8f1dc; padding: 15px; display: flex; align-items: center; justify-content: space-between;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 9998; transform: translateY(-100%); transition: transform 0.4s;
-    border-bottom: 1px solid var(--gold);
-  }
-  #pwa-install-banner.show { transform: translateY(0); }
-  .banner-text { flex-grow: 1; margin-right: 15px; }
-  .banner-text h4 { margin: 0 0 4px 0; color: var(--gold); font-size: 16px; font-weight: 700; }
-  .banner-text p { margin: 0; font-size: 12px; color: #cdbf8f; }
-  .banner-actions { display: flex; align-items: center; gap: 10px; }
-  .btn-install { background: var(--gold); color: #050807; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; cursor: pointer; }
-  .btn-close-banner { background: none; border: none; color: #cdbf8f; font-size: 20px; cursor: pointer; padding: 0 5px; }
+  .btn-clear-cache { position:fixed; bottom:8px; right:8px; background:transparent; border:1px solid transparent; color:var(--text-muted); font-size:14px; line-height:1; padding:3px 5px; cursor:pointer; opacity:.55; transition:opacity .25s,transform .15s,background .25s,border-color .25s; z-index:50; border-radius:6px; user-select:none; -webkit-tap-highlight-color:transparent; }
+  .btn-clear-cache:hover { opacity:1; background:var(--card-bg); border-color:var(--card-border); }
+  .btn-clear-cache:active { transform:scale(.9); opacity:1; }
+  body.edit-mode .btn-clear-cache, body.sort-mode-active .btn-clear-cache { display:none; }
 
-  .btn-clear-cache {
-    position: fixed; bottom: 8px; right: 8px;
-    background: transparent; border: 1px solid transparent;
-    color: var(--text-muted); font-size: 14px; line-height: 1;
-    padding: 3px 5px; cursor: pointer; opacity: 0.55;
-    transition: opacity 0.25s, transform 0.15s, background 0.25s, border-color 0.25s;
-    z-index: 50; border-radius: 6px; user-select: none;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .btn-clear-cache:hover { opacity: 1; background: var(--card-bg); border-color: var(--card-border); }
-  .btn-clear-cache:active { transform: scale(0.9); opacity: 1; }
-  body.edit-mode .btn-clear-cache,
-  body.sort-mode-active .btn-clear-cache { display: none; }
-
-  .cover {
-    justify-content: center; position: relative;
-    background: radial-gradient(circle at 20% 20%, rgba(212,175,55,.14) 0 1.5px, transparent 2.5px), radial-gradient(circle at 80% 30%, rgba(212,175,55,.10) 0 1.5px, transparent 2.5px), radial-gradient(circle at 30% 80%, rgba(212,175,55,.08) 0 1.5px, transparent 2.5px), radial-gradient(ellipse at 50% 40%, rgba(212,175,55,.06), transparent 60%), linear-gradient(160deg, #0a0f0d 0%, #050807 55%, #000 100%);
-    background-size: 46px 46px, 62px 62px, 54px 54px, cover, cover; transition: background 0.5s;
-  }
-  body.light-mode .cover {
-    background: radial-gradient(circle at 20% 20%, rgba(139,101,8,.14) 0 1.5px, transparent 2.5px), radial-gradient(circle at 80% 30%, rgba(139,101,8,.10) 0 1.5px, transparent 2.5px), radial-gradient(circle at 30% 80%, rgba(139,101,8,.08) 0 1.5px, transparent 2.5px), radial-gradient(ellipse at 50% 40%, rgba(139,101,8,.06), transparent 60%), linear-gradient(160deg, #f5ebd6 0%, #fdfaf6 55%, #ffffff 100%);
-  }
+  .cover { justify-content:center; position:relative; background:radial-gradient(circle at 20% 20%, rgba(212,175,55,.14) 0 1.5px, transparent 2.5px), radial-gradient(circle at 80% 30%, rgba(212,175,55,.10) 0 1.5px, transparent 2.5px), radial-gradient(circle at 30% 80%, rgba(212,175,55,.08) 0 1.5px, transparent 2.5px), radial-gradient(ellipse at 50% 40%, rgba(212,175,55,.06), transparent 60%), linear-gradient(160deg,#0a0f0d 0%,#050807 55%,#000 100%); background-size:46px 46px, 62px 62px, 54px 54px, cover, cover; transition:background .5s; }
+  body.light-mode .cover { background:radial-gradient(circle at 20% 20%, rgba(139,101,8,.14) 0 1.5px, transparent 2.5px), radial-gradient(circle at 80% 30%, rgba(139,101,8,.10) 0 1.5px, transparent 2.5px), radial-gradient(circle at 30% 80%, rgba(139,101,8,.08) 0 1.5px, transparent 2.5px), radial-gradient(ellipse at 50% 40%, rgba(139,101,8,.06), transparent 60%), linear-gradient(160deg,#f5ebd6 0%,#fdfaf6 55%,#ffffff 100%); }
   .cover::before { content:""; position:absolute; inset:15px; border:1px solid rgba(212,175,55,.55); border-radius:6px; pointer-events:none; z-index:2; animation:framePulse 8s infinite; }
-  body.light-mode .cover::before { border-color: rgba(139,101,8,.55); }
+  body.light-mode .cover::before { border-color:rgba(139,101,8,.55); }
   @keyframes framePulse{0%,100%{box-shadow:inset 0 0 60px rgba(212,175,55,.05)}50%{box-shadow:inset 0 0 90px rgba(212,175,55,.14),0 0 30px rgba(212,175,55,.18)}}
 
-  .stars, .particles { position:absolute; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .stars,.particles { position:absolute; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
   .star { position:absolute; background:#ffe9a8; border-radius:50%; box-shadow:0 0 6px 1px rgba(232,199,102,.65); animation:twinkle var(--d,3s) infinite; animation-delay:var(--delay,0s); }
-  body.light-mode .star { background: #d4af37; box-shadow: 0 0 6px 1px rgba(139,101,8,.65); }
+  body.light-mode .star { background:#d4af37; box-shadow:0 0 6px 1px rgba(139,101,8,.65); }
   @keyframes twinkle{0%,100%{opacity:.1;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
   .particle { position:absolute; bottom:-20px; border-radius:50%; background:radial-gradient(circle,#ffe9a8 0%,#d4af37 55%,transparent 100%); box-shadow:0 0 10px rgba(212,175,55,.7); opacity:0; animation:floatUp var(--dur,14s) linear infinite; animation-delay:var(--delay,0s); }
-  body.light-mode .particle { background: radial-gradient(circle,#d4af37 0%,#8b6508 55%,transparent 100%); }
+  body.light-mode .particle { background:radial-gradient(circle,#d4af37 0%,#8b6508 55%,transparent 100%); }
   @keyframes floatUp{0%{transform:translate(0,0);opacity:0}10%{opacity:.85}90%{opacity:.4}100%{transform:translate(var(--dx,20px),-110vh);opacity:0}}
 
   .moon { position:absolute; top:40px; right:40px; width:1em; height:1em; font-size:60px; border-radius:50%; box-shadow:inset -.22em -.03em 0 0 #e8c766; animation:moonGlow 6s infinite; z-index:10; cursor:pointer; }
-  body.light-mode .moon { box-shadow: inset -.22em -.03em 0 0 #8b6508; }
+  body.light-mode .moon { box-shadow:inset -.22em -.03em 0 0 #8b6508; }
   @keyframes moonGlow{0%,100%{filter:drop-shadow(0 0 10px rgba(212,175,55,.35))}50%{filter:drop-shadow(0 0 24px rgba(232,199,102,.8))}}
 
-  .btn-theme { position: absolute; top: 20px; left: 20px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--gold); font-size: 24px; padding: 8px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; }
+  .btn-theme { position:absolute; top:20px; left:20px; background:var(--card-bg); border:1px solid var(--card-border); color:var(--gold); font-size:24px; padding:8px; border-radius:50%; cursor:pointer; z-index:10; display:flex; align-items:center; justify-content:center; width:45px; height:45px; }
   .cover-content { position:relative; z-index:3; width:100%; display:flex; flex-direction:column; align-items:center; text-align:center; padding:20px; }
-  .bismillah { font-family:'Amiri',serif; font-size:clamp(22px, 5vw, 34px); color:var(--gold); line-height:1.8; margin:0 0 15px; animation:softGlow 5s infinite; direction: rtl; }
+  .bismillah { font-family:'Amiri',serif; font-size:clamp(22px,5vw,34px); color:var(--gold); line-height:1.8; margin:0 0 15px; animation:softGlow 5s infinite; direction:rtl; }
   @keyframes softGlow{0%,100%{text-shadow:0 0 14px rgba(212,175,55,.2)}50%{text-shadow:0 0 28px rgba(232,199,102,.65)}}
-  .kicker { font-family:Georgia,serif; font-size:clamp(10px, 1.5vw, 13px); letter-spacing:.4em; text-transform:uppercase; color:var(--gold); margin:0 0 15px; }
-  h1.cover-title { margin:0; font-weight:700; font-size:clamp(38px, 8vw, 76px); line-height:1.04; background:linear-gradient(100deg,#f6e7a8 0%,#d4af37 22%,#fff6cf 42%,#b8860b 62%,#f6e7a8 82%,#d4af37 100%); background-size:220% 100%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 2px 10px rgba(0,0,0,.7)); animation:shimmer 7s linear infinite; }
-  body.light-mode h1.cover-title { background: linear-gradient(100deg, #8b6508 0%, #d4af37 22%, #5c4402 42%, #b8860b 62%, #8b6508 82%, #d4af37 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .kicker { font-family:Georgia,serif; font-size:clamp(10px,1.5vw,13px); letter-spacing:.4em; text-transform:uppercase; color:var(--gold); margin:0 0 15px; }
+  h1.cover-title { margin:0; font-weight:700; font-size:clamp(38px,8vw,76px); line-height:1.04; background:linear-gradient(100deg,#f6e7a8 0%,#d4af37 22%,#fff6cf 42%,#b8860b 62%,#f6e7a8 82%,#d4af37 100%); background-size:220% 100%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 2px 10px rgba(0,0,0,.7)); animation:shimmer 7s linear infinite; }
+  body.light-mode h1.cover-title { background:linear-gradient(100deg,#8b6508 0%,#d4af37 22%,#5c4402 42%,#b8860b 62%,#8b6508 82%,#d4af37 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
   @keyframes shimmer{0%{background-position:0% 50%}100%{background-position:-220% 50%}}
-  .divider { position:relative; width:clamp(80px, 30vw, 170px); height:1px; margin:20px auto; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
+  .divider { position:relative; width:clamp(80px,30vw,170px); height:1px; margin:20px auto; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
   .divider span { position:absolute; left:50%; top:50%; background:var(--bg-main); padding:0 10px; color:var(--gold); font-size:16px; animation:spinSlow 14s linear infinite; }
   @keyframes spinSlow{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
-  .desc { margin:0 auto 30px; max-width:30ch; font-style:italic; font-size:clamp(15px, 2.5vw, 20px); color:var(--text-muted); }
-  .btn-open { padding:12px 30px; background:var(--card-bg); border:1px solid var(--gold); color:var(--gold); border-radius:30px; font-family:Georgia,serif; font-size:16px; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; box-shadow:0 0 15px rgba(212,175,55,0.2); }
-  .cover-footer { position:absolute; bottom:30px; left:0; right:0; text-align:center; font-family:Georgia, serif; font-size:12px; letter-spacing:.1em; color:var(--text-muted); z-index:3; }
+  .desc { margin:0 auto 30px; max-width:30ch; font-style:italic; font-size:clamp(15px,2.5vw,20px); color:var(--text-muted); }
+  .btn-open { padding:12px 30px; background:var(--card-bg); border:1px solid var(--gold); color:var(--gold); border-radius:30px; font-family:Georgia,serif; font-size:16px; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; box-shadow:0 0 15px rgba(212,175,55,.2); }
+  .cover-footer { position:absolute; bottom:30px; left:0; right:0; text-align:center; font-family:Georgia,serif; font-size:12px; letter-spacing:.1em; color:var(--text-muted); z-index:3; }
 
-  body.edit-mode #cover-bismillah,
-  body.edit-mode #cover-kicker,
-  body.edit-mode #cover-title,
-  body.edit-mode #cover-desc,
-  body.edit-mode #cover-footer {
-    outline: 2px dashed var(--gold) !important;
-    outline-offset: 6px; border-radius: 4px; cursor: text;
-    padding: 2px 6px; transition: outline-color 0.2s; position: relative;
-  }
-  body.edit-mode #cover-bismillah:focus,
-  body.edit-mode #cover-kicker:focus,
-  body.edit-mode #cover-title:focus,
-  body.edit-mode #cover-desc:focus,
-  body.edit-mode #cover-footer:focus {
-    outline-style: solid; outline-color: #fff; background: rgba(212,175,55,0.08);
-  }
-  body.light-mode.edit-mode #cover-bismillah:focus,
-  body.light-mode.edit-mode #cover-kicker:focus,
-  body.light-mode.edit-mode #cover-title:focus,
-  body.light-mode.edit-mode #cover-desc:focus,
-  body.light-mode.edit-mode #cover-footer:focus { outline-color: #050807; }
+  body.edit-mode #cover-bismillah, body.edit-mode #cover-kicker, body.edit-mode #cover-title, body.edit-mode #cover-desc, body.edit-mode #cover-footer { outline:2px dashed var(--gold) !important; outline-offset:6px; border-radius:4px; cursor:text; padding:2px 6px; transition:outline-color .2s; position:relative; }
+  body.edit-mode #cover-bismillah:focus, body.edit-mode #cover-kicker:focus, body.edit-mode #cover-title:focus, body.edit-mode #cover-desc:focus, body.edit-mode #cover-footer:focus { outline-style:solid; outline-color:#fff; background:rgba(212,175,55,.08); }
+  body.light-mode.edit-mode #cover-bismillah:focus, body.light-mode.edit-mode #cover-kicker:focus, body.light-mode.edit-mode #cover-title:focus, body.light-mode.edit-mode #cover-desc:focus, body.light-mode.edit-mode #cover-footer:focus { outline-color:#050807; }
 
-  .cover-edit-hint {
-    display: none; position: fixed; top: 78px; left: 50%; transform: translateX(-50%);
-    background: var(--gold); color: var(--bg-main); padding: 6px 8px 6px 14px;
-    border-radius: 20px; font-size: 12px; font-weight: bold; z-index: 150;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5); align-items: center; gap: 8px;
-    white-space: nowrap; pointer-events: auto;
-  }
-  body.edit-mode .cover-edit-hint { display: flex; }
-  .cover-edit-hint .hint-text { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 13px; line-height: 1; }
-  .cover-reset-btn {
-    background: var(--bg-main); color: var(--gold); border: none;
-    padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;
-    cursor: pointer; font-family: 'Cormorant Garamond', Georgia, serif; transition: opacity 0.2s;
-  }
-  .cover-reset-btn:hover { opacity: 0.85; }
-  .cover-reset-btn:active { transform: scale(0.95); }
+  .cover-edit-hint { display:none; position:fixed; top:78px; left:50%; transform:translateX(-50%); background:var(--gold); color:var(--bg-main); padding:6px 8px 6px 14px; border-radius:20px; font-size:12px; font-weight:bold; z-index:150; box-shadow:0 4px 15px rgba(0,0,0,.5); align-items:center; gap:8px; white-space:nowrap; pointer-events:auto; }
+  body.edit-mode .cover-edit-hint { display:flex; }
+  .cover-edit-hint .hint-text { font-family:'Cormorant Garamond',Georgia,serif; font-size:13px; line-height:1; }
+  .cover-reset-btn { background:var(--bg-main); color:var(--gold); border:none; padding:4px 10px; border-radius:12px; font-size:11px; font-weight:bold; cursor:pointer; font-family:'Cormorant Garamond',Georgia,serif; transition:opacity .2s; }
+  .cover-reset-btn:hover { opacity:.85; }
+  .cover-reset-btn:active { transform:scale(.95); }
 
   .toc-wrapper { width:100%; max-width:600px; margin:0 auto; padding:20px 15px 50px; position:relative; }
-  .toc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; flex-wrap: wrap; gap: 8px; }
-  .toc-header h2 { margin:0; font-size:clamp(34px, 7vw, 46px); font-weight:700; letter-spacing:.1em; text-align: left; background:linear-gradient(100deg, var(--text-title) 0%, var(--gold) 50%, var(--text-title) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation; cursor: default; }
-  .icon-area { display: flex; gap: 6px; flex-shrink: 0; }
-  .icon-btn { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--gold); font-size: 18px; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
-  .icon-btn:hover { background: var(--gold); color: var(--bg-main); }
+  .toc-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; flex-wrap:wrap; gap:8px; }
+  .toc-header h2 { margin:0; font-size:clamp(34px,7vw,46px); font-weight:700; letter-spacing:.1em; text-align:left; background:linear-gradient(100deg,var(--text-title) 0%, var(--gold) 50%, var(--text-title) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; touch-action:manipulation; cursor:default; }
+  .icon-area { display:flex; gap:6px; flex-shrink:0; }
+  .icon-btn { background:var(--card-bg); border:1px solid var(--card-border); color:var(--gold); font-size:18px; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.3s; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+  .icon-btn:hover { background:var(--gold); color:var(--bg-main); }
+  .icon-btn.tapping { animation:tripleTapPulse .35s ease-out; }
+  @keyframes tripleTapPulse { 0%{transform:scale(1);} 40%{transform:scale(1.28); background:var(--gold); color:var(--bg-main); box-shadow:0 0 20px rgba(212,175,55,.8);} 100%{transform:scale(1);} }
+  #toc-heading.tapping { animation:headingTapPulse .35s ease-out; }
+  @keyframes headingTapPulse { 0%{transform:scale(1);} 40%{transform:scale(1.06); filter:drop-shadow(0 0 8px rgba(212,175,55,.9));} 100%{transform:scale(1);} }
+  .btn-icon-action.tapping { animation:tripleTapPulse .35s ease-out; }
 
-  .icon-btn.tapping { animation: tripleTapPulse 0.35s ease-out; }
-  @keyframes tripleTapPulse {
-    0% { transform: scale(1); }
-    40% { transform: scale(1.28); background: var(--gold); color: var(--bg-main); box-shadow: 0 0 20px rgba(212,175,55,.8); }
-    100% { transform: scale(1); }
-  }
-  #toc-heading.tapping { animation: headingTapPulse 0.35s ease-out; }
-  @keyframes headingTapPulse {
-    0% { transform: scale(1); }
-    40% { transform: scale(1.06); filter: drop-shadow(0 0 8px rgba(212,175,55,.9)); }
-    100% { transform: scale(1); }
-  }
-  .btn-icon-action.tapping { animation: tripleTapPulse 0.35s ease-out; }
+  .search-container { display:none; margin-top:10px; margin-bottom:5px; position:relative; width:100%; }
+  .search-container.active { display:block; }
+  .search-input { width:100%; padding:10px 20px 10px 40px; background:var(--input-bg); border:1px solid var(--card-border); border-radius:25px; color:var(--text-main); font-family:'Cormorant Garamond',serif; font-size:16px; outline:none; }
+  .search-icon-inside { position:absolute; left:15px; top:50%; transform:translateY(-50%); color:var(--gold); font-size:16px; }
 
-  .search-container { display: none; margin-top: 10px; margin-bottom: 5px; position: relative; width: 100%; }
-  .search-container.active { display: block; }
-  .search-input { width: 100%; padding: 10px 20px 10px 40px; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 25px; color: var(--text-main); font-family: 'Cormorant Garamond', serif; font-size: 16px; outline: none; }
-  .search-icon-inside { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--gold); font-size: 16px; }
+  .toc-sub-header { display:flex; justify-content:space-between; align-items:center; margin-top:15px; border-bottom:1px dashed var(--card-border); padding-bottom:5px; }
+  .section-title-inline { font-family:Georgia,serif; color:var(--gold); font-size:14px; letter-spacing:.2em; text-transform:uppercase; display:block; }
+  .btn-sort { background:var(--card-bg); border:1px solid var(--gold); color:var(--gold); padding:4px 10px; border-radius:15px; font-family:'Cormorant Garamond',serif; font-size:12px; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; gap:4px; transition:.3s; }
+  .btn-sort.active { background:var(--gold); color:var(--bg-main); }
 
-  .toc-sub-header { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px; }
-  .section-title-inline { font-family: Georgia, serif; color: var(--gold); font-size: 14px; letter-spacing: .2em; text-transform: uppercase; display: block; }
-  .btn-sort { background: var(--card-bg); border: 1px solid var(--gold); color: var(--gold); padding: 4px 10px; border-radius: 15px; font-family: 'Cormorant Garamond', serif; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: 0.3s; }
-  .btn-sort.active { background: var(--gold); color: var(--bg-main); }
-
-  .section-title { font-family: Georgia, serif; color: var(--gold); font-size: 14px; letter-spacing: .2em; text-transform: uppercase; margin: 25px 0 10px 5px; border-bottom: 1px dashed var(--card-border); padding-bottom: 5px; display: none; }
+  .section-title { font-family:Georgia,serif; color:var(--gold); font-size:14px; letter-spacing:.2em; text-transform:uppercase; margin:25px 0 10px 5px; border-bottom:1px dashed var(--card-border); padding-bottom:5px; display:none; }
   .toc-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+  .toc-item { display:flex; align-items:center; justify-content:space-between; background:var(--card-bg); border:1px solid var(--card-border); border-radius:8px; padding-right:15px; transition:transform .1s, box-shadow .1s; }
+  .toc-item a { display:flex; align-items:center; text-decoration:none; padding:12px 15px; flex-grow:1; cursor:pointer; }
+  .toc-number { font-size:clamp(18px,3vw,22px); color:var(--gold); margin-right:15px; font-weight:bold; min-width:24px; }
+  .toc-title { font-size:clamp(20px,3.5vw,24px); font-weight:600; color:var(--text-main); flex-grow:1; }
+  .btn-fav-toggle { background:none; border:none; font-size:24px; cursor:pointer; color:#555; }
+  .btn-fav-toggle.active { color:#f6e7a8; text-shadow:0 0 10px rgba(232,199,102,.8); }
+  body.light-mode .btn-fav-toggle.active { color:#b8860b; text-shadow:none; }
 
-  .toc-item { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding-right: 15px; transition: transform 0.1s, box-shadow 0.1s; }
-  .toc-item a { display: flex; align-items: center; text-decoration: none; padding: 12px 15px; flex-grow: 1; cursor: pointer; }
-
-  .toc-number { font-size:clamp(18px, 3vw, 22px); color:var(--gold); margin-right:15px; font-weight:bold; min-width:24px; }
-  .toc-title { font-size:clamp(20px, 3.5vw, 24px); font-weight:600; color:var(--text-main); flex-grow:1; }
-
-  .btn-fav-toggle { background: none; border: none; font-size: 24px; cursor: pointer; color: #555; }
-  .btn-fav-toggle.active { color: #f6e7a8; text-shadow: 0 0 10px rgba(232,199,102,0.8); }
-  body.light-mode .btn-fav-toggle.active { color: #b8860b; text-shadow: none; }
-
-  .sortable-ghost { opacity: 0.4; background: rgba(212,175,55,0.1) !important; border: 2px dashed var(--gold) !important; }
-  .sortable-chosen { background: rgba(212,175,55,0.05); box-shadow: 0 5px 15px rgba(0,0,0,0.3); cursor: grabbing !important; }
-  body.sort-mode-active .toc-item { cursor: grab; border-color: var(--gold); }
-  body.sort-mode-active .toc-item a { pointer-events: none; }
-  body.sort-mode-active .btn-fav-toggle { opacity: 0.3; pointer-events: none; }
-
-  .sort-hint { text-align: center; font-size: 14px; color: var(--gold); margin-bottom: 15px; font-style: italic; display: none; }
-  body.sort-mode-active .sort-hint { display: block; }
+  .sortable-ghost { opacity:.4; background:rgba(212,175,55,.1) !important; border:2px dashed var(--gold) !important; }
+  .sortable-chosen { background:rgba(212,175,55,.05); box-shadow:0 5px 15px rgba(0,0,0,.3); cursor:grabbing !important; }
+  body.sort-mode-active .toc-item { cursor:grab; border-color:var(--gold); }
+  body.sort-mode-active .toc-item a { pointer-events:none; }
+  body.sort-mode-active .btn-fav-toggle { opacity:.3; pointer-events:none; }
+  .sort-hint { text-align:center; font-size:14px; color:var(--gold); margin-bottom:15px; font-style:italic; display:none; }
+  body.sort-mode-active .sort-hint { display:block; }
 
   .doa-container { width:100%; max-width:700px; margin:0 auto; padding:30px 20px 60px; }
-  .doa-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 8px; }
-  .doa-header-actions { display: flex; align-items: center; gap: 6px; }
+  .doa-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; gap:8px; }
+  .doa-header-actions { display:flex; align-items:center; gap:6px; }
   .btn-back { display:inline-flex; align-items:center; gap:8px; color:var(--gold); font-size:16px; cursor:pointer; background:var(--card-bg); padding:6px 12px; border-radius:20px; border:1px solid var(--card-border); }
-  .btn-fav-page { background: none; border: none; font-size: 28px; cursor: pointer; color: #555; }
-  .btn-fav-page.active { color: #f6e7a8; text-shadow: 0 0 15px rgba(232,199,102,0.8); }
-  body.light-mode .btn-fav-page.active { color: #b8860b; text-shadow: none; }
+  .btn-fav-page { background:none; border:none; font-size:28px; cursor:pointer; color:#555; }
+  .btn-fav-page.active { color:#f6e7a8; text-shadow:0 0 15px rgba(232,199,102,.8); }
+  body.light-mode .btn-fav-page.active { color:#b8860b; text-shadow:none; }
 
-  .btn-icon-action {
-    background: var(--card-bg); border: 1px solid var(--card-border);
-    color: var(--gold); font-size: 16px; width: 36px; height: 36px;
-    border-radius: 50%; display: none; align-items: center; justify-content: center;
-    cursor: pointer; transition: 0.3s; -webkit-tap-highlight-color: transparent;
-  }
-  .btn-icon-action:hover { background: var(--gold); color: var(--bg-main); }
-  .btn-icon-action.danger { color: #ff6b6b; border-color: rgba(255,107,107,0.4); }
-  .btn-icon-action.danger:hover { background: #ff4444; color: white; border-color: #ff4444; }
+  .btn-icon-action { background:var(--card-bg); border:1px solid var(--card-border); color:var(--gold); font-size:16px; width:36px; height:36px; border-radius:50%; display:none; align-items:center; justify-content:center; cursor:pointer; transition:.3s; -webkit-tap-highlight-color:transparent; }
+  .btn-icon-action:hover { background:var(--gold); color:var(--bg-main); }
+  .btn-icon-action.danger { color:#ff6b6b; border-color:rgba(255,107,107,.4); }
+  .btn-icon-action.danger:hover { background:#ff4444; color:white; border-color:#ff4444; }
 
-  .doa-tools { display: flex; justify-content: center; gap: 6px; margin-bottom: 15px; flex-wrap: wrap; }
-  .tool-btn { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--gold); padding: 6px 10px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 4px; }
-  .tool-btn:hover, .tool-btn.active { background: var(--gold); color: var(--bg-main); }
+  .doa-tools { display:flex; justify-content:center; gap:6px; margin-bottom:15px; flex-wrap:wrap; }
+  .tool-btn { background:var(--card-bg); border:1px solid var(--card-border); color:var(--gold); padding:6px 10px; border-radius:20px; font-size:14px; font-weight:bold; cursor:pointer; transition:all .3s; display:flex; align-items:center; gap:4px; }
+  .tool-btn:hover, .tool-btn.active { background:var(--gold); color:var(--bg-main); }
 
-  .doa-title { font-size:clamp(20px, 4.5vw, 28px); color:var(--text-title); margin:0 0 10px; text-align: center; }
+  .doa-title { font-size:clamp(20px,4.5vw,28px); color:var(--text-title); margin:0 0 10px; text-align:center; }
   .doa-card { background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:25px; margin-bottom:25px; }
 
-  .arabic-text { font-family: 'Amiri', 'Traditional Arabic', serif; font-size: clamp(26px, 6vw, 34px); color: var(--gold); direction: rtl; text-align: right; line-height: 2.5; margin-bottom: 20px; white-space: pre-wrap; }
-  .latin-text { font-style:italic; color:var(--text-muted); font-size:16px; line-height:1.6; margin-bottom:20px; border-left:2px solid var(--gold); padding-left:15px; white-space: pre-wrap; display: none; }
-  .translation-text { color:var(--text-main); font-size:18px; line-height:1.6; white-space: pre-wrap; display: none; }
+  .arabic-text { font-family:'Amiri','Traditional Arabic',serif; font-size:clamp(26px,6vw,34px); color:var(--gold); direction:rtl; text-align:right; line-height:2.5; margin-bottom:20px; white-space:pre-wrap; }
+  .latin-text { font-style:italic; color:var(--text-muted); font-size:16px; line-height:1.6; margin-bottom:20px; border-left:2px solid var(--gold); padding-left:15px; white-space:pre-wrap; display:none; }
+  .translation-text { color:var(--text-main); font-size:18px; line-height:1.6; white-space:pre-wrap; display:none; }
 
-  body.edit-mode .arabic-text,
-  body.edit-mode .latin-text,
-  body.edit-mode .translation-text {
-    display: block !important;
-    border: 2px dashed var(--gold) !important; padding: 15px !important;
-    border-radius: 8px; background: rgba(212,175,55,0.05); cursor: text; outline: none;
-  }
+  body.edit-mode .arabic-text, body.edit-mode .latin-text, body.edit-mode .translation-text { display:block !important; border:2px dashed var(--gold) !important; padding:15px !important; border-radius:8px; background:rgba(212,175,55,.05); cursor:text; outline:none; }
 
-  .edit-tools { display: none; position: fixed; bottom: 20px; right: 20px; z-index: 10000; flex-direction: column; gap: 10px; }
-  body.edit-mode .edit-tools { display: flex; }
+  .edit-tools { display:none; position:fixed; bottom:20px; right:20px; z-index:10000; flex-direction:column; gap:10px; }
+  body.edit-mode .edit-tools { display:flex; }
 
-  .btn-edit-action {
-    background: var(--gold); color: var(--bg-main); padding: 12px 20px; border-radius: 30px; border: none;
-    font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    font-family: 'Cormorant Garamond', serif; font-size: 16px;
-    display: flex; align-items: center; justify-content: center; gap: 5px;
-  }
-  .btn-edit-action.secondary { background: var(--bg-main); color: var(--gold); border: 1px solid var(--gold); }
-  .btn-edit-action.danger { background: #111; color: #ff4444; border: 1px solid #ff4444; }
+  .btn-edit-action { background:var(--gold); color:var(--bg-main); padding:12px 20px; border-radius:30px; border:none; font-weight:bold; cursor:pointer; box-shadow:0 4px 15px rgba(0,0,0,.4); font-family:'Cormorant Garamond',serif; font-size:16px; display:flex; align-items:center; justify-content:center; gap:5px; }
+  .btn-edit-action.secondary { background:var(--bg-main); color:var(--gold); border:1px solid var(--gold); }
+  .btn-edit-action.danger { background:#111; color:#ff4444; border:1px solid #ff4444; }
 
-  .modal-overlay {
-    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-    z-index: 20000; justify-content: center; align-items: center; padding: 20px;
-  }
-  .modal-overlay.active { display: flex; }
-  .modal-content {
-    background: var(--bg-main); border: 1px solid var(--gold); border-radius: 12px;
-    width: 100%; max-width: 500px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-    max-height: 90vh; overflow-y: auto;
-  }
-  .modal-content h3 { color: var(--gold); margin-top: 0; text-align: center; font-family: Georgia, serif; font-size: 22px; }
-  .modal-label { display: block; color: var(--gold); font-size: 14px; margin-bottom: 5px; font-weight: bold; }
-  .modal-hint { font-size: 12px; color: var(--text-muted); font-style: italic; margin-bottom: 12px; line-height: 1.5; }
-  .modal-input {
-    width: 100%; padding: 10px; margin-bottom: 15px;
-    background: var(--input-bg); border: 1px solid var(--card-border);
-    border-radius: 8px; color: var(--text-main); font-family: 'Cormorant Garamond', serif;
-    font-size: 16px; outline: none;
-  }
-  textarea.modal-input { resize: vertical; min-height: 80px; }
-  textarea.arabic-input { font-family: 'Amiri', serif; font-size: 20px; direction: rtl; text-align: right; line-height: 1.8; }
-  .modal-actions { display: flex; gap: 10px; margin-top: 10px; }
-  .modal-btn {
-    flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold;
-    font-family: 'Cormorant Garamond', serif; font-size: 16px; cursor: pointer;
-  }
-  .modal-btn.save { background: var(--gold); color: var(--bg-main); }
-  .modal-btn.cancel { background: #333; color: #fff; }
-  .modal-btn.alt { background: var(--card-bg); color: var(--gold); border: 1px solid var(--gold); }
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:20000; justify-content:center; align-items:center; padding:20px; }
+  .modal-overlay.active { display:flex; }
+  .modal-content { background:var(--bg-main); border:1px solid var(--gold); border-radius:12px; width:100%; max-width:500px; padding:25px; box-shadow:0 10px 40px rgba(0,0,0,.8); max-height:90vh; overflow-y:auto; }
+  .modal-content h3 { color:var(--gold); margin-top:0; text-align:center; font-family:Georgia,serif; font-size:22px; }
+  .modal-label { display:block; color:var(--gold); font-size:14px; margin-bottom:5px; font-weight:bold; }
+  .modal-hint { font-size:12px; color:var(--text-muted); font-style:italic; margin-bottom:12px; line-height:1.5; }
+  .modal-input { width:100%; padding:10px; margin-bottom:15px; background:var(--input-bg); border:1px solid var(--card-border); border-radius:8px; color:var(--text-main); font-family:'Cormorant Garamond',serif; font-size:16px; outline:none; }
 
-  .backup-info {
-    background: var(--card-bg); border: 1px solid var(--card-border);
-    border-radius: 8px; padding: 12px 15px; margin-bottom: 15px;
-    font-size: 14px; line-height: 1.7; color: var(--text-muted);
-  }
-  .backup-info strong { color: var(--gold); }
+  /* contenteditable "textarea" untuk modal */
+  .cd-input { width:100%; padding:10px; margin-bottom:15px; background:var(--input-bg); border:1px solid var(--card-border); border-radius:8px; color:var(--text-main); font-family:'Cormorant Garamond',serif; font-size:16px; outline:none; min-height:80px; max-height:200px; overflow-y:auto; white-space:pre-wrap; word-wrap:break-word; line-height:1.5; }
+  .cd-input:focus { border-color:var(--gold); }
+  .cd-input:empty:before { content:attr(data-placeholder); color:var(--text-muted); font-style:italic; pointer-events:none; }
+  .cd-input.arabic-cd { font-family:'Amiri',serif; font-size:20px; direction:rtl; text-align:right; line-height:1.8; min-height:100px; }
 
-  .tasbih-container { width: 100%; max-width: 400px; margin: 0 auto; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100%; }
-  .tasbih-target { display: flex; gap: 10px; margin-bottom: 30px; }
-  .btn-target { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--gold); background: var(--card-bg); color: var(--gold); font-size: 16px; font-weight: bold; cursor: pointer; }
-  .btn-target.active { background: var(--gold); color: var(--bg-main); }
-  .tasbih-circle {
-    width: 250px; height: 250px; border-radius: 50%;
-    background: radial-gradient(circle, var(--bg-main) 30%, rgba(212,175,55,0.2) 100%);
-    border: 3px solid var(--gold); display: flex; flex-direction: column;
-    align-items: center; justify-content: center; cursor: pointer;
-    box-shadow: 0 0 30px rgba(212,175,55,0.3); transition: transform 0.1s;
-    user-select: none; margin-bottom: 30px;
-  }
-  .tasbih-circle:active { transform: scale(0.95); }
-  .tasbih-count { font-size: 80px; font-weight: bold; color: var(--gold); line-height: 1; }
-  .tasbih-text { font-size: 20px; color: var(--text-muted); margin-top: 10px; }
-  .btn-reset-tasbih { background: none; border: 1px solid #ff4444; color: #ff4444; padding: 10px 20px; border-radius: 20px; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+  .modal-actions { display:flex; gap:10px; margin-top:10px; }
+  .modal-btn { flex:1; padding:12px; border-radius:8px; border:none; font-weight:bold; font-family:'Cormorant Garamond',serif; font-size:16px; cursor:pointer; }
+  .modal-btn.save { background:var(--gold); color:var(--bg-main); }
+  .modal-btn.cancel { background:#333; color:#fff; }
+  .modal-btn.alt { background:var(--card-bg); color:var(--gold); border:1px solid var(--gold); }
+
+  /* FLOATING COLOR TOOLBAR */
+  .color-toolbar { position:fixed; z-index:30000; background:var(--bg-main); border:1px solid var(--gold); border-radius:12px; padding:6px; box-shadow:0 8px 24px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.05); display:none; align-items:center; gap:4px; flex-wrap:wrap; max-width:calc(100vw - 20px); }
+  .color-toolbar.show { display:flex; }
+  body.light-mode .color-toolbar { box-shadow:0 8px 24px rgba(0,0,0,.15), 0 0 0 1px rgba(0,0,0,.05); }
+  .ct-swatch { width:26px; height:26px; border-radius:50%; border:1px solid rgba(0,0,0,.2); cursor:pointer; padding:0; transition:transform .15s; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+  .ct-swatch:hover { transform:scale(1.2); }
+  .ct-swatch:active { transform:scale(.9); }
+  .ct-divider { width:1px; height:20px; background:var(--card-border); margin:0 2px; }
+  .ct-custom { width:26px; height:26px; border-radius:50%; border:2px dashed var(--card-border); cursor:pointer; padding:0; overflow:hidden; background:transparent; -webkit-appearance:none; appearance:none; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+  .ct-custom::-webkit-color-swatch-wrapper { padding:0; }
+  .ct-custom::-webkit-color-swatch { border:none; border-radius:50%; }
+  .ct-custom::-moz-color-swatch { border:none; border-radius:50%; }
+  .ct-reset { width:26px; height:26px; border-radius:50%; border:1px solid var(--card-border); background:var(--card-bg); color:var(--gold); cursor:pointer; font-size:14px; font-weight:bold; display:flex; align-items:center; justify-content:center; padding:0; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+  .ct-reset:hover { background:var(--gold); color:var(--bg-main); }
+
+  .backup-info { background:var(--card-bg); border:1px solid var(--card-border); border-radius:8px; padding:12px 15px; margin-bottom:15px; font-size:14px; line-height:1.7; color:var(--text-muted); }
+  .backup-info strong { color:var(--gold); }
+
+  .tasbih-container { width:100%; max-width:400px; margin:0 auto; padding:30px 20px; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100%; }
+  .tasbih-target { display:flex; gap:10px; margin-bottom:30px; }
+  .btn-target { padding:8px 16px; border-radius:20px; border:1px solid var(--gold); background:var(--card-bg); color:var(--gold); font-size:16px; font-weight:bold; cursor:pointer; }
+  .btn-target.active { background:var(--gold); color:var(--bg-main); }
+  .tasbih-circle { width:250px; height:250px; border-radius:50%; background:radial-gradient(circle,var(--bg-main) 30%,rgba(212,175,55,.2) 100%); border:3px solid var(--gold); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 0 30px rgba(212,175,55,.3); transition:transform .1s; user-select:none; margin-bottom:30px; }
+  .tasbih-circle:active { transform:scale(.95); }
+  .tasbih-count { font-size:80px; font-weight:bold; color:var(--gold); line-height:1; }
+  .tasbih-text { font-size:20px; color:var(--text-muted); margin-top:10px; }
+  .btn-reset-tasbih { background:none; border:1px solid #ff4444; color:#ff4444; padding:10px 20px; border-radius:20px; font-size:16px; cursor:pointer; display:flex; align-items:center; gap:5px; }
 </style>
 </head>
 <body>
@@ -345,7 +244,7 @@
     <div class="particles" aria-hidden="true"></div>
 
     <div id="cover-edit-hint" class="cover-edit-hint">
-      <span class="hint-text">✏️ Ketuk teks untuk mengedit</span>
+      <span class="hint-text">✏️ Ketuk teks untuk edit · blok teks untuk warnai</span>
       <button class="cover-reset-btn" onclick="resetCoverTexts()">↺ Reset</button>
     </div>
 
@@ -357,13 +256,13 @@
       <p class="desc" id="cover-desc" oninput="autoSaveCover()">Panduan doa harian dan muqaddimah pilihan</p>
       <button class="btn-open" onclick="showPage('page-toc')">Buka Daftar Isi</button>
     </div>
-    <div class="cover-footer" id="cover-footer" oninput="autoSaveCover()">buku digital v1.23.26 created by oznet</div>
+    <div class="cover-footer" id="cover-footer" oninput="autoSaveCover()">buku digital v1.25.26 created by oznet</div>
   </div>
 
   <div id="page-toc" class="page">
     <div class="toc-wrapper">
       <div class="sticky-wrapper">
-        <a class="btn-back" style="margin-bottom: 10px;" onclick="goToCover()">❮ Kembali ke Cover</a>
+        <a class="btn-back" style="margin-bottom:10px;" onclick="goToCover()">❮ Kembali ke Cover</a>
         <div class="toc-header">
           <h2 id="toc-heading">Daftar Isi</h2>
           <div class="icon-area">
@@ -380,7 +279,7 @@
         </div>
 
         <div class="toc-sub-header">
-          <div class="section-title-inline" id="all-section-title" style="display: block;">Semua Doa</div>
+          <div class="section-title-inline" id="all-section-title" style="display:block;">Semua Doa</div>
           <button id="btn-sort" class="btn-sort" onclick="toggleSortMode()">🔀 Atur Urutan</button>
         </div>
       </div>
@@ -388,7 +287,7 @@
       <div class="sort-hint">Tekan & tahan judul, lalu geser ke atas/bawah.</div>
 
       <div id="fav-section-title" class="section-title">⭐ Doa Favorit</div>
-      <div id="fav-list" class="toc-list" style="margin-bottom: 20px;"></div>
+      <div id="fav-list" class="toc-list" style="margin-bottom:20px;"></div>
 
       <div id="all-list" class="toc-list"></div>
     </div>
@@ -428,19 +327,16 @@
 
   <div id="page-tasbih" class="page">
     <div class="tasbih-container">
-      <a class="btn-back" style="align-self: flex-start; margin-bottom: 20px;" onclick="goBack()">❮ Kembali</a>
-
+      <a class="btn-back" style="align-self:flex-start; margin-bottom:20px;" onclick="goBack()">❮ Kembali</a>
       <div class="tasbih-target">
         <button class="btn-target" onclick="setTarget(33, event)">33x</button>
         <button class="btn-target" onclick="setTarget(99, event)">99x</button>
         <button class="btn-target active" onclick="setTarget(100, event)">100x</button>
       </div>
-
       <div class="tasbih-circle" onclick="countTasbih()">
         <div class="tasbih-count" id="tasbih-count">0</div>
         <div class="tasbih-text" id="tasbih-target-text">dari 100</div>
       </div>
-
       <button class="btn-reset-tasbih" onclick="resetTasbih()">🔄 Reset</button>
     </div>
   </div>
@@ -448,22 +344,46 @@
 
 <button id="btn-clear-cache" class="btn-clear-cache" onclick="clearAppCache()" title="Hapus Cache Aplikasi" aria-label="Hapus Cache Aplikasi">🧹</button>
 
+<!-- FLOATING COLOR TOOLBAR -->
+<div id="color-toolbar" class="color-toolbar">
+  <button class="ct-swatch" data-color="#d4af37" style="background:#d4af37" title="Gold"></button>
+  <button class="ct-swatch" data-color="#f6e7a8" style="background:#f6e7a8" title="Ivory"></button>
+  <button class="ct-swatch" data-color="#ffffff" style="background:#ffffff" title="White"></button>
+  <button class="ct-swatch" data-color="#c0c0c0" style="background:#c0c0c0" title="Silver"></button>
+  <button class="ct-swatch" data-color="#cdbf8f" style="background:#cdbf8f" title="Olive"></button>
+  <button class="ct-swatch" data-color="#7ab87a" style="background:#7ab87a" title="Green"></button>
+  <button class="ct-swatch" data-color="#6db3d6" style="background:#6db3d6" title="Blue"></button>
+  <button class="ct-swatch" data-color="#b8a4d9" style="background:#b8a4d9" title="Purple"></button>
+  <button class="ct-swatch" data-color="#e8a0a0" style="background:#e8a0a0" title="Rose"></button>
+  <button class="ct-swatch" data-color="#ff9966" style="background:#ff9966" title="Coral"></button>
+  <div class="ct-divider"></div>
+  <input type="color" class="ct-custom" title="Warna kustom">
+  <button class="ct-reset" title="Hapus warna">↺</button>
+</div>
+
 <div class="edit-tools" id="edit-tools">
   <button class="btn-edit-action secondary" onclick="exportCode()">📤 Ekspor Kode ke GitHub</button>
   <button class="btn-edit-action danger" onclick="enableEditMode()">❌ Selesai Edit</button>
 </div>
 
+<!-- MODAL: TAMBAH DOA -->
 <div class="modal-overlay" id="add-doa-modal">
   <div class="modal-content">
     <h3>Tambah Doa Baru</h3>
+    <p class="modal-hint">💡 Blok teks Arab/Latin lalu warnai dengan palet yang muncul.</p>
+
     <label class="modal-label">Judul Doa</label>
     <input type="text" id="new-title" class="modal-input" placeholder="Contoh: Doa Sebelum Tidur">
+
     <label class="modal-label">Teks Arab</label>
-    <textarea id="new-arabic" class="modal-input arabic-input" placeholder="اللَّهُمَّ ..."></textarea>
+    <div id="new-arabic" class="cd-input arabic-cd" contenteditable="true" data-placeholder="اللَّهُمَّ ..."></div>
+
     <label class="modal-label">Teks Latin (Opsional)</label>
-    <textarea id="new-latin" class="modal-input" placeholder="Allahumma ..."></textarea>
+    <div id="new-latin" class="cd-input" contenteditable="true" data-placeholder="Allahumma ..."></div>
+
     <label class="modal-label">Terjemahan / Konten (Opsional)</label>
-    <textarea id="new-translation" class="modal-input" placeholder="Ya Allah ..."></textarea>
+    <div id="new-translation" class="cd-input" contenteditable="true" data-placeholder="Ya Allah ..."></div>
+
     <div class="modal-actions">
       <button class="modal-btn cancel" onclick="closeAddDoaModal()">Batal</button>
       <button class="modal-btn save" onclick="saveNewDoa()">Simpan Doa</button>
@@ -471,12 +391,21 @@
   </div>
 </div>
 
+<!-- MODAL: EDIT JUDUL + TEKS -->
 <div class="modal-overlay" id="rename-doa-modal">
   <div class="modal-content">
-    <h3>✏️ Edit Judul Doa</h3>
-    <p class="modal-hint">Berlaku untuk semua doa (bawaan maupun buatan sendiri). Perubahan judul tersimpan otomatis di perangkat ini.</p>
+    <h3>✏️ Edit Judul & Teks</h3>
+    <p class="modal-hint">💡 Blok teks Arab/Latin lalu warnai dengan palet yang muncul.</p>
+
     <label class="modal-label">Judul Baru</label>
     <input type="text" id="rename-title" class="modal-input" placeholder="Judul doa...">
+
+    <label class="modal-label">Teks Arab</label>
+    <div id="rename-arabic-cd" class="cd-input arabic-cd" contenteditable="true" data-placeholder="اللَّهُمَّ ..."></div>
+
+    <label class="modal-label">Teks Latin</label>
+    <div id="rename-latin-cd" class="cd-input" contenteditable="true" data-placeholder="Allahumma ..."></div>
+
     <button id="rename-reset-btn" class="modal-btn alt" onclick="resetDoaTitle()" style="width:100%; margin-bottom:8px; display:none;">↺ Reset ke Judul Asli</button>
     <div class="modal-actions">
       <button class="modal-btn cancel" onclick="closeRenameModal()">Batal</button>
@@ -485,12 +414,13 @@
   </div>
 </div>
 
+<!-- MODAL: BACKUP -->
 <div class="modal-overlay" id="backup-modal">
   <div class="modal-content">
     <h3>💾 Backup & Restore</h3>
     <div class="backup-info" id="backup-info">Memuat info...</div>
     <p style="color:var(--text-muted); font-size:13px; line-height:1.5; margin-bottom:15px;">
-      Backup berisi semua data: doa buatan sendiri, judul yang diubah, favorit, urutan, tema, ukuran font, dan teks cover.
+      Backup berisi semua data: doa, judul, warna teks (inline), favorit, urutan, tema, ukuran font, dan teks cover.
     </p>
     <div class="modal-actions" style="flex-direction:column;">
       <button class="modal-btn save" onclick="exportBackup()" style="width:100%;">📤 Ekspor Backup (.json)</button>
@@ -532,11 +462,10 @@
     kicker: 'Buku Digital',
     title: 'Kumpulan Doa<br>&amp; Muqaddimah',
     desc: 'Panduan doa harian dan muqaddimah pilihan',
-    footer: 'buku digital v1.23.26 created by oznet'
+    footer: 'buku digital v1.25.26 created by oznet'
   };
 
   let coverTexts = { ...COVER_DEFAULTS };
-
   try {
     const savedCover = JSON.parse(localStorage.getItem('cover_texts'));
     if (savedCover && typeof savedCover === 'object') {
@@ -544,7 +473,7 @@
         if (typeof savedCover[k] === 'string') coverTexts[k] = savedCover[k];
       });
     }
-  } catch(e) { console.warn('Gagal load cover_texts:', e); }
+  } catch(e) {}
 
   function sanitizeHTML(html) {
     const tmp = document.createElement('div');
@@ -554,26 +483,15 @@
       [...el.attributes].forEach(attr => {
         const name = attr.name.toLowerCase();
         const value = String(attr.value || '').trim().toLowerCase();
-        if (name.startsWith('on') || (name === 'href' && value.startsWith('javascript:'))) {
-          el.removeAttribute(attr.name);
-        }
+        if (name.startsWith('on') || (name === 'href' && value.startsWith('javascript:'))) el.removeAttribute(attr.name);
       });
     });
     return tmp.innerHTML;
   }
 
   function applyCoverTexts() {
-    const map = {
-      'cover-bismillah': coverTexts.bismillah,
-      'cover-kicker': coverTexts.kicker,
-      'cover-title': coverTexts.title,
-      'cover-desc': coverTexts.desc,
-      'cover-footer': coverTexts.footer
-    };
-    Object.keys(map).forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.innerHTML = map[id];
-    });
+    const map = { 'cover-bismillah': coverTexts.bismillah, 'cover-kicker': coverTexts.kicker, 'cover-title': coverTexts.title, 'cover-desc': coverTexts.desc, 'cover-footer': coverTexts.footer };
+    Object.keys(map).forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = map[id]; });
   }
   applyCoverTexts();
 
@@ -591,11 +509,13 @@
     if (!confirm('↺ Reset semua teks cover ke default?\n\nJudul, deskripsi, kicker, bismillah, dan footer akan dikembalikan ke pengaturan awal.')) return;
     coverTexts = { ...COVER_DEFAULTS };
     try { localStorage.removeItem('cover_texts'); } catch(e) {}
-    applyCoverTexts();
-    playSound();
+    applyCoverTexts(); playSound();
     alert('✅ Teks cover berhasil direset ke default.');
   }
 
+  // ====================================================
+  // LOAD DATA
+  // ====================================================
   try {
     const customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {};
     const savedOrder = JSON.parse(localStorage.getItem('custom_doa_order')) || [];
@@ -610,31 +530,22 @@
       doa.arabic      = cd.arabic      ?? doa.arabic;
       doa.latin       = cd.latin       ?? doa.latin;
       doa.translation = cd.translation ?? doa.translation;
-      if (cd.title && cd.title !== ORIGINAL_TITLES[doa.id]) {
-        doa.title = cd.title;
-      }
+      if (cd.title && cd.title !== ORIGINAL_TITLES[doa.id]) doa.title = cd.title;
     });
 
     Object.keys(customData).forEach(id => {
       if (dataDoa.some(d => d.id === id)) return;
       const cd = customData[id];
       if (!cd || !cd.title) return;
-      dataDoa.push({
-        id, title: cd.title,
-        arabic: cd.arabic || '', latin: cd.latin || '', translation: cd.translation || ''
-      });
+      dataDoa.push({ id, title: cd.title, arabic: cd.arabic || '', latin: cd.latin || '', translation: cd.translation || '' });
     });
 
     if (Array.isArray(savedOrder) && savedOrder.length) {
       const newOrder = [];
-      savedOrder.forEach(id => {
-        const found = dataDoa.find(d => d.id === id);
-        if (found) newOrder.push(found);
-      });
+      savedOrder.forEach(id => { const found = dataDoa.find(d => d.id === id); if (found) newOrder.push(found); });
       dataDoa.forEach(d => { if (!newOrder.some(n => n.id === d.id)) newOrder.push(d); });
       dataDoa = newOrder;
     }
-
     if (mutated) localStorage.setItem('custom_doa_data', JSON.stringify(customData));
   } catch(e) { console.warn("Gagal load data:", e); }
 
@@ -642,6 +553,9 @@
   let currentDoaId = null;
   let sortableInstance = null;
 
+  // ====================================================
+  // RENDER TOC
+  // ====================================================
   function renderTOC() {
     try {
       const favList = document.getElementById('fav-list');
@@ -733,78 +647,40 @@
   renderTOC();
 
   // ====================================================
-  // TRIPLE-TAP (➕, heading, ✏️ pensil) — TANPA NOTIF
+  // TRIPLE-TAP SYSTEM (tanpa notif)
   // ====================================================
   const TRIPLE_TAP_WINDOW = 1000;
   let addBtnCount = 0, addBtnTimer = null;
   let headingCount = 0, headingTimer = null;
   let pencilCount = 0, pencilTimer = null;
 
-  function pulseElement(el) {
-    if (!el) return;
-    el.classList.remove('tapping');
-    void el.offsetWidth;
-    el.classList.add('tapping');
-  }
+  function pulseElement(el) { if (!el) return; el.classList.remove('tapping'); void el.offsetWidth; el.classList.add('tapping'); }
 
   function handleAddTap(e) {
     if (e) { e.preventDefault(); e.stopPropagation(); }
-    const btn = document.getElementById('add-doa-btn');
-    pulseElement(btn);
-
+    pulseElement(document.getElementById('add-doa-btn'));
     addBtnCount++;
     if (addBtnTimer) clearTimeout(addBtnTimer);
-
-    if (addBtnCount >= 3) {
-      addBtnCount = 0;
-      addBtnTimer = null;
-      openAddDoaModal();
-      return;
-    }
-    addBtnTimer = setTimeout(() => {
-      addBtnCount = 0;
-      addBtnTimer = null;
-    }, TRIPLE_TAP_WINDOW);
+    if (addBtnCount >= 3) { addBtnCount = 0; addBtnTimer = null; openAddDoaModal(); return; }
+    addBtnTimer = setTimeout(() => { addBtnCount = 0; addBtnTimer = null; }, TRIPLE_TAP_WINDOW);
   }
 
   function handleHeadingTap(e) {
     if (e) { e.preventDefault(); e.stopPropagation(); }
-    const h = document.getElementById('toc-heading');
-    pulseElement(h);
-
+    pulseElement(document.getElementById('toc-heading'));
     headingCount++;
     if (headingTimer) clearTimeout(headingTimer);
-
-    if (headingCount >= 3) {
-      headingCount = 0;
-      headingTimer = null;
-      openAddDoaModal();
-      return;
-    }
-    headingTimer = setTimeout(() => {
-      headingCount = 0;
-      headingTimer = null;
-    }, TRIPLE_TAP_WINDOW);
+    if (headingCount >= 3) { headingCount = 0; headingTimer = null; openAddDoaModal(); return; }
+    headingTimer = setTimeout(() => { headingCount = 0; headingTimer = null; }, TRIPLE_TAP_WINDOW);
   }
 
   function handlePencilTap(e) {
     if (e) { e.preventDefault(); e.stopPropagation(); }
-    const btn = document.getElementById('rename-custom-btn');
-    pulseElement(btn);
-
+    pulseElement(document.getElementById('rename-custom-btn'));
     pencilCount++;
     if (pencilTimer) clearTimeout(pencilTimer);
-
-    if (pencilCount >= 3) {
-      pencilCount = 0;
-      pencilTimer = null;
-      openRenameModal();
-      return;
-    }
-    pencilTimer = setTimeout(() => {
-      pencilCount = 0;
-      pencilTimer = null;
-    }, TRIPLE_TAP_WINDOW);
+    if (pencilCount >= 3) { pencilCount = 0; pencilTimer = null; openRenameModal(); return; }
+    pencilTimer = setTimeout(() => { pencilCount = 0; pencilTimer = null; }, TRIPLE_TAP_WINDOW);
   }
 
   (function bindTripleTap() {
@@ -817,44 +693,276 @@
   })();
 
   // ====================================================
-  // MODAL TAMBAH DOA
+  // COLOR TOOLBAR (seleksi teks)
+  // ====================================================
+  let savedRange = null;
+  let selectionDebounceTimer = null;
+  let lastToolbarShowTime = 0;
+
+  function getEditableParent(node) {
+    if (!node) return null;
+    const el = node.nodeType === 1 ? node : node.parentElement;
+    return el ? el.closest('[contenteditable="true"]') : null;
+  }
+
+  function showColorToolbar(range) {
+    const toolbar = document.getElementById('color-toolbar');
+    if (!toolbar) return;
+    const rect = range.getBoundingClientRect();
+    if (!rect || (rect.width === 0 && rect.height === 0)) return;
+
+    toolbar.classList.add('show');
+    const tRect = toolbar.getBoundingClientRect();
+
+    let top = rect.top - tRect.height - 8;
+    let left = rect.left + rect.width / 2 - tRect.width / 2;
+
+    if (top < 10) top = rect.bottom + 8;
+    if (left < 10) left = 10;
+    if (left + tRect.width > window.innerWidth - 10) left = window.innerWidth - tRect.width - 10;
+    if (top + tRect.height > window.innerHeight - 10) top = window.innerHeight - tRect.height - 10;
+
+    toolbar.style.top = top + 'px';
+    toolbar.style.left = left + 'px';
+    lastToolbarShowTime = Date.now();
+  }
+
+  function hideColorToolbar() {
+    const toolbar = document.getElementById('color-toolbar');
+    if (toolbar) toolbar.classList.remove('show');
+  }
+
+  function handleSelectionChange() {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+      // Beri waktu sebentar sebelum hide (antisipasi tap pada toolbar)
+      if (Date.now() - lastToolbarShowTime < 500) return;
+      hideColorToolbar();
+      return;
+    }
+    const range = sel.getRangeAt(0);
+    const editableEl = getEditableParent(range.commonAncestorContainer);
+    if (!editableEl) { hideColorToolbar(); return; }
+    savedRange = range.cloneRange();
+    showColorToolbar(range);
+  }
+
+  function restoreSelectionIfLost() {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+      if (!savedRange) return false;
+      sel.removeAllRanges();
+      sel.addRange(savedRange);
+    }
+    return true;
+  }
+
+  function applyColorToSelection(color) {
+    if (!restoreSelectionIfLost()) return false;
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return false;
+    const range = sel.getRangeAt(0);
+    const editableEl = getEditableParent(range.commonAncestorContainer);
+    if (!editableEl) return false;
+
+    // Fokus ke editable agar execCommand bekerja
+    if (document.activeElement !== editableEl) {
+      try { editableEl.focus({ preventScroll: true }); } catch(e) { editableEl.focus(); }
+      // Restore selection setelah focus
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    try {
+      document.execCommand('foreColor', false, color);
+      savedRange = sel.rangeCount > 0 ? sel.getRangeAt(0).cloneRange() : null;
+      return true;
+    } catch (e) {
+      // Fallback: manual span wrapping
+      try {
+        const contents = range.extractContents();
+        const span = document.createElement('span');
+        span.style.color = color;
+        span.appendChild(contents);
+        range.insertNode(span);
+        sel.removeAllRanges();
+        const newRange = document.createRange();
+        newRange.selectNodeContents(span);
+        sel.addRange(newRange);
+        savedRange = newRange.cloneRange();
+        return true;
+      } catch (e2) {
+        console.warn('applyColor failed:', e2);
+        return false;
+      }
+    }
+  }
+
+  function clearColorFromSelection() {
+    if (!restoreSelectionIfLost()) return false;
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return false;
+    const range = sel.getRangeAt(0);
+    const editableEl = getEditableParent(range.commonAncestorContainer);
+    if (!editableEl) return false;
+
+    if (document.activeElement !== editableEl) {
+      try { editableEl.focus({ preventScroll: true }); } catch(e) { editableEl.focus(); }
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    // Coba execCommand foreColor inherit
+    try {
+      document.execCommand('foreColor', false, 'inherit');
+      return true;
+    } catch (e) {}
+
+    // Fallback: unwrap color spans
+    try {
+      const root = range.commonAncestorContainer;
+      const rootEl = root.nodeType === 1 ? root : root.parentElement;
+      const colorSpans = rootEl.querySelectorAll('span[style*="color"]');
+      let changed = false;
+      colorSpans.forEach(span => {
+        try {
+          if (range.intersectsNode(span)) {
+            const parent = span.parentNode;
+            while (span.firstChild) parent.insertBefore(span.firstChild, span);
+            parent.removeChild(span);
+            changed = true;
+          }
+        } catch(e) {}
+      });
+      return changed;
+    } catch (e) { return false; }
+  }
+
+  function persistAfterColorChange() {
+    // Kalau di doa viewer + edit mode → autoSave
+    if (isEditMode && currentDoaId) {
+      autoSave();
+    }
+    // Kalau di cover edit mode → autoSaveCover
+    // (dipanggil lewat oninput yang sudah terpasang, execCommand biasanya men-trigger input)
+    // Safety: panggil sekali lagi
+    if (isEditMode) {
+      try { autoSaveCover(); } catch(e) {}
+    }
+  }
+
+  function initColorToolbar() {
+    const toolbar = document.getElementById('color-toolbar');
+    if (!toolbar) return;
+
+    toolbar.querySelectorAll('.ct-swatch').forEach(sw => {
+      sw.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const color = sw.dataset.color;
+        if (applyColorToSelection(color)) {
+          persistAfterColorChange();
+          playSound();
+        }
+      });
+    });
+
+    const custom = toolbar.querySelector('.ct-custom');
+    if (custom) {
+      custom.addEventListener('input', (e) => {
+        const color = e.target.value;
+        if (/^#[0-9a-f]{6}$/i.test(color)) {
+          if (applyColorToSelection(color)) persistAfterColorChange();
+        }
+      });
+    }
+
+    const reset = toolbar.querySelector('.ct-reset');
+    if (reset) {
+      reset.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (clearColorFromSelection()) {
+          persistAfterColorChange();
+          playSound();
+        }
+      });
+    }
+
+    // Pointer down preventDefault agar selection tidak hilang saat tap toolbar
+    toolbar.addEventListener('pointerdown', (e) => {
+      if (e.target.tagName !== 'INPUT') e.preventDefault();
+    });
+
+    // Debounced selectionchange
+    document.addEventListener('selectionchange', () => {
+      clearTimeout(selectionDebounceTimer);
+      selectionDebounceTimer = setTimeout(handleSelectionChange, 150);
+    });
+
+    // Hide on scroll
+    window.addEventListener('scroll', hideColorToolbar, { passive: true });
+    document.getElementById('app-scroll').addEventListener('scroll', () => {
+      if (Date.now() - lastToolbarShowTime > 300) hideColorToolbar();
+    }, { passive: true });
+  }
+  initColorToolbar();
+
+  // ====================================================
+  // TAMBAH DOA
   // ====================================================
   function openAddDoaModal() {
+    document.getElementById('new-title').value = '';
+    document.getElementById('new-arabic').innerHTML = '';
+    document.getElementById('new-latin').innerHTML = '';
+    document.getElementById('new-translation').innerHTML = '';
     playSound();
     document.getElementById('add-doa-modal').classList.add('active');
   }
+
   function closeAddDoaModal() {
+    hideColorToolbar();
     document.getElementById('add-doa-modal').classList.remove('active');
-    document.getElementById('new-title').value = ''; document.getElementById('new-arabic').value = '';
-    document.getElementById('new-latin').value = ''; document.getElementById('new-translation').value = '';
   }
 
   function saveNewDoa() {
     const title = document.getElementById('new-title').value.trim();
-    const arabic = document.getElementById('new-arabic').value.trim();
-    const latin = document.getElementById('new-latin').value.trim();
-    const translation = document.getElementById('new-translation').value.trim();
-    if (!title || (!arabic && !translation)) {
+    const arabicHtml = document.getElementById('new-arabic').innerHTML.trim();
+    const latinHtml = document.getElementById('new-latin').innerHTML.trim();
+    const transHtml = document.getElementById('new-translation').innerHTML.trim();
+    const arabicText = document.getElementById('new-arabic').innerText.trim();
+    const transText = document.getElementById('new-translation').innerText.trim();
+
+    if (!title || (!arabicText && !transText)) {
       alert('Judul dan minimal salah satu teks (Arab / Terjemahan) wajib diisi!');
       return;
     }
+
     const newId = 'doa_' + Date.now();
-    dataDoa.push({ id: newId, title, arabic, latin, translation });
+    dataDoa.push({ id: newId, title, arabic: arabicHtml, latin: latinHtml, translation: transHtml });
+
     try {
       let customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {};
-      customData[newId] = { title, arabic, latin, translation };
+      customData[newId] = { title, arabic: arabicHtml, latin: latinHtml, translation: transHtml };
       localStorage.setItem('custom_doa_data', JSON.stringify(customData));
       localStorage.setItem('custom_doa_order', JSON.stringify(dataDoa.map(d => d.id)));
     } catch(e) {}
+
     closeAddDoaModal(); renderTOC(); playSound();
-    alert('✅ Doa baru berhasil ditambahkan dan tersimpan permanen di perangkat ini!');
+    alert('✅ Doa baru berhasil ditambahkan!');
   }
 
+  // ====================================================
+  // EDIT JUDUL + TEKS
+  // ====================================================
   function openRenameModal() {
     if (!currentDoaId) return;
     const doa = dataDoa.find(d => d.id === currentDoaId);
     if (!doa) return;
     document.getElementById('rename-title').value = doa.title;
+    document.getElementById('rename-arabic-cd').innerHTML = doa.arabic || '';
+    document.getElementById('rename-latin-cd').innerHTML = doa.latin || '';
+
     const resetBtn = document.getElementById('rename-reset-btn');
     if (resetBtn) {
       const isBuiltin = BUILTIN_IDS.has(currentDoaId);
@@ -865,7 +973,10 @@
     playSound();
   }
 
-  function closeRenameModal() { document.getElementById('rename-doa-modal').classList.remove('active'); }
+  function closeRenameModal() {
+    hideColorToolbar();
+    document.getElementById('rename-doa-modal').classList.remove('active');
+  }
 
   function saveRenameDoa() {
     if (!currentDoaId) return;
@@ -873,20 +984,31 @@
     if (!newTitle) { alert('Judul tidak boleh kosong.'); return; }
     const doa = dataDoa.find(d => d.id === currentDoaId);
     if (!doa) return;
+
+    const newArabicHtml = document.getElementById('rename-arabic-cd').innerHTML.trim();
+    const newLatinHtml = document.getElementById('rename-latin-cd').innerHTML.trim();
+
     doa.title = newTitle;
+    doa.arabic = newArabicHtml;
+    doa.latin = newLatinHtml;
+
     try {
       let customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {};
-      if (!customData[currentDoaId]) {
-        customData[currentDoaId] = { arabic: doa.arabic, latin: doa.latin, translation: doa.translation };
-      }
-      if (BUILTIN_IDS.has(currentDoaId) && newTitle === ORIGINAL_TITLES[currentDoaId]) {
-        delete customData[currentDoaId].title;
-      } else {
-        customData[currentDoaId].title = newTitle;
-      }
+      if (!customData[currentDoaId]) customData[currentDoaId] = {};
+      customData[currentDoaId].arabic = newArabicHtml;
+      customData[currentDoaId].latin = newLatinHtml;
+      customData[currentDoaId].translation = doa.translation || '';
+      if (BUILTIN_IDS.has(currentDoaId) && newTitle === ORIGINAL_TITLES[currentDoaId]) delete customData[currentDoaId].title;
+      else customData[currentDoaId].title = newTitle;
       localStorage.setItem('custom_doa_data', JSON.stringify(customData));
     } catch(e) {}
+
     document.getElementById('doa-title').innerText = newTitle;
+    const arabicEl = document.getElementById('doa-arabic');
+    const latinEl = document.getElementById('doa-latin');
+    if (arabicEl) arabicEl.innerHTML = newArabicHtml || '';
+    if (latinEl) latinEl.innerHTML = newLatinHtml || '';
+
     renderTOC(); closeRenameModal(); playSound();
   }
 
@@ -897,6 +1019,9 @@
     document.getElementById('rename-title').value = original;
   }
 
+  // ====================================================
+  // HAPUS DOA
+  // ====================================================
   function deleteCurrentDoa() {
     if (!currentDoaId || !isCustomDoa(currentDoaId)) return;
     const doa = dataDoa.find(d => d.id === currentDoaId);
@@ -916,11 +1041,13 @@
     } catch(e) {}
 
     currentDoaId = null;
-    renderTOC();
-    goBack();
+    renderTOC(); goBack();
     alert('Doa berhasil dihapus.');
   }
 
+  // ====================================================
+  // BACKUP / RESTORE
+  // ====================================================
   function openBackupModal() {
     try {
       const customData = JSON.parse(localStorage.getItem('custom_doa_data') || '{}');
@@ -935,7 +1062,7 @@
         info.innerHTML =
           `📊 Doa buatan sendiri: <strong>${customCount}</strong><br>` +
           `✏️ Judul doa diubah: <strong>${renamedCount}</strong><br>` +
-          `🎨 Cover dikustomisasi: <strong>${coverCustomized}/${coverTotal} bagian</strong><br>` +
+          `🎭 Cover dikustomisasi: <strong>${coverCustomized}/${coverTotal} bagian</strong><br>` +
           `⭐ Favorit: <strong>${favorites.length}</strong><br>` +
           `📚 Total doa: <strong>${dataDoa.length}</strong><br>` +
           `💾 Ukuran data: <strong>~${sizeKB} KB</strong>`;
@@ -981,10 +1108,7 @@
     reader.onload = (e) => {
       try {
         const parsed = JSON.parse(e.target.result);
-        if (!parsed || parsed.app !== 'buku-doa' || !parsed.data) {
-          alert('❌ File backup tidak valid.');
-          return;
-        }
+        if (!parsed || parsed.app !== 'buku-doa' || !parsed.data) { alert('❌ File backup tidak valid.'); return; }
         if (!confirm('⚠️ Impor backup akan MENGGANTI semua data saat ini.\n\nLanjutkan?')) return;
         const d = parsed.data;
         if (d.custom_doa_data)   localStorage.setItem('custom_doa_data', JSON.stringify(d.custom_doa_data));
@@ -995,36 +1119,20 @@
         if (d.cover_texts)       localStorage.setItem('cover_texts', JSON.stringify(d.cover_texts));
         alert('✅ Backup berhasil diimpor! Halaman akan dimuat ulang.');
         location.reload();
-      } catch(err) {
-        alert('❌ Gagal membaca file backup: ' + err.message);
-      }
+      } catch(err) { alert('❌ Gagal membaca file backup: ' + err.message); }
     };
     reader.readAsText(file);
     event.target.value = '';
   }
 
   async function clearAppCache() {
-    const offlineWarning = !navigator.onLine
-      ? '\n\n⚠️ PERINGATAN: Anda sedang OFFLINE.\nMenghapus cache saat offline akan membuat aplikasi TIDAK BISA DIBUKA sampai ada koneksi internet.'
-      : '';
-    const ok = confirm(
-      '🧹 Hapus cache aplikasi?\n\n' +
-      '• File aplikasi akan diunduh ulang dari server (versi terbaru).\n' +
-      '• Data doa, favorit, pengaturan, dan teks cover Anda TIDAK akan terhapus.' +
-      offlineWarning + '\n\nLanjutkan?'
-    );
+    const offlineWarning = !navigator.onLine ? '\n\n⚠️ PERINGATAN: Anda sedang OFFLINE.\nMenghapus cache saat offline akan membuat aplikasi TIDAK BISA DIBUKA sampai ada koneksi internet.' : '';
+    const ok = confirm('🧹 Hapus cache aplikasi?\n\n• File aplikasi akan diunduh ulang dari server (versi terbaru).\n• Data doa, favorit, pengaturan, dan teks cover Anda TIDAK akan terhapus.' + offlineWarning + '\n\nLanjutkan?');
     if (!ok) return;
     try {
       let cleared = 0;
-      if ('caches' in window) {
-        const keys = await caches.keys();
-        cleared = keys.length;
-        await Promise.all(keys.map(k => caches.delete(k)));
-      }
-      if ('serviceWorker' in navigator) {
-        const regs = await navigator.serviceWorker.getRegistrations();
-        await Promise.all(regs.map(r => r.unregister()));
-      }
+      if ('caches' in window) { const keys = await caches.keys(); cleared = keys.length; await Promise.all(keys.map(k => caches.delete(k))); }
+      if ('serviceWorker' in navigator) { const regs = await navigator.serviceWorker.getRegistrations(); await Promise.all(regs.map(r => r.unregister())); }
       alert('✅ Cache berhasil dihapus (' + cleared + ' entri).\nAplikasi akan dimuat ulang dengan file terbaru.');
       const url = new URL(window.location.href);
       url.searchParams.set('_cb', Date.now());
@@ -1035,6 +1143,9 @@
     }
   }
 
+  // ====================================================
+  // UTIL
+  // ====================================================
   function playSound() {
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext; if (!AudioContext) return;
@@ -1052,6 +1163,7 @@
     if (isScrolling) toggleAutoScroll();
     if (isSpeaking) toggleTTS();
     if (wakeLock !== null) toggleWakeLock();
+    hideColorToolbar();
     if (activePage.id === 'page-doa' || activePage.id === 'page-tasbih') {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('page-toc').classList.add('active');
@@ -1069,6 +1181,7 @@
     if (isScrolling) toggleAutoScroll();
     if (isSpeaking) toggleTTS();
     if (wakeLock !== null) toggleWakeLock();
+    hideColorToolbar();
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-cover').classList.add('active');
     document.getElementById('app-scroll').scrollTop = 0;
@@ -1078,6 +1191,7 @@
 
   function showPage(pageId, pushHistory = true) {
     playSound();
+    hideColorToolbar();
     if (pageId === 'page-toc') {
       document.getElementById('search-container').classList.remove('active');
       document.getElementById('search-input').value = ''; filterTOC();
@@ -1111,8 +1225,8 @@
 
     if (isScrolling) toggleAutoScroll();
     if (isSpeaking) toggleTTS();
+    hideColorToolbar();
 
-    // Reset triple-tap pensil saat buka doa lain
     pencilCount = 0;
     if (pencilTimer) { clearTimeout(pencilTimer); pencilTimer = null; }
 
@@ -1205,18 +1319,15 @@
     const arabicEl = document.getElementById('doa-arabic');
     const latinEl = document.getElementById('doa-latin');
     const transEl = document.getElementById('doa-translation');
-
     const arabic = arabicEl.style.display === 'none' ? '' : arabicEl.innerText.trim();
     const latin = latinEl.style.display === 'none' ? '' : latinEl.innerText.trim();
     const trans = transEl.style.display === 'none' ? '' : transEl.innerText.trim();
-
     const parts = [title];
     if (arabic) parts.push(arabic);
     if (latin) parts.push(latin);
     if (trans) parts.push(arabic ? `Artinya:\n${trans}` : trans);
     parts.push('(Dikutip dari Aplikasi Kumpulan Doa & Muqaddimah)');
     const textToCopy = parts.join('\n\n');
-
     try {
       navigator.clipboard.writeText(textToCopy)
         .then(() => alert('Teks doa berhasil disalin ke clipboard!'))
@@ -1253,23 +1364,17 @@
   let isSpeaking = false;
   function toggleTTS() {
     const btn = document.getElementById('btn-tts');
-    if (isSpeaking) {
-      window.speechSynthesis.cancel(); isSpeaking = false; btn.classList.remove('active');
-      return;
-    }
+    if (isSpeaking) { window.speechSynthesis.cancel(); isSpeaking = false; btn.classList.remove('active'); return; }
     const arabicEl = document.getElementById('doa-arabic');
     const latinEl = document.getElementById('doa-latin');
     const transEl = document.getElementById('doa-translation');
-
     const hasArabic = arabicEl.style.display !== 'none' && arabicEl.innerText.trim();
     const visible = [];
     if (hasArabic) visible.push(arabicEl.innerText);
     if (latinEl.style.display !== 'none' && latinEl.innerText.trim()) visible.push(latinEl.innerText);
     if (!hasArabic && transEl.style.display !== 'none' && transEl.innerText.trim()) visible.push(transEl.innerText);
-
     const textToRead = visible.join('. ');
     if (!textToRead.trim()) { alert('Tidak ada teks untuk dibaca.'); return; }
-
     isSpeaking = true; btn.classList.add('active');
     const utterance = new SpeechSynthesisUtterance(textToRead);
     utterance.lang = hasArabic ? 'ar-SA' : 'id-ID';
@@ -1329,6 +1434,9 @@
   }
   animateStars();
 
+  // ====================================================
+  // EDIT MODE
+  // ====================================================
   let isEditMode = false; let moonTapCount = 0; let moonTapTimer;
   const moonEl = document.getElementById('secret-moon');
   if (moonEl) {
@@ -1344,32 +1452,27 @@
     if (isEditMode) {
       document.body.classList.add('edit-mode');
       alert("✅ MODE EDIT AKTIF.\n\n" +
-            "• Di halaman COVER: ketuk judul / teks untuk mengedit.\n" +
-            "• Di halaman DOA: ketuk teks Arab / Latin / Terjemahan untuk mengedit.\n\n" +
+            "• Halaman COVER: ketuk teks untuk mengedit.\n" +
+            "• Halaman DOA: ketuk teks Arab / Latin / Terjemahan untuk mengedit.\n\n" +
+            "🎨 PALET WARNA:\nBlok/tandai sebagian teks → palet warna muncul otomatis → pilih warna.\n\n" +
             "Semua perubahan otomatis tersimpan di HP ini.");
     } else {
       document.body.classList.remove('edit-mode');
+      hideColorToolbar();
       alert("Mode Edit Dimatikan.");
     }
     updateEditability(); playSound();
   }
 
   function updateEditability() {
-    ['doa-arabic', 'doa-latin', 'doa-translation'].forEach(id => {
+    ['doa-arabic','doa-latin','doa-translation'].forEach(id => {
       const el = document.getElementById(id);
-      if (el) {
-        if (isEditMode) el.setAttribute('contenteditable','true');
-        else el.removeAttribute('contenteditable');
-      }
+      if (el) { if (isEditMode) el.setAttribute('contenteditable','true'); else el.removeAttribute('contenteditable'); }
     });
-    ['cover-bismillah', 'cover-kicker', 'cover-title', 'cover-desc', 'cover-footer'].forEach(id => {
+    ['cover-bismillah','cover-kicker','cover-title','cover-desc','cover-footer'].forEach(id => {
       const el = document.getElementById(id);
-      if (el) {
-        if (isEditMode) el.setAttribute('contenteditable','true');
-        else el.removeAttribute('contenteditable');
-      }
+      if (el) { if (isEditMode) el.setAttribute('contenteditable','true'); else el.removeAttribute('contenteditable'); }
     });
-
     if (!isEditMode && currentDoaId) {
       const doa = dataDoa.find(d => d.id === currentDoaId);
       if (doa) {
@@ -1390,27 +1493,16 @@
     const updatedTranslation = document.getElementById('doa-translation').innerHTML;
 
     const doa = dataDoa.find(d => d.id === currentDoaId);
-    if (doa) {
-      doa.arabic = updatedArabic;
-      doa.latin = updatedLatin;
-      doa.translation = updatedTranslation;
-    }
+    if (doa) { doa.arabic = updatedArabic; doa.latin = updatedLatin; doa.translation = updatedTranslation; }
 
     let customData = {};
     try { customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {}; } catch(e) {}
 
-    const entry = {
-      ...(customData[currentDoaId] || {}),
-      arabic: updatedArabic, latin: updatedLatin, translation: updatedTranslation
-    };
+    const entry = { ...(customData[currentDoaId] || {}), arabic: updatedArabic, latin: updatedLatin, translation: updatedTranslation };
 
     if (doa && doa.title) {
-      if (BUILTIN_IDS.has(currentDoaId)) {
-        if (doa.title !== ORIGINAL_TITLES[currentDoaId]) entry.title = doa.title;
-        else delete entry.title;
-      } else {
-        entry.title = doa.title;
-      }
+      if (BUILTIN_IDS.has(currentDoaId)) { if (doa.title !== ORIGINAL_TITLES[currentDoaId]) entry.title = doa.title; else delete entry.title; }
+      else entry.title = doa.title;
     }
 
     customData[currentDoaId] = entry;
@@ -1448,6 +1540,9 @@
     document.body.appendChild(modal);
   }
 
+  // ====================================================
+  // PWA
+  // ====================================================
   try {
     let deferredPrompt;
     const installBanner = document.getElementById('pwa-install-banner');
@@ -1486,11 +1581,9 @@
             }
           });
         });
-      }).catch(err => console.log('SW gagal (mungkin di preview):', err));
+      }).catch(err => console.log('SW gagal:', err));
 
-      if (btnUpdate) {
-        btnUpdate.addEventListener('click', () => { if (newWorker) newWorker.postMessage({ action: 'skipWaiting' }); });
-      }
+      if (btnUpdate) btnUpdate.addEventListener('click', () => { if (newWorker) newWorker.postMessage({ action: 'skipWaiting' }); });
 
       let refreshing;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -1499,9 +1592,7 @@
         refreshing = true;
       });
     }
-  } catch(e) {
-    console.warn("PWA / SW tidak didukung di lingkungan ini.");
-  }
+  } catch(e) { console.warn("PWA / SW tidak didukung."); }
 </script>
 </body>
 </html>
