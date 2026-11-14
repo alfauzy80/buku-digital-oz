@@ -1,4 +1,4 @@
-const CACHE_NAME = 'buku-doa-v42';
+const CACHE_NAME = 'buku-doa-v44';
 const ASSETS = [
   './',
   './index.html',
@@ -35,7 +35,6 @@ self.addEventListener('fetch', event => {
   const req = event.request;
   if (req.method !== 'GET') return;
 
-  // Navigasi: network-first, fallback ke cache / index.html
   if (req.mode === 'navigate') {
     event.respondWith(
       fetch(req)
@@ -44,14 +43,11 @@ self.addEventListener('fetch', event => {
           caches.open(CACHE_NAME).then(c => c.put(req, clone));
           return res;
         })
-        .catch(() =>
-          caches.match(req).then(r => r || caches.match('./index.html'))
-        )
+        .catch(() => caches.match(req).then(r => r || caches.match('./index.html')))
     );
     return;
   }
 
-  // Aset lain: stale-while-revalidate
   event.respondWith(
     caches.match(req).then(cached => {
       const network = fetch(req)
@@ -69,7 +65,5 @@ self.addEventListener('fetch', event => {
 });
 
 self.addEventListener('message', event => {
-  if (event.data && event.data.action === 'skipWaiting') {
-    self.skipWaiting();
-  }
+  if (event.data && event.data.action === 'skipWaiting') self.skipWaiting();
 });
