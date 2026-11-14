@@ -181,6 +181,7 @@
     40% { transform: scale(1.06); filter: drop-shadow(0 0 8px rgba(212,175,55,.9)); }
     100% { transform: scale(1); }
   }
+  .btn-icon-action.tapping { animation: tripleTapPulse 0.35s ease-out; }
 
   .search-container { display: none; margin-top: 10px; margin-bottom: 5px; position: relative; width: 100%; }
   .search-container.active { display: block; }
@@ -226,7 +227,7 @@
     background: var(--card-bg); border: 1px solid var(--card-border);
     color: var(--gold); font-size: 16px; width: 36px; height: 36px;
     border-radius: 50%; display: none; align-items: center; justify-content: center;
-    cursor: pointer; transition: 0.3s;
+    cursor: pointer; transition: 0.3s; -webkit-tap-highlight-color: transparent;
   }
   .btn-icon-action:hover { background: var(--gold); color: var(--bg-main); }
   .btn-icon-action.danger { color: #ff6b6b; border-color: rgba(255,107,107,0.4); }
@@ -356,7 +357,7 @@
       <p class="desc" id="cover-desc" oninput="autoSaveCover()">Panduan doa harian dan muqaddimah pilihan</p>
       <button class="btn-open" onclick="showPage('page-toc')">Buka Daftar Isi</button>
     </div>
-    <div class="cover-footer" id="cover-footer" oninput="autoSaveCover()">buku digital v1.22.26 created by oznet</div>
+    <div class="cover-footer" id="cover-footer" oninput="autoSaveCover()">buku digital v1.23.26 created by oznet</div>
   </div>
 
   <div id="page-toc" class="page">
@@ -399,7 +400,7 @@
         <div class="doa-header">
           <a class="btn-back" onclick="goBack()">❮ Kembali</a>
           <div class="doa-header-actions">
-            <button id="rename-custom-btn" class="btn-icon-action" onclick="openRenameModal()" title="Edit Judul">✏️</button>
+            <button id="rename-custom-btn" class="btn-icon-action" title="Edit Judul (ketuk 3×)">✏️</button>
             <button id="delete-custom-btn" class="btn-icon-action danger" onclick="deleteCurrentDoa()" title="Hapus Doa">🗑️</button>
             <button id="fav-btn-page" class="btn-fav-page" onclick="toggleCurrentFavorite()">☆</button>
           </div>
@@ -531,7 +532,7 @@
     kicker: 'Buku Digital',
     title: 'Kumpulan Doa<br>&amp; Muqaddimah',
     desc: 'Panduan doa harian dan muqaddimah pilihan',
-    footer: 'buku digital v1.22.26 created by oznet'
+    footer: 'buku digital v1.23.26 created by oznet'
   };
 
   let coverTexts = { ...COVER_DEFAULTS };
@@ -732,11 +733,12 @@
   renderTOC();
 
   // ====================================================
-  // TRIPLE-TAP (menu ➕ & heading "Daftar Isi") — TANPA NOTIF
+  // TRIPLE-TAP (➕, heading, ✏️ pensil) — TANPA NOTIF
   // ====================================================
   const TRIPLE_TAP_WINDOW = 1000;
   let addBtnCount = 0, addBtnTimer = null;
   let headingCount = 0, headingTimer = null;
+  let pencilCount = 0, pencilTimer = null;
 
   function pulseElement(el) {
     if (!el) return;
@@ -785,11 +787,33 @@
     }, TRIPLE_TAP_WINDOW);
   }
 
+  function handlePencilTap(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    const btn = document.getElementById('rename-custom-btn');
+    pulseElement(btn);
+
+    pencilCount++;
+    if (pencilTimer) clearTimeout(pencilTimer);
+
+    if (pencilCount >= 3) {
+      pencilCount = 0;
+      pencilTimer = null;
+      openRenameModal();
+      return;
+    }
+    pencilTimer = setTimeout(() => {
+      pencilCount = 0;
+      pencilTimer = null;
+    }, TRIPLE_TAP_WINDOW);
+  }
+
   (function bindTripleTap() {
     const btn = document.getElementById('add-doa-btn');
     const heading = document.getElementById('toc-heading');
+    const pencil = document.getElementById('rename-custom-btn');
     if (btn) btn.addEventListener('click', handleAddTap);
     if (heading) heading.addEventListener('click', handleHeadingTap);
+    if (pencil) pencil.addEventListener('click', handlePencilTap);
   })();
 
   // ====================================================
@@ -1087,6 +1111,10 @@
 
     if (isScrolling) toggleAutoScroll();
     if (isSpeaking) toggleTTS();
+
+    // Reset triple-tap pensil saat buka doa lain
+    pencilCount = 0;
+    if (pencilTimer) { clearTimeout(pencilTimer); pencilTimer = null; }
 
     currentDoaId = id;
     document.getElementById('doa-title').innerText = doa.title;
