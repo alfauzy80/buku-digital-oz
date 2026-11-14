@@ -1,4 +1,4 @@
-const CACHE_NAME = 'buku-doa-v53';
+const CACHE_NAME = 'buku-doa-v55';
 const ASSETS = [
   './',
   './index.html',
