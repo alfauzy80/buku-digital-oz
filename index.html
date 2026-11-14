@@ -285,12 +285,13 @@
       <p class="desc">Panduan doa harian dan muqaddimah pilihan</p>
       <button class="btn-open" onclick="showPage('page-toc')">Buka Daftar Isi</button>
     </div>
-    <div class="cover-footer">buku digital v1.16.26 created by oznet</div>
+    <div class="cover-footer">buku digital v1.17.26 created by oznet</div>
   </div>
 
   <div id="page-toc" class="page">
     <div class="toc-wrapper">
       <div class="sticky-wrapper">
+        <a class="btn-back" style="margin-bottom: 10px;" onclick="goToCover()">❮ Kembali ke Cover</a>
         <div class="toc-header">
           <h2>Daftar Isi</h2>
           <div class="icon-area">
@@ -657,7 +658,6 @@
     if (!doa) return;
     document.getElementById('rename-title').value = doa.title;
 
-    // Tampilkan tombol "Reset ke Judul Asli" hanya jika doa bawaan & judul sudah diubah
     const resetBtn = document.getElementById('rename-reset-btn');
     if (resetBtn) {
       const isBuiltin = BUILTIN_IDS.has(currentDoaId);
@@ -685,7 +685,6 @@
       if (!customData[currentDoaId]) {
         customData[currentDoaId] = { arabic: doa.arabic, latin: doa.latin, translation: doa.translation };
       }
-      // Hanya simpan title jika berbeda dari judul asli (built-in)
       if (BUILTIN_IDS.has(currentDoaId) && newTitle === ORIGINAL_TITLES[currentDoaId]) {
         delete customData[currentDoaId].title;
       } else {
@@ -844,6 +843,18 @@
     }
   }
 
+  // Tombol "Kembali ke Cover" dari Daftar Isi
+  function goToCover() {
+    if (isScrolling) toggleAutoScroll();
+    if (isSpeaking) toggleTTS();
+    if (wakeLock !== null) toggleWakeLock();
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-cover').classList.add('active');
+    document.getElementById('app-scroll').scrollTop = 0;
+    try { history.replaceState({page: 'cover'}, '', '#cover'); } catch(e){}
+    playSound();
+  }
+
   function showPage(pageId, pushHistory = true) {
     playSound();
     if (pageId === 'page-toc') {
@@ -904,7 +915,6 @@
       transEl.style.display = transContent ? 'block' : 'none';
     }
 
-    // Tombol aksi: rename untuk SEMUA doa, hapus hanya untuk doa buatan user
     const custom = isCustomDoa(id);
     const renameBtn = document.getElementById('rename-custom-btn');
     const deleteBtn = document.getElementById('delete-custom-btn');
@@ -1144,7 +1154,6 @@
     }
   }
 
-  // autoSave: pertahankan title sesuai kondisi (built-in vs custom)
   function autoSave() {
     if (!isEditMode || !currentDoaId) return;
     const updatedArabic = document.getElementById('doa-arabic').innerHTML;
@@ -1170,11 +1179,9 @@
 
     if (doa && doa.title) {
       if (BUILTIN_IDS.has(currentDoaId)) {
-        // Built-in: simpan title hanya jika berbeda dari asli; jika sama, hapus override
         if (doa.title !== ORIGINAL_TITLES[currentDoaId]) entry.title = doa.title;
         else delete entry.title;
       } else {
-        // Custom: selalu simpan title
         entry.title = doa.title;
       }
     }
