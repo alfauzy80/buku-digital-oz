@@ -70,6 +70,34 @@
   .btn-install { background: var(--gold); color: #050807; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; cursor: pointer; }
   .btn-close-banner { background: none; border: none; color: #cdbf8f; font-size: 20px; cursor: pointer; padding: 0 5px; }
 
+  /* TOMBOL HAPUS CACHE */
+  .btn-clear-cache {
+    position: fixed;
+    bottom: 8px;
+    right: 8px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1;
+    padding: 3px 5px;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity 0.25s, transform 0.15s, background 0.25s, border-color 0.25s;
+    z-index: 50;
+    border-radius: 6px;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-clear-cache:hover {
+    opacity: 1;
+    background: var(--card-bg);
+    border-color: var(--card-border);
+  }
+  .btn-clear-cache:active { transform: scale(0.9); opacity: 1; }
+  body.edit-mode .btn-clear-cache,
+  body.sort-mode-active .btn-clear-cache { display: none; }
+
   .cover {
     justify-content: center; position: relative;
     background: radial-gradient(circle at 20% 20%, rgba(212,175,55,.14) 0 1.5px, transparent 2.5px), radial-gradient(circle at 80% 30%, rgba(212,175,55,.10) 0 1.5px, transparent 2.5px), radial-gradient(circle at 30% 80%, rgba(212,175,55,.08) 0 1.5px, transparent 2.5px), radial-gradient(ellipse at 50% 40%, rgba(212,175,55,.06), transparent 60%), linear-gradient(160deg, #0a0f0d 0%, #050807 55%, #000 100%);
@@ -285,7 +313,7 @@
       <p class="desc">Panduan doa harian dan muqaddimah pilihan</p>
       <button class="btn-open" onclick="showPage('page-toc')">Buka Daftar Isi</button>
     </div>
-    <div class="cover-footer">buku digital v1.17.26 created by oznet</div>
+    <div class="cover-footer">buku digital v1.18.26 created by oznet</div>
   </div>
 
   <div id="page-toc" class="page">
@@ -374,6 +402,9 @@
   </div>
 </div>
 
+<!-- TOMBOL HAPUS CACHE (pojok kanan bawah) -->
+<button id="btn-clear-cache" class="btn-clear-cache" onclick="clearAppCache()" title="Hapus Cache Aplikasi" aria-label="Hapus Cache Aplikasi">🧹</button>
+
 <div class="edit-tools" id="edit-tools">
   <button class="btn-edit-action secondary" onclick="exportCode()">📤 Ekspor Kode ke GitHub</button>
   <button class="btn-edit-action danger" onclick="enableEditMode()">❌ Selesai Edit</button>
@@ -456,57 +487,44 @@
 
   dataDoa.forEach((doa, index) => { if (!doa.id) doa.id = 'doa_' + (index + 1); });
 
-  // Kunci ID doa bawaan (sebelum ada tambahan dari user)
   const BUILTIN_IDS = new Set(dataDoa.map(d => d.id));
   const isCustomDoa = (id) => !BUILTIN_IDS.has(id);
 
-  // Simpan judul ASLI doa bawaan untuk deteksi "judul sudah diubah"
   const ORIGINAL_TITLES = {};
   dataDoa.forEach(d => { ORIGINAL_TITLES[d.id] = d.title; });
 
   // ====================================================
-  // LOAD DATA DARI LOCALSTORAGE + REKONSTRUKSI DOA USER
+  // LOAD DATA DARI LOCALSTORAGE
   // ====================================================
   try {
     const customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {};
     const savedOrder = JSON.parse(localStorage.getItem('custom_doa_order')) || [];
     let mutated = false;
 
-    // (a) Override entri bawaan: teks + judul
     dataDoa.forEach(doa => {
       const cd = customData[doa.id];
       if (!cd) return;
-
-      // Migrasi muqaddimah lama
       if (cd.arabic && cd.arabic.trim().startsWith('<div') && !cd.translation) {
         cd.translation = cd.arabic; cd.arabic = ''; mutated = true;
       }
-
       doa.arabic      = cd.arabic      ?? doa.arabic;
       doa.latin       = cd.latin       ?? doa.latin;
       doa.translation = cd.translation ?? doa.translation;
-
-      // Judul: pakai override hanya jika berbeda dari judul asli
       if (cd.title && cd.title !== ORIGINAL_TITLES[doa.id]) {
         doa.title = cd.title;
       }
     });
 
-    // (b) Rekonstruksi doa buatan user
     Object.keys(customData).forEach(id => {
       if (dataDoa.some(d => d.id === id)) return;
       const cd = customData[id];
       if (!cd || !cd.title) return;
       dataDoa.push({
-        id,
-        title: cd.title,
-        arabic: cd.arabic || '',
-        latin: cd.latin || '',
-        translation: cd.translation || ''
+        id, title: cd.title,
+        arabic: cd.arabic || '', latin: cd.latin || '', translation: cd.translation || ''
       });
     });
 
-    // (c) Terapkan urutan tersimpan
     if (Array.isArray(savedOrder) && savedOrder.length) {
       const newOrder = [];
       savedOrder.forEach(id => {
@@ -621,7 +639,6 @@
   // TAMBAH DOA BARU
   // ====================================================
   function openAddDoaModal() { document.getElementById('add-doa-modal').classList.add('active'); }
-
   function closeAddDoaModal() {
     document.getElementById('add-doa-modal').classList.remove('active');
     document.getElementById('new-title').value = ''; document.getElementById('new-arabic').value = '';
@@ -644,27 +661,25 @@
       customData[newId] = { title, arabic, latin, translation };
       localStorage.setItem('custom_doa_data', JSON.stringify(customData));
       localStorage.setItem('custom_doa_order', JSON.stringify(dataDoa.map(d => d.id)));
-    } catch(e) { console.warn("Gagal simpan:", e); }
+    } catch(e) {}
     closeAddDoaModal(); renderTOC(); playSound();
     alert('✅ Doa baru berhasil ditambahkan dan tersimpan permanen di perangkat ini!');
   }
 
   // ====================================================
-  // EDIT JUDUL (berlaku untuk SEMUA doa)
+  // EDIT JUDUL (semua doa)
   // ====================================================
   function openRenameModal() {
     if (!currentDoaId) return;
     const doa = dataDoa.find(d => d.id === currentDoaId);
     if (!doa) return;
     document.getElementById('rename-title').value = doa.title;
-
     const resetBtn = document.getElementById('rename-reset-btn');
     if (resetBtn) {
       const isBuiltin = BUILTIN_IDS.has(currentDoaId);
       const isChanged = isBuiltin && ORIGINAL_TITLES[currentDoaId] && doa.title !== ORIGINAL_TITLES[currentDoaId];
       resetBtn.style.display = isChanged ? 'block' : 'none';
     }
-
     document.getElementById('rename-doa-modal').classList.add('active');
     playSound();
   }
@@ -677,9 +692,7 @@
     if (!newTitle) { alert('Judul tidak boleh kosong.'); return; }
     const doa = dataDoa.find(d => d.id === currentDoaId);
     if (!doa) return;
-
     doa.title = newTitle;
-
     try {
       let customData = JSON.parse(localStorage.getItem('custom_doa_data')) || {};
       if (!customData[currentDoaId]) {
@@ -692,7 +705,6 @@
       }
       localStorage.setItem('custom_doa_data', JSON.stringify(customData));
     } catch(e) {}
-
     document.getElementById('doa-title').innerText = newTitle;
     renderTOC(); closeRenameModal(); playSound();
   }
@@ -705,7 +717,7 @@
   }
 
   // ====================================================
-  // HAPUS DOA (khusus doa buatan user)
+  // HAPUS DOA (custom only)
   // ====================================================
   function deleteCurrentDoa() {
     if (!currentDoaId || !isCustomDoa(currentDoaId)) return;
@@ -792,14 +804,12 @@
           return;
         }
         if (!confirm('⚠️ Impor backup akan MENGGANTI semua data saat ini.\n\nLanjutkan?')) return;
-
         const d = parsed.data;
         if (d.custom_doa_data)   localStorage.setItem('custom_doa_data', JSON.stringify(d.custom_doa_data));
         if (d.custom_doa_order)  localStorage.setItem('custom_doa_order', JSON.stringify(d.custom_doa_order));
         if (d.doa_favorites)     localStorage.setItem('doa_favorites', JSON.stringify(d.doa_favorites));
         if (d.doa_theme)         localStorage.setItem('doa_theme', d.doa_theme);
         if (typeof d.doa_font_scale === 'number') localStorage.setItem('doa_font_scale', d.doa_font_scale);
-
         alert('✅ Backup berhasil diimpor! Halaman akan dimuat ulang.');
         location.reload();
       } catch(err) {
@@ -808,6 +818,44 @@
     };
     reader.readAsText(file);
     event.target.value = '';
+  }
+
+  // ====================================================
+  // HAPUS CACHE (icon 🧹)
+  // ====================================================
+  async function clearAppCache() {
+    const offlineWarning = !navigator.onLine
+      ? '\n\n⚠️ PERINGATAN: Anda sedang OFFLINE.\nMenghapus cache saat offline akan membuat aplikasi TIDAK BISA DIBUKA sampai ada koneksi internet.'
+      : '';
+
+    const ok = confirm(
+      '🧹 Hapus cache aplikasi?\n\n' +
+      '• File aplikasi akan diunduh ulang dari server (versi terbaru).\n' +
+      '• Data doa, favorit, dan pengaturan Anda TIDAK akan terhapus.' +
+      offlineWarning +
+      '\n\nLanjutkan?'
+    );
+    if (!ok) return;
+
+    try {
+      let cleared = 0;
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        cleared = keys.length;
+        await Promise.all(keys.map(k => caches.delete(k)));
+      }
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(r => r.unregister()));
+      }
+      alert('✅ Cache berhasil dihapus (' + cleared + ' entri).\nAplikasi akan dimuat ulang dengan file terbaru.');
+      const url = new URL(window.location.href);
+      url.searchParams.set('_cb', Date.now());
+      window.location.replace(url.toString());
+    } catch(e) {
+      alert('❌ Gagal menghapus cache: ' + e.message + '\n\nMencoba memuat ulang halaman...');
+      window.location.reload();
+    }
   }
 
   // ====================================================
@@ -843,7 +891,6 @@
     }
   }
 
-  // Tombol "Kembali ke Cover" dari Daftar Isi
   function goToCover() {
     if (isScrolling) toggleAutoScroll();
     if (isSpeaking) toggleTTS();
@@ -883,9 +930,6 @@
     } catch(e) { }
   }
 
-  // ====================================================
-  // OPEN DOA
-  // ====================================================
   function openDoa(id, pushHistory = true) {
     if (document.body.classList.contains('sort-mode-active')) return;
     const doa = dataDoa.find(d => d.id === id);
