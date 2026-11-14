@@ -356,7 +356,7 @@
       <p class="desc" id="cover-desc" oninput="autoSaveCover()">Panduan doa harian dan muqaddimah pilihan</p>
       <button class="btn-open" onclick="showPage('page-toc')">Buka Daftar Isi</button>
     </div>
-    <div class="cover-footer" id="cover-footer" oninput="autoSaveCover()">buku digital v1.21.26 created by oznet</div>
+    <div class="cover-footer" id="cover-footer" oninput="autoSaveCover()">buku digital v1.22.26 created by oznet</div>
   </div>
 
   <div id="page-toc" class="page">
@@ -531,7 +531,7 @@
     kicker: 'Buku Digital',
     title: 'Kumpulan Doa<br>&amp; Muqaddimah',
     desc: 'Panduan doa harian dan muqaddimah pilihan',
-    footer: 'buku digital v1.21.26 created by oznet'
+    footer: 'buku digital v1.22.26 created by oznet'
   };
 
   let coverTexts = { ...COVER_DEFAULTS };
@@ -732,7 +732,7 @@
   renderTOC();
 
   // ====================================================
-  // TRIPLE-TAP SYSTEM (menu ➕ & heading "Daftar Isi")
+  // TRIPLE-TAP (menu ➕ & heading "Daftar Isi") — TANPA NOTIF
   // ====================================================
   const TRIPLE_TAP_WINDOW = 1000;
   let addBtnCount = 0, addBtnTimer = null;
@@ -743,20 +743,6 @@
     el.classList.remove('tapping');
     void el.offsetWidth;
     el.classList.add('tapping');
-  }
-
-  function showTapHint(text) {
-    const existing = document.getElementById('tap-hint-toast');
-    if (existing) existing.remove();
-    const t = document.createElement('div');
-    t.id = 'tap-hint-toast';
-    t.innerText = text;
-    t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--bg-main);padding:10px 18px;border-radius:22px;font-weight:bold;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.45);font-family:Georgia,serif;font-size:14px;pointer-events:none;transition:opacity .3s;white-space:nowrap;';
-    document.body.appendChild(t);
-    setTimeout(() => {
-      t.style.opacity = '0';
-      setTimeout(() => t.remove(), 300);
-    }, 1500);
   }
 
   function handleAddTap(e) {
@@ -773,8 +759,6 @@
       openAddDoaModal();
       return;
     }
-    const remaining = 3 - addBtnCount;
-    showTapHint(`Ketuk ${remaining}× lagi untuk tambah doa ➕`);
     addBtnTimer = setTimeout(() => {
       addBtnCount = 0;
       addBtnTimer = null;
@@ -795,15 +779,12 @@
       openAddDoaModal();
       return;
     }
-    const remaining = 3 - headingCount;
-    showTapHint(`Ketuk ${remaining}× lagi untuk tambah doa ➕`);
     headingTimer = setTimeout(() => {
       headingCount = 0;
       headingTimer = null;
     }, TRIPLE_TAP_WINDOW);
   }
 
-  // Pasang handler saat DOM siap
   (function bindTripleTap() {
     const btn = document.getElementById('add-doa-btn');
     const heading = document.getElementById('toc-heading');
